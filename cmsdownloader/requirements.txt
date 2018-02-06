@@ -1,0 +1,13 @@
+beautifulsoup4==4.6.0
+requests==2.18.4
+requests-cache==0.4.13
+argparse==1.4.0
+tenacity==4.8.0
+numpy==1.13.3
+pandas==0.20.3
+psycopg2==2.6.2
+pyproj==1.9.5.1
+python-dateutil==2.6.1
+requests==2.18.4
+Shapely==1.6.1
+SQLAlchemy==1.1.14

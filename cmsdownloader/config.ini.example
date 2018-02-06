@@ -1,0 +1,24 @@
+[dev]
+host=IP_ADDRESS OR LOCALHOST
+port=PORT NUMBER
+database=DATABASENAME
+user=USERNAME
+password=PASSWORD
+
+[acc]
+host=IP_ADDRESS OR LOCALHOST
+port=PORT NUMBER
+database=DATABASENAME
+user=USERNAME
+password=PASSWORD
+
+[prod]
+host=IP_ADDRESS OR LOCALHOST
+port=PORT NUMBER
+database=DATABASENAME
+user=USERNAME
+password=PASSWORD
+
+[loginCredentials]
+user=EMAILADRESS
+password=PASSWORD
