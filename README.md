@@ -5,7 +5,7 @@
 
 Python script to download all the containers, containertypes and wells from https://bammensservice.nl api into seperate jsons.
 Swagger can be found here after you login: https://bammensservice.nl/api/doc
-The results can be found here as an example: https://github.com/Amsterdam/schoonmonitor/tree/master/cmsdownloader/data.
+The results can be found here as an example: https://github.com/Amsterdam/afvalcontainers/tree/master/cmsdownloader/data.
 
 ### Install procedure ###
 
