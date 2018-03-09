@@ -1,12 +1,19 @@
 FROM amsterdam/python
 
+
+RUN adduser --system datapunt
 RUN rm -rf /data
 RUN mkdir /data
+RUN chown datapunt /data
 
-ADD /requirements.txt /requirements.txt
-RUN pip install -r /requirements.txt
+WORKDIR /app
+
+COPY requirements.txt /app/
+
+RUN pip install --no-cache-dir -r requirements.txt
+
 COPY . /app/
 
-ADD /run_cmsdownloader.sh /app/run_cmsdownloader.sh
-ADD /run_load_json2pg.sh /app/run_load_json2pg.sh
-ADD /run_load_json2pg.sh /app/run_json2geojson.sh
+USER datapunt
+
+CMD /app/docker-run.sh

@@ -1,26 +1,46 @@
 # utf-8
+import os
 import requests
 from bs4 import BeautifulSoup
-from config import config
 import argparse
 import json
 import tenacity
+import logging
 
+
+def logger():
+    """
+    Setup basic logging for console.
+
+    Usage:
+        Initialize the logger by adding the code at the top of your script:
+        ``logger = logger()``
+
+    TODO: add log file export
+    """
+    logging.basicConfig(level=logging.INFO,
+                        format='%(asctime)s %(levelname)-8s %(message)s',
+                        datefmt='%a, %d %b %Y %H:%M:%S')
+    logger = logging.getLogger(__name__)
+    return logger
+
+
+logger = logger()
+
+assert os.environ['BAMMENS_API_USERNAME']
+assert os.environ['BAMMENS_API_PASSWORD']
 
 def get_login_cookies(session, baseUrl):
     """
         Get PHPSESSID cookie to use the API
     """
-    print("start login")
+    logger.info("start login")
     loginPage = session.get(baseUrl + '/login')
     soup = BeautifulSoup(loginPage.text, "html.parser")
     csrf = soup.find("input", type="hidden")
 
-    # Get user and password from config.ini file
-    credentials = config('loginCredentials')
-
-    payload = {'_username': credentials['user'],
-               '_password': credentials['password'],
+    payload = {'_username': os.environ['BAMMENS_API_USERNAME'],
+               '_password': os.environ['BAMMENS_API_PASSWORD'],
                '_csrf_token': csrf['value'],
                }
 
@@ -35,29 +55,29 @@ def get_login_cookies(session, baseUrl):
         soup = BeautifulSoup(loginCheck.text, "html.parser")
         # Check for name in html page which is only visible after login
         if 'dashboard' in soup.title.string.lower():
-            print("login succeeded!")
+            logger.info("login succeeded!")
             return loginCheck.cookies
     if loginCheck.status_code == 401 or loginCheck == 403:
-        print('login failed!')
+        logger.info('login failed!')
 
 
 @tenacity.retry(wait=tenacity.wait_fixed(1),
                 retry=tenacity.retry_if_exception_type(IOError))
 def getContainer(session, cookies, endpoint, containerId):
     """
-        Get The container date
+        Get The container data
     """
     url = baseUrl + '/api/' + endpoint + '/' + str(containerId) + '.json'
-    print(url)
+    logger.info(url)
     containerURI = session.get(url, cookies=cookies)
-    #print(containerURI.headers)
-    #print(containerURI.text)
+    #logger.info(containerURI.headers)
+    #logger.info(containerURI.text)
     if 'application/json' not in containerURI.headers["Content-Type"]:
         # DOES NOT WORK YET
         cookies = get_login_cookies(session, baseUrl)
         containerURI = session.get(url, cookies=cookies)
         containerData = containerURI.json()
-        print("get login?")
+        logger.info("get login?")
     else:
         containerData = containerURI.json()
     return containerData
@@ -72,30 +92,30 @@ def main(baseUrl, endpoints, folder):
             data = []
             ListURI = session.get(baseUrl + '/api/' + endpoint + '.json', cookies=cookies)
             List = ListURI.json()
-            #print(containerList['containers'][0])
+            #logger.info(containerList['containers'][0])
             arrayName = list(List.keys())[0]
 
             IdList = [item['id'] for item in List[arrayName]]
-            #print(len(IdList), ' ', endpoint)
+            #logger.info(len(IdList), ' ', endpoint)
             for Id in IdList:
                 item = getContainer(session, cookies, endpoint, Id)
                 status = '{} of {}'.format(str(n), str(len(IdList)))
-                print(status)
+                logger.info(status)
                 data.append(item)
                 n += 1
             with open(folder + '/' + endpoint + '.json', 'w') as outFile:
                 json.dump(data, outFile, indent=2)
-        print('Done with downloading!')
+        logger.info('Done with downloading!')
 
 
 if __name__ == '__main__':
     desc = "download all containers from Bammens Api, for more info: https://bammensservice.nl/api/doc"
     parser = argparse.ArgumentParser(desc)
     parser.add_argument('datadir', type=str,
-                        help='Local data directory.', nargs=1)
+                        help='Local data directory.')
     args = parser.parse_args()
 
     baseUrl = 'https://bammensservice.nl'
-    endpoints = ['containers', 'wells', 'containertypes']
+    endpoints = ['containertypes','containers', 'wells']
 
-    main(baseUrl, endpoints, args.datadir[0])
+    main(baseUrl, endpoints, args.datadir)

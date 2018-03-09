@@ -2,5 +2,5 @@ set -x
 set -u
 set -e
 
-python /app/json2geojson.py
+python /app/json2geojson.py data
 

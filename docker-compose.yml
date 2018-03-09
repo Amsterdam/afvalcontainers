@@ -1,0 +1,19 @@
+version: '3.0'
+services:
+  database:
+    image: amsterdam/postgres
+    ports:
+      - "5504:5432"
+    environment:
+      POSTGRES_PASSWORD: insecure
+      POSTGRES_DB: afvalcontainers
+      POSTGRES_USER: afvalcontainers
+  cmsdownloader:
+    build: cmsdownloader/
+    links:
+      - database
+    environment:
+      CKAN_API_KEY:
+      BAMMENS_API_USERNAME:
+      BAMMENS_API_PASSWORD:
+      

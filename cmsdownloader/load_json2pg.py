@@ -96,7 +96,7 @@ def load_containers(datadir, dbConfig):
     # Load all files into 1 big dataframe with lat lon as 4326
     df = pd.DataFrame()
     for fileName  in files_json:
-        with open('data/'+fileName,'r') as response:
+        with open(datadir+'/'+fileName,'r') as response:
             data = json.loads(response.read())
             objectKeyName = list(data[0].keys())[0]
             print(fileName + " object opened")

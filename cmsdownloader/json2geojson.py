@@ -1,5 +1,5 @@
 import json
-
+import argparse
 
 def flatten_json(jsonObject):
     """
@@ -33,10 +33,15 @@ def jsonPoints2geojson(df, latColumn, lonColumn):
     for item in df:
         print(item)
         item = flatten_json(item)
-        print(item)
+        print(item.keys())
+        keep_items = {}
+        for k,v in item.items():
+            if k in ['id', 'id_number', 'serial_number', 'location.address.summary', 'location.address.district', 'location.address.neighbourhood', 'owner.name', 'created_at', 'placing_date', 'operational_date', 'warranty_date']:
+                keep_items[k] = v
+        print(keep_items)
         if lonColumn:
             feature = {'type': 'Feature',
-                       'properties': item}
+                       'properties': keep_items}
             feature['geometry'] = {'type': 'Point',
                                    'coordinates': [float(item[lonColumn]),
                                                    float(item[latColumn])
@@ -75,10 +80,18 @@ def joinByKeyNames(geojson, dataset, key1, key2):
     return geojson
 
 
+def parser():
+    desc = "convert jsons to geojson file."
+    parser = argparse.ArgumentParser(desc)
+    parser.add_argument('datadir', type=str,
+                        help='Local data directory.')   
+    return parser
+
 def main():
+    args = parser().parse_args()
     # Prepare values for functions
-    fileName = 'data/wells.json'
-    fileName2 = 'data/containers.json'
+    fileName = args.datadir+'/wells.json'
+    fileName2 = args.datadir+'/containers.json'
     lat = 'location.position.latitude'
     lon = 'location.position.longitude'  # for use later in flattened json as item['location.position.longitude']
     waste_descriptions = [
@@ -91,7 +104,7 @@ def main():
                   {"id": 20, "waste_name": "Glas"},
                   {"id": 25, "waste_name": "Plastic"}]
 
-    with open('data/afvalcontainers.geojson', 'w') as outFile:
+    with open('/'+args.datadir+'/afvalcontainers.geojson', 'w') as outFile:
         wells = openJsonArrayKeyDict2FlattenedJson(fileName)
         containers = openJsonArrayKeyDict2FlattenedJson(fileName2)
         # Build Geojson from wells
