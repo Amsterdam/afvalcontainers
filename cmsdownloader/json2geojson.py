@@ -1,5 +1,28 @@
 import json
 import argparse
+import logging
+
+
+def logger():
+    """
+    Setup basic logging for console.
+
+    Usage:
+        Initialize the logger by adding the code at the top of your script:
+        ``logger = logger()``
+
+    TODO: add log file export
+    """
+    logging.basicConfig(level=logging.INFO,
+                        format='%(asctime)s %(levelname)-8s %(message)s',
+                        datefmt='%a, %d %b %Y %H:%M:%S')
+    logger = logging.getLogger(__name__)
+    return logger
+
+
+# Setup logging service
+logger = logger()
+
 
 def flatten_json(jsonObject):
     """
@@ -31,14 +54,14 @@ def jsonPoints2geojson(df, latColumn, lonColumn):
     """
     geojson = {'type': 'FeatureCollection', 'features': []}
     for item in df:
-        print(item)
+        # logger.info(item)
         item = flatten_json(item)
-        print(item.keys())
+        # logger.info(item.keys())
         keep_items = {}
         for k,v in item.items():
-            if k in ['id', 'id_number', 'serial_number', 'location.address.summary', 'location.address.district', 'location.address.neighbourhood', 'owner.name', 'created_at', 'placing_date', 'operational_date', 'warranty_date']:
+            if k in ['id', 'id_number', 'serial_number', 'well','location.address.summary', 'location.address.district', 'location.address.neighbourhood', 'owner.name', 'created_at', 'placing_date', 'operational_date', 'warranty_date','containers.0']:
                 keep_items[k] = v
-        print(keep_items)
+        # logger.info(keep_items)
         if lonColumn:
             feature = {'type': 'Feature',
                        'properties': keep_items}
@@ -58,10 +81,10 @@ def openJsonArrayKeyDict2FlattenedJson(fileName):
     with open(fileName, 'r') as response:
         data = json.loads(response.read())
         objectKeyName = list(data[0].keys())[0]
-        #objectKeyName = str(objectKeyName, 'utf-8')
-        print(fileName + " object opened")
+        # objectKeyName = str(objectKeyName, 'utf-8')
+        logger.info(fileName + " object opened")
         data = [item[objectKeyName] for item in data]
-        #print(data[0])
+        # logger.info(data[0])
     return data
 
 
@@ -69,14 +92,17 @@ def joinByKeyNames(geojson, dataset, key1, key2):
     """Insert data from dataset to a geojson where key1 from dataset matches key2 in the geojson."""
     n = 1
     for feature in geojson['features']:
+        #logger.info(feature["properties"])
         matches = [item for item in dataset
                    if item[key1] == feature["properties"].get(key2)]
         if matches:
+            if  'owner' in (matches[0].keys()):
+                del matches[0]['owner']
             feature['properties'].update(matches[0])
         else:
             feature['properties']['container'] = None
         n += 1
-        print("{} of {}".format(n, len(geojson['features'])))
+        #logger.info("{} of {}".format(n, len(geojson['features'])))
     return geojson
 
 
@@ -90,8 +116,8 @@ def parser():
 def main():
     args = parser().parse_args()
     # Prepare values for functions
-    fileName = args.datadir+'/wells.json'
-    fileName2 = args.datadir+'/containers.json'
+    fileName = args.datadir + '/wells.json'
+    fileName2 = args.datadir + '/containers.json'
     lat = 'location.position.latitude'
     lon = 'location.position.longitude'  # for use later in flattened json as item['location.position.longitude']
     waste_descriptions = [
@@ -104,17 +130,18 @@ def main():
                   {"id": 20, "waste_name": "Glas"},
                   {"id": 25, "waste_name": "Plastic"}]
 
-    with open('/'+args.datadir+'/afvalcontainers.geojson', 'w') as outFile:
+    with open(args.datadir+'/afvalcontainers.geojson', 'w') as outFile:
         wells = openJsonArrayKeyDict2FlattenedJson(fileName)
+        logger.info('Flatten wells dictionaries')
         containers = openJsonArrayKeyDict2FlattenedJson(fileName2)
-        # Build Geojson from wells
         geojson = jsonPoints2geojson(wells, lat, lon)
-        # Add containers to wells
+        logger.info('Build Geojson from wells')
         joinByKeyNames(geojson, containers, 'id', 'containers.0')
-        # Add descriptions to containers
+        logger.info('Added containers to wells')
         joinByKeyNames(geojson, waste_descriptions, 'id', 'waste_type')
+        logger.info('Added descriptions to containers')
         json.dump(geojson, outFile, indent=2)
-        print ('written geojson')
+        logger.info('Finished writing geojson')
 
 
 if __name__ == '__main__':
