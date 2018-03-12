@@ -11,3 +11,4 @@ python-dateutil==2.6.1
 requests==2.18.4
 Shapely==1.6.1
 SQLAlchemy==1.1.14
+tqdm==4.19.7

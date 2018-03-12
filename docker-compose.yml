@@ -5,9 +5,9 @@ services:
     ports:
       - "5504:5432"
     environment:
-      POSTGRES_PASSWORD: insecure
       POSTGRES_DB: afvalcontainers
       POSTGRES_USER: afvalcontainers
+      POSTGRES_PASSWORD: insecure
   cmsdownloader:
     build: cmsdownloader/
     links:

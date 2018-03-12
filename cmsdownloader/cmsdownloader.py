@@ -1,11 +1,44 @@
 # utf-8
 import os
+import sys
 import requests
 from bs4 import BeautifulSoup
 import argparse
 import json
 import tenacity
 import logging
+import time
+from tqdm import tqdm
+import io
+
+def delete_last_lines(n=1):
+    CURSOR_UP_ONE = '\x1b[1A'
+    ERASE_LINE = '\x1b[2K'
+    
+    for _ in range(n):
+        sys.stdout.write(CURSOR_UP_ONE)
+        sys.stdout.write(ERASE_LINE)
+
+
+class TqdmToLogger(io.StringIO):
+    """
+        Output stream for TQDM which will output to logger module instead of
+        the StdOut.
+    """    
+    logger = None
+    level = None
+    buf = ''
+    def __init__(self,logger,level=None):
+        super(TqdmToLogger, self).__init__()
+        self.logger = logger
+        self.level = level or logging.INFO
+        
+    def write(self,buf):
+        self.buf = buf.strip('\r\n\t ')
+    def flush(self):
+        self.logger.log(self.level, self.buf)
+
+
 
 
 def logger():
@@ -20,12 +53,15 @@ def logger():
     """
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(levelname)-8s %(message)s',
-                        datefmt='%a, %d %b %Y %H:%M:%S')
+                        datefmt='%a, %d %b %Y %H:%M:%S'
+                        )
     logger = logging.getLogger(__name__)
     return logger
 
 
 logger = logger()
+
+tqdm_out = TqdmToLogger(logger,level=logging.INFO)
 
 assert os.environ['BAMMENS_API_USERNAME']
 assert os.environ['BAMMENS_API_PASSWORD']
@@ -68,7 +104,7 @@ def getContainer(session, cookies, endpoint, containerId):
         Get The container data
     """
     url = baseUrl + '/api/' + endpoint + '/' + str(containerId) + '.json'
-    logger.info(url)
+    #logger.info(url)
     containerURI = session.get(url, cookies=cookies)
     #logger.info(containerURI.headers)
     #logger.info(containerURI.text)
@@ -88,21 +124,24 @@ def main(baseUrl, endpoints, folder):
     with requests.Session() as session:
         cookies = get_login_cookies(session, baseUrl)
         for endpoint in endpoints:
-            n = 1
             data = []
-            ListURI = session.get(baseUrl + '/api/' + endpoint + '.json', cookies=cookies)
+            url = baseUrl + '/api/' + endpoint + '.json'
+
+            ListURI = session.get(url, cookies=cookies)
+            logger.info('Retrieving all objects from '.format(endpoint))
             List = ListURI.json()
             #logger.info(containerList['containers'][0])
             arrayName = list(List.keys())[0]
 
             IdList = [item['id'] for item in List[arrayName]]
             #logger.info(len(IdList), ' ', endpoint)
-            for Id in IdList:
+            for Id in tqdm(IdList, file=tqdm_out):
                 item = getContainer(session, cookies, endpoint, Id)
-                status = '{} of {}'.format(str(n), str(len(IdList)))
-                logger.info(status)
+
+                # status = '{} of {}'.format(str(n), str(len(IdList)))
+                # logger.info(status)
                 data.append(item)
-                n += 1
+                delete_last_lines()
             with open(folder + '/' + endpoint + '.json', 'w') as outFile:
                 json.dump(data, outFile, indent=2)
         logger.info('Done with downloading!')
