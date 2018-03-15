@@ -3,7 +3,7 @@ import os
 import argparse
 import requests
 import logging
-
+from mimetypes import MimeTypes
 
 def logger():
     """
@@ -24,6 +24,22 @@ def logger():
 
 # Setup logging service
 logger = logger()
+
+
+def getFileType(filename_path):
+    """
+    Return filetype as 'type/subtype' based on extension.
+
+    Args:
+        1. filename_path: set path where file resides
+
+    Returns:
+        Returns 'type/subtype' as a string.
+    """    
+    mime = MimeTypes()
+    content_type = mime.guess_type(filename_path)[0]
+    logger.info("Found content type '{}'".format(content_type))
+    return content_type
 
 
 def find_resource_id_if_exists(url, dataset_name, file_name):
@@ -69,7 +85,10 @@ def upload_file_to_ckan(url, dataset_name, file_path):
     else:
         data_upload_url = url+'/api/action/resource_create'
         data={"package_id": dataset_name,
-              "name":file_name}
+              "name":file_name,
+              "description": "Generated Geojson from API from the Container Management System from Bammens.nl",
+              "format":getFileType(file_name)}
+        logger.info(data)     
         logger.info('Uploading {}...'.format(file_name))
 
     response = requests.post(data_upload_url,

@@ -128,7 +128,8 @@ def main():
                   {"id": 7, "waste_name": "Textiel"},
                   {"id": 9, "waste_name": "Wormen"},
                   {"id": 20, "waste_name": "Glas"},
-                  {"id": 25, "waste_name": "Plastic"}]
+                  {"id": 25, "waste_name": "Plastic"},
+                  {"id": 31, "waste_name": "Blipvert"}]
 
     with open(args.datadir+'/afvalcontainers.geojson', 'w') as outFile:
         wells = openJsonArrayKeyDict2FlattenedJson(fileName)
