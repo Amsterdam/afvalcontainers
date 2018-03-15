@@ -9,7 +9,7 @@ services:
       POSTGRES_USER: afvalcontainers
       POSTGRES_PASSWORD: insecure
   cmsdownloader:
-    build: ./cmsdownloader/
+    build: ./cmsdownloader
     links:
       - database
     environment:
