@@ -1,6 +1,5 @@
 FROM amsterdam/python
 
-
 RUN adduser --system datapunt
 RUN rm -rf /data
 RUN mkdir /data
