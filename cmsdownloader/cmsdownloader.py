@@ -7,39 +7,35 @@ import argparse
 import json
 import tenacity
 import logging
-import time
 from tqdm import tqdm
-import io
+
 
 def delete_last_lines(n=1):
     CURSOR_UP_ONE = '\x1b[1A'
     ERASE_LINE = '\x1b[2K'
-    
+
     for _ in range(n):
         sys.stdout.write(CURSOR_UP_ONE)
         sys.stdout.write(ERASE_LINE)
 
 
-class TqdmToLogger(io.StringIO):
+class TqdmToLogger(object):
     """
         Output stream for TQDM which will output to logger module instead of
         the StdOut.
-    """    
-    logger = None
-    level = None
-    buf = ''
-    def __init__(self,logger,level=None):
-        super(TqdmToLogger, self).__init__()
+    """
+
+    def __init__(self, logger, level=None):
+        self.buff = ''
         self.logger = logger
         self.level = level or logging.INFO
-        
-    def write(self,buf):
+
+    def write(self, buf):
         self.buf = buf.strip('\r\n\t ')
-        self.flush()
+        #self.flush()
+
     def flush(self):
         self.logger.log(self.level, self.buf)
-
-
 
 
 def logger():
@@ -62,10 +58,11 @@ def logger():
 
 logger = logger()
 
-tqdm_out = TqdmToLogger(logger,level=logging.INFO)
+tqdm_out = TqdmToLogger(logger, level=logging.INFO)
 
 assert os.environ['BAMMENS_API_USERNAME']
 assert os.environ['BAMMENS_API_PASSWORD']
+
 
 def get_login_cookies(session, baseUrl):
     """
@@ -142,9 +139,11 @@ def main(baseUrl, endpoints, folder):
                 # status = '{} of {}'.format(str(n), str(len(IdList)))
                 # logger.info(status)
                 data.append(item)
-                delete_last_lines()
-            with open(folder + '/' + endpoint + '.json', 'w') as outFile:
+                #delete_last_lines()
+            filepath = folder + '/' + endpoint + '.json'
+            with open(filepath, 'w') as outFile:
                 json.dump(data, outFile, indent=2)
+            logger.info('Written file: {}', format(filepath))
         logger.info('Done with downloading!')
 
 
