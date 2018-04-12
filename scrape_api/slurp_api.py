@@ -181,9 +181,6 @@ async def store_results(endpoint):
 
     clear_current_table(endpoint)
 
-    session = models.Session()
-    db_model = ENDPOINT_MODEL[endpoint]
-
     results = []
     while True:
         value = await RESULT_QUEUE.get()
@@ -258,18 +255,18 @@ async def run_workers(endpoint, workers=WORKERS):
     log.debug('done!')
 
 
-async def main(endpoint, workers=WORKERS):
-    engine = models.make_engine(section='docker')
-    # models.Base.metadata.create_all(engine)
-    models.set_engine(engine)
-    # scrape the data!
+async def main(endpoint, workers=WORKERS, make_engine=True):
+    # when testing we do not want an engine.
+    if make_engine:
+        engine = models.make_engine(section='docker')
+        models.set_engine(engine)
     await run_workers(endpoint, workers=workers)
 
 
-def start_import(args, workers=WORKERS):
+def start_import(args, workers=WORKERS, make_engine=True):
     start = time.time()
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main(args, workers=workers))
+    loop.run_until_complete(main(args, workers=workers, make_engine=make_engine))
     log.info('Took: %s', time.time() - start)
 
 

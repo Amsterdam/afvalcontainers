@@ -1,0 +1,1563 @@
+[
+  {
+    "container_type": {
+      "id": 27,
+      "name": "Nieuw-West (SV)  Rest 5m3 TR Opl inst",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 138,
+      "name": "Nieuw-West papier 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 109,
+      "name": "nieuw-West Glas 1 4m3 KH TR OPL inst",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 204,
+      "name": "Nieuw-West papier 5m3 KH TR OPL inst",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 41,
+      "name": "Nieuw west Papier",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 140,
+      "name": "Algemene order",
+      "volume": 0
+    }
+  },
+  {
+    "container_type": {
+      "id": 244,
+      "name": "Nieuw West rest  belfast 5m3 ",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 347,
+      "name": "Oost stadsdeel DC Rest 3H 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 344,
+      "name": "Oost stadsdeel KHDC papier 5M3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 457,
+      "name": "Oost Belfast ED KH DB 5 m3 Papier",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 333,
+      "name": "Oost stadsdeel KHDC Glas 1 4m3",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 456,
+      "name": "Oost Belfast ED KH DB 5 m3 Rest",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 341,
+      "name": "ASW KHDC Rest  KH 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3321,
+      "name": "7m3 KHC Rest Amsterdam Standaard",
+      "volume": 7
+    }
+  },
+  {
+    "container_type": {
+      "id": 3588,
+      "name": "5m3 KHC Rest Amsterdam Standaard 1192*1192*2341",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 540,
+      "name": "Oost stadsdeel V-consyst Rest 5m3  Grijsblauw RAL5008",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 533,
+      "name": "Oost Stadsdeel V-consyst Papier 5m3 RAL7021",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 531,
+      "name": "Oost Stadsdeel V-consyst Glas 5m3 RAL5008",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 353,
+      "name": "Oost stadsdeel IJburg Rubens Rest KH 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 206,
+      "name": "Oost Stadsdeel Ijburg papier KH 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 149,
+      "name": "Oost stadsdeel ijburg Rubens KH Glas 1 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 376,
+      "name": "Oost Stadsdeel V-consyst Rest 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3591,
+      "name": "5m3 KHC Plastic Amsterdam Standaard 1192*1192*2341",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 534,
+      "name": "Oost Stadsdeel V-consyst Papier 5m3 RAL5008",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 378,
+      "name": "Oost Stadsdeel V-consyst Papier 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 377,
+      "name": "Oost Stadsdeel V-consyst Glas 1 4m3",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 495,
+      "name": "Oost Stadsdeel V-consyst Rest 5m3 RAL7021",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 350,
+      "name": "Oost stadsdeel(IJburg) Rest Rubens KH 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 352,
+      "name": "Oost stadsdeel Rubens Papier KH 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 351,
+      "name": "Oost stadsdeel Rubens Glas 1 KH 3m3",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 580,
+      "name": "Oost stadsdeel V-Consyst Kunststof",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 566,
+      "name": "ASW KHDC Rest 7m3",
+      "volume": 7
+    }
+  },
+  {
+    "container_type": {
+      "id": 3557,
+      "name": "5M3 Rest KH OC Vconsyst",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3540,
+      "name": "3M3 GFT KH OC Vconsyst",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 3553,
+      "name": "5M3 Papier 3HKZ OC Vconsyst",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3547,
+      "name": "5M3 Glas 3 kleur 3HKZ OC Vconsyst",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 381,
+      "name": "Oost Stadsdeel B-Waste Rest 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 383,
+      "name": "Oost Stadsdeel B-Waste Papier 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 382,
+      "name": "Oost Stadsdeel B-Waste Glas 1 4m3",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 406,
+      "name": "Sulo Classic II",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 349,
+      "name": "Oost stadsdeel DC papier 3H 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 348,
+      "name": "Oost stadsdeel DC Glas 1 3H 3m3",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 322,
+      "name": "Bovengronds Rest 3m3",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 332,
+      "name": "Oost Stadsdeel KHDC  Rest 5M3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 354,
+      "name": "Oost stadsdeel Rubens Glas 1 KH IJburg",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 336,
+      "name": "ASW KHDC Glas 1 KH 4M3",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 372,
+      "name": "West Stadsdeel V-Consyst Glas 1 4m3",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 401,
+      "name": "ASW BOVENGRONDSE CONTAINER",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 339,
+      "name": "ASW KHDC Papier KH 5M3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 335,
+      "name": "ASW Rubens Rest KH 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 342,
+      "name": "ASW KHDC Textiel KH 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 373,
+      "name": "West Stadsdeel V-Consyst Papier 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 403,
+      "name": "Bovengronds Papier",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 363,
+      "name": "West stadsdeel V-Consyst rest 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 337,
+      "name": "ASW KHDC Rest KH 5M3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 519,
+      "name": "ASW Bos & Lommer Belfast KHC 5M3 Rest 1340",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 366,
+      "name": "Zuidoost Stadsdeel Kliko Rest 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 394,
+      "name": "ZuidOost Sulo Rest 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 364,
+      "name": "Zuid Oost stadsdeel Metro Glas 1 4m3",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 435,
+      "name": "HMI Omnivoor glas",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 365,
+      "name": "Zuid Oost stadsdeel Metro Papier 5m3",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 59,
+      "name": "Bovengrondse Glas",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 357,
+      "name": "Centrum stadsdeel Papier 1 KH Wolff 3m3",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 463,
+      "name": "Centrum Glas 1 KH 3.7 m3 Evo-L",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 464,
+      "name": "Centrum Papier KH 3.7 m3 Evol-L",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 356,
+      "name": "Centrum stadsdeel Glas 1 KH 3m3 Eigen zuil",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 358,
+      "name": "Centrum stadsdeel Evo Rest KH 5m3 ",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 160,
+      "name": "Centrum Stadsdeel Glas 1 KH 3m3",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 359,
+      "name": "Centrum stadsdeel EVO Papier KH 3m3",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 321,
+      "name": "Centrum Amsterdam EVO papier KH 4m3",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 320,
+      "name": "Centrum amsterdam EVO Glas 4m3",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 391,
+      "name": "Bovengrondse rest",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 409,
+      "name": "Bovengronds Kunststof",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 429,
+      "name": "Centrum Evo L papier 4m3",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 433,
+      "name": "Centrum Rest 4m3 EVO KH",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 430,
+      "name": "Centrum Evo L Glas 4m3",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 428,
+      "name": "Centrum Evo L Rest 4m3",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 89,
+      "name": "Nieuw-west rest 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 393,
+      "name": "ASW Rest Rubens 3m3 KH",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 298,
+      "name": "Kikker Rest ",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 496,
+      "name": "5M3 Rest Sulo Zuid Oost",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 513,
+      "name": "Bos en Lommer ondergrondse rest 7m3",
+      "volume": 7
+    }
+  },
+  {
+    "container_type": {
+      "id": 522,
+      "name": "Bovengrondse (textiel)",
+      "volume": 0
+    }
+  },
+  {
+    "container_type": {
+      "id": 184,
+      "name": "2 Glas inwerpbuis verlengd 3m3",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 472,
+      "name": "Bovengrondse Collector Bammens Rest",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 334,
+      "name": "ASW V-CONSYST METRO REST KH",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 380,
+      "name": "Oost Stadsdeel V-consyst Textiel 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 441,
+      "name": "BAUER 3M3 Rest Bovengrondse",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 573,
+      "name": "7TVG5 KHFC ROME 80 TROPL 5/7",
+      "volume": 7
+    }
+  },
+  {
+    "container_type": {
+      "id": 210,
+      "name": "centrum Stadsdeel Glas 3m3",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 532,
+      "name": "Oost Stadsdeel V-consyst Glas 5m3 RAL7021",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 538,
+      "name": "Rhino Pers Rest 5m3 Belfast KH ",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 470,
+      "name": "MCB Bovengrondse Papier",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 63,
+      "name": "KICI Textiel 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 2754,
+      "name": "5TVG5 KH BEL 80 PERS TROPL4/6",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 355,
+      "name": "Oost stadsdeel Rubens Papier KH IJburg",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 396,
+      "name": "Zuid Oost Sulo Glas 4m3",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 395,
+      "name": "Zuid Oost Sulo Papier 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 473,
+      "name": "Bovengrondse Collector Bammens Papier",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 2331,
+      "name": "3TV1423R KH BEL 80 TROPL",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 214,
+      "name": "Nieuwe west  3m3 belfast glas 1",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 215,
+      "name": "Nieuw west  3m3 belfast papier ",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 2083,
+      "name": "3TV1423R G2 KH BEL PAP TROPL 4/6 ",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 628,
+      "name": "5TV1423R KH BEL 80 TROPL G2",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 1993,
+      "name": "3TV1423R G2 KH BEL GL1 TROPL 4/6 ISOL",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 1994,
+      "name": "5TV1423R G2 KH BEL PAP TROPL 4/6",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 2392,
+      "name": "3TV1423R KH BEL PAP TROPL G2",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 1981,
+      "name": "3TV1423R G2 KH BEL 80 TROPL 4/6",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 1978,
+      "name": "5TV1340R KH BEL. PAP TROPL 4/6 2%",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 2085,
+      "name": "5TV1423R G2 KH BEL 80 TROPL 4/6",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 1976,
+      "name": "5TV1340R KH BEL 80 TROPL 4/6 2%",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 2395,
+      "name": "ONBEKEND",
+      "volume": 0
+    }
+  },
+  {
+    "container_type": {
+      "id": 139,
+      "name": "Nieuw-west rest 5m3 Rubens",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 2393,
+      "name": "Nieuw West 5 kuub RU KI PAP",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 2394,
+      "name": "4M3 KH GLAS RUB TR 5/7 VERSTEL",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 1977,
+      "name": "4TV1340R KH BEL GL1 TROPL 4/6 2%",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 3322,
+      "name": "5m3 KHC Papier Amsterdam Standaard 1380*1380*2690",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3630,
+      "name": "4m3 KHC Glas Amsterdam Standaard 1338*1338*2130",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 617,
+      "name": "4TVG5 3HKZ  BEL 80 TROPL 4/6",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 2197,
+      "name": "5SVG5 2HKPF EVOL 80 TROPL 4/6",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3641,
+      "name": "MCB Bovengrondse Plastic",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 48,
+      "name": "Nieuw west rest 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 474,
+      "name": "Bovengrondse Collector Bammens Glas",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 2439,
+      "name": "Nieuw West Metro papier 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 1986,
+      "name": "5TVG5 KHC UTR. 80 TROPL 5/7",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 569,
+      "name": "5TVG5 KH BEL 80 TROPL 5/7",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3142,
+      "name": "5TV KHFC VC AMS REST  TRINL",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3324,
+      "name": "5m3 KHC Plastic Amsterdam Standaard 1380*1380*2690",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 9,
+      "name": "HMS rest 5M3 ",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3287,
+      "name": "Bovengronds Textiel Symphanie",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 3288,
+      "name": "3 m3 1 Haaks Glas Metro",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 3289,
+      "name": "4 m3 1 Haaks Glas Metro",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 3290,
+      "name": "3 m3 KH Metro",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 3291,
+      "name": "4 m3 KH Glas Bammens Downcost",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 3292,
+      "name": "3 m3 KH Glas Bammens Downcost",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 3293,
+      "name": "3 m3 KH Glas Bammens Inwerpzuil 2002",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 3294,
+      "name": "5 m3 KH Glas Bammens Inwerpzuil 2002",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3295,
+      "name": "4 m3 KH Glas Bammens Inwerpzuil 2002",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 3296,
+      "name": "3 m3 1 Haaks Glas Bammens Downcost",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 3049,
+      "name": "4 M3 1-H GLAS TRANEN 4E GEN.",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 3298,
+      "name": "3 m3 1 Haaks Papier Metro",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 3299,
+      "name": "4 m3 1 Haaks Papier Metro",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 3302,
+      "name": "5 m3 KH Papier Bammens Downcost",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3300,
+      "name": "5 m3 1 Haaks Papier Metro",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3301,
+      "name": "4 m3 KH Papier Metro",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 3305,
+      "name": "5 m3 KH Papier Metro",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3303,
+      "name": "4 m3 KH Papier Bammens Downcost",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 3304,
+      "name": "3 m3 KH Papier Bammens Downcost",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 3307,
+      "name": "5 m3 1 Haaks Papier Downcost",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3308,
+      "name": "5 m3 1 Haaks Papier Bammen Inwerpzuil 2002",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3310,
+      "name": "4 m3 1 Haaks Rest Metro",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 3311,
+      "name": "5 m3 1 Haaks Rest Metro",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3312,
+      "name": "3 m3 1 Haaks Rest Metro",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 3313,
+      "name": "5 m3 KH Rest Metro",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3314,
+      "name": "5 m3 KH Rest Bammens Downcost",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 2427,
+      "name": "Sidcon pers Rest 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3317,
+      "name": "Pers KH Rest Icova",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 3323,
+      "name": "5m3 KHC Glas Amsterdam Standaard 1380*1380*2690",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3320,
+      "name": "5m3 KHC Rest Amsterdam Standaard 1380*1380*2690",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3318,
+      "name": "3,5m3 KH Glas Icova",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 3319,
+      "name": "3,5m3 KH Papier Icova",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 3325,
+      "name": "MCB Bovengrondse Rest",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 3326,
+      "name": "Bammens underground",
+      "volume": 0
+    }
+  },
+  {
+    "container_type": {
+      "id": 3327,
+      "name": "Poolse Container",
+      "volume": 0
+    }
+  },
+  {
+    "container_type": {
+      "id": 3564,
+      "name": "5m3 KHC Textiel Amsterdam Standaard 1380*1380*2690",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 4317,
+      "name": "7m3 KHC Rest Amsterdam Standaard 1380*1380*3626",
+      "volume": 7
+    }
+  },
+  {
+    "container_type": {
+      "id": 3539,
+      "name": "5M3 Kunststof/ Plastic 3HKZ OC Sidcon",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 412,
+      "name": "MCB Bovengrondse Glas",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 471,
+      "name": "MCB Bovengrondse Rest",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 3572,
+      "name": "3m3 KHC Glas Amsterdam Standaard 1380*1380*1470",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 3571,
+      "name": "3m3 KHC Papier Amsterdam Standaard 1380*1380*1470",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 3570,
+      "name": "3m3 KHC Rest Amsterdam Standaard 1380*1380*1470",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 3565,
+      "name": "4,65m3 KHC Rest Amsterdam Standaard 1380*1380*2489",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 3566,
+      "name": "4,65m3 KHC Papier Amsterdam Standaard 1380*1380*2489",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 3567,
+      "name": "4,65m3 KHC Glas Amsterdam Standaard 1380*1380*2489",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 3568,
+      "name": "4,65m3 KHC Plastic Amsterdam Standaard 1380*1380*2489",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 3590,
+      "name": "5m3 KHC Papier Amsterdam Standaard 1192*1192*2341",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3543,
+      "name": "5m3 GFT KH OC Vconsyst",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3574,
+      "name": "5m3 KHC Rest Amsterdam Standaard 1338*2690",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 405,
+      "name": "ASW Rubens Textiel KH 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3657,
+      "name": "4m3 KHC Glas Amsterdam Standaard 1338*2690",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 3576,
+      "name": "5m3 KHC Papier Amsterdam Standaard 1338*2690",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3577,
+      "name": "5m3 KHC Plastic Amsterdam Standaard 1338*2690",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 572,
+      "name": "5TV1423RKLIKO BEL 80 TROPL 4/6",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3140,
+      "name": "7TV KHFC SNAAS AMS REST TRINL",
+      "volume": 7
+    }
+  },
+  {
+    "container_type": {
+      "id": 1941,
+      "name": "5TVG4+ KH BEL 80 TROPL 4/6 2%",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 624,
+      "name": "5SVG5 3HKZ BEL PAP TROPL 4/6",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3555,
+      "name": "5M3 Rest 1 HK OC Vconsyst",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3531,
+      "name": "5M3 Kunststof/ Plastic KH BG MCB",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 4316,
+      "name": "5m3 KHC rest Amsterdam Vconsyst 2  1340*1340*2725",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3141,
+      "name": "4,8TV KHFC SNAAS AMS REST TRINL",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3556,
+      "name": "5M3 Rest 3HKZ OC Vconsyst",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 1940,
+      "name": "5TV1340R KH BEL PAP TROPL 4/6 2%",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3549,
+      "name": "4M3 Glas Groen 3HKZ OC Vconsyst",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 3554,
+      "name": "4M3 Rest 3HKZ OC Vconsyst",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 3558,
+      "name": "4M3 Textiel KH OC Vconsyst",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 3586,
+      "name": "5m3 Rest KHC Pers KA-4 (Sidcon)",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3552,
+      "name": "5M3 Glas wit 3HKZ OC Vconsyst",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3579,
+      "name": "5m3 KHC Rest Amsterdam Standaard 1338*1338*2619",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3582,
+      "name": "5m3 KHC Plastic Amsterdam Standaard 1338*1338*2619",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3581,
+      "name": "5m3 KHC Glas Amsterdam Standaard 1338*1338*2619",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3559,
+      "name": "5M3 Textiel 3HKZ OC Vconsyst",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3328,
+      "name": "Engels, upperground",
+      "volume": 0
+    }
+  },
+  {
+    "container_type": {
+      "id": 3551,
+      "name": "4M3 Glas wit 3HKZ OC Vconsyst",
+      "volume": 4
+    }
+  },
+  {
+    "container_type": {
+      "id": 4286,
+      "name": "3m3 KHC Rest Amsterdam Standaard 1380*1380*1640",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 3589,
+      "name": "5m3 KHC Glas Amsterdam Standaard 1192*1192*2341",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3592,
+      "name": "5m3 KHC Textiel Amsterdam Standaard 1192*1192*2341",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 4309,
+      "name": "5m3 KHC Glas Amsterdam Vconsyst 2  1340*1340*2725",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 4310,
+      "name": "5m3 KHC glas Amsterdam Standaard 1340*1340*2725",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 4311,
+      "name": "3m3 KHC glas Amsterdam standaard 1380*1380*1290",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 4312,
+      "name": "5m3 KHC Papier Amsterdam Vconsyst 2  1340*1340*2725",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 4313,
+      "name": "5m3 KHC papier Amsterdam Standaard 1340*1340*2725",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 4314,
+      "name": "5m3 KHC Plastic Amsterdam Vconsyst 2  1340*1340*2725",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 4315,
+      "name": "5m3 KHC plastic Amsterdam Standaard 1340*1340*2725",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 4318,
+      "name": "7m3 KHC rest Belfast 1380*1380*2690",
+      "volume": 7
+    }
+  },
+  {
+    "container_type": {
+      "id": 4319,
+      "name": "5m3 KHC rest Amsterdam Standaard 1340*1340*2725",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 4320,
+      "name": "5m3 KHC Textiel Amsterdam Vconsyst 2  1340*1340*2725",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 404,
+      "name": "Semi Ondergrondse OC ASW",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 3583,
+      "name": "5m3 KHC Textiel Amsterdam Standaard 1338*1338*2619",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 3580,
+      "name": "5m3 KHC Papier Amsterdam Standaard 1338*1338*2619",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 385,
+      "name": "Oost Stadsdeel B-Waste Textiel 5m3",
+      "volume": 5
+    }
+  },
+  {
+    "container_type": {
+      "id": 4300,
+      "name": "3M3 Glas-Bont KH Semi-BG Bauer",
+      "volume": 3
+    }
+  },
+  {
+    "container_type": {
+      "id": 4299,
+      "name": "3M3 Papier KH Semi-BG Bauer",
+      "volume": 3
+    }
+  }
+]
