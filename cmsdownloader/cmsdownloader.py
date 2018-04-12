@@ -28,9 +28,9 @@ assert os.environ['BAMMENS_API_PASSWORD']
 
 @tenacity.retry(wait=tenacity.wait_fixed(1),
                 retry=tenacity.retry_if_exception_type(IOError))
-def getItem(session, cookies, endpoint, containerId):
+def getItem(session, cookies, endpoint, _id):
     """Get The container data"""
-    url = baseUrl + '/api/' + endpoint + '/' + str(containerId) + '.json'
+    url = baseUrl + '/api/' + endpoint + '/' + str(_id) + '.json'
     containerURI = session.get(url, cookies=cookies)
     containerData = containerURI.json()
     return containerData

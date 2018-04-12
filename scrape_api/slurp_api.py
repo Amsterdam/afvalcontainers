@@ -1,8 +1,9 @@
 """
-save external API sources
+Save external bammens API container sources
 """
 
 import aiohttp
+import time
 # import aiopg
 from aiohttp import ClientSession
 import asyncio
@@ -13,17 +14,19 @@ import models
 import logging
 import argparse
 import settings
+from settings import API_URL
 import os.path
-
 from dateutil import parser
 
-log = logging.getLogger(__name__)
-log.setLevel(logging.DEBUG)
+import login
+
+log = logging.getLogger('slurp_api')
+log.setLevel(logging.INFO)
 logging.getLogger('urllib3').setLevel(logging.ERROR)
 
 ENVIRONMENT = os.getenv('ENVIRONMENT', 'acceptance')
 
-WORKERS = 5
+WORKERS = 12
 
 STATUS = {
     'done': False
@@ -33,33 +36,31 @@ URL_QUEUE = asyncio.Queue()
 RESULT_QUEUE = asyncio.Queue()
 
 ENDPOINTS = [
-    'containertypes',
+    'container_types',
     'containers',
     'wells'
 ]
 
 ENDPOINT_MODEL = {
-    'containertypes': models.ContainerTypes,
+    'container_types': models.ContainerTypes,
     'containers': models.Containers,
     'wells': models.Well
 }
 
 ENDPOINT_URL = {
-    'containertypes': '{host}:{port}/gemeenteamsterdam/realtime/timerange',
-    'wells': '{host}:{port}/gemeenteamsterdam/expected/timerange',
-    'containers': '{host}:{port}/gemeenteamsterdam/realtime/current',
+    'container_types': f'{API_URL}/api/containertypes',
+    'wells': f'{API_URL}/api/wells',
+    'containers': f'{API_URL}/api/containers',
 }
 
 
 api_config = {
-    'password': os.getenv('QUANTILLION_PASSWORD'),
+    'password': os.getenv('BAMMENS_API_PASSWORD'),
     'hosts': {
-        'production': 'http://apis.quantillion.io',
-        'acceptance': 'http://apis.quantillion.io',
-        # 'acceptance': 'http://apis.development.quantillion.io',
+        'production': 'https://bammens.nl/api/',
     },
-    'port': 3001,
-    'username': 'gemeenteAmsterdam',
+    # 'port': 3001,
+    'username': os.getenv('BAMMENS_API_USERNAME')
 }
 
 
@@ -67,11 +68,11 @@ AUTH = (api_config['username'], api_config.get('password'))
 
 
 async def fetch(url, session, params=None, auth=None):
-    async with session.get(url) as response:
-        return await response
+    response = await session.get(url, ssl=False)
+    return response
 
 
-async def get_the_json(session, endpoint) -> list:
+async def get_the_json(session, endpoint, _id=None) -> list:
     """
     Get some json of endpoint!
     """
@@ -79,33 +80,35 @@ async def get_the_json(session, endpoint) -> list:
     params = {}
     response = None
     url = ENDPOINT_URL[endpoint]
-    response = await fetch(url, params=params, auth=AUTH)
+    if _id:
+        url = f'{url}/{_id}.json'
+    response = await fetch(url, session)
 
     if response is None:
         log.error('RESPONSE NONE %s %s', url, params)
         return []
-    elif response.status_code == 200:
-        log.debug(f' OK  {response.status_code}:{url}')
-    elif response.status_code == 401:
-        log.error(f' AUTH {response.status_code}:{url}')
-    elif response.status_code == 500:
-        log.debug(f'FAIL {response.status_code}:{url}')
+    elif response.status == 200:
+        log.debug(f' OK  {response.status}:{url}')
+    elif response.status == 401:
+        log.error(f' AUTH {response.status}:{url}')
+    elif response.status == 500:
+        log.debug(f'FAIL {response.status}:{url}')
 
-    # we did WRONG requests. crash hard!
-    elif response.status_code == 400:
-        log.error(f' 400 {response.status_code}:{url}')
+    # WE did WRONG requests. crash hard!
+    elif response.status == 400:
+        log.error(f' 400 {response.status}:{url}')
         raise ValueError('400. wrong request.')
-    elif response.status_code == 404:
-        log.error(f' 404 {response.status_code}:{url}')
+    elif response.status == 404:
+        log.error(f' 404 {response.status}:{url}')
         raise ValueError('404. NOT FOUND wrong request.')
 
     if response:
-        json = response.json()
+        json = await response.json()
 
     return json
 
 
-def add_locations_to_db(endpoint, json: list):
+def add_items_to_db(endpoint, json: list):
     """
     Given json api response, store data in database
     """
@@ -117,28 +120,25 @@ def add_locations_to_db(endpoint, json: list):
     db_model = ENDPOINT_MODEL[endpoint]
 
     # make new session
-    session = models.Session()
+    db_session = models.Session()
 
-    log.debug(f"Storing {len(json)} locations")
+    log.debug(f"Storing {len(json)} items")
 
     # Store the location json!
-    for loc in json:
+    for item in json:
 
-        place_id = loc['place_id']
-        scraped_at = parser.parse(loc['ScrapeTime'])
+        scraped_at = datetime.datetime.now()
 
         grj = db_model(
-            place_id=place_id,
+            id=item['id'],
             scraped_at=scraped_at,
-            name=loc['name'],
-            data=loc,
+            data=item,
         )
+        db_session.add(grj)
 
-        session.add(grj)
+    db_session.commit()
 
-    session.commit()
-
-    log.debug(f"Updated {len(json)} locations")
+    log.debug(f"Updated {len(json)} items")
 
 
 def delete_duplicates(db_model):
@@ -169,39 +169,25 @@ DELETE FROM {tablename} a USING (
     log.debug('Count after %d', session.query(db_model).count())
 
 
-def get_previous_days():
-
-    now = datetime.datetime.now()
-
-    day = datetime.timedelta(days=1)
-
-    today = now.date()
-    tomorrow = (now + day).date()
-
-    yield (str(today), str(tomorrow))
-
-    # lets go 50 days in the past
-    for i in range(1, settings.DAYS):
-        past_time = now - i * day
-        past_date1 = past_time.date()
-        past_date2 = (past_time + day).date()
-        yield (str(past_date1), str(past_date2))
-
-
 async def do_request(work_id, session, endpoint, params={}):
     """
-    Do batch request of LIMIT each
+    Do request
     """
 
-    while True:
-        log.debug('%d %s', work_id, params)
-        url = await URL_QUEUE.get()
-        if url is None:
-            break
-        # json_response = get_the_json(endpoint, params)
-        json_response = url
-        await RESULT_QUEUE.put(json_response)
-        # add_item_to_db(endpoint, json_response)
+    async with ClientSession() as session:
+        # set login credentials in session
+        await login.set_login_cookies(session)
+
+        while True:
+            item = await URL_QUEUE.get()
+            if item == 'terminate':
+                break
+            url = ENDPOINT_URL[endpoint]
+            _id = item['id']
+            json_response = await get_the_json(session, endpoint, _id)
+            _type = list(json_response.keys())[0]
+            item = json_response[_type]
+            await RESULT_QUEUE.put(item)
 
     log.debug(f'Done {work_id}')
 
@@ -217,50 +203,83 @@ def clear_current_table(endpoint):
     session.commit()
 
 
-async def result_reader():
+async def store_results(endpoint):
 
-    clear_current_table()
+    clear_current_table(endpoint)
 
+    session = models.Session()
+    db_model = ENDPOINT_MODEL[endpoint]
+
+    results = []
     while True:
         value = await RESULT_QUEUE.get()
-        log.debug("Got value! -> {}".format(value))
-        if value is None:
+
+        if value == 'terminate':
             break
 
+        results.append(value)
+        if len(results) > 5:
+            # save items
+            add_items_to_db(endpoint, results)
+            results = []
 
-async def fill_url_queue(endpoint, login):
+    if results:
+        # save whats left.
+        add_items_to_db(endpoint, results)
+
+
+async def log_progress(total):
+    while True:
+        size = URL_QUEUE.qsize()
+        log.info('Progress %s %s', size, total)
+        await asyncio.sleep(10)
+
+
+async def fill_url_queue(session, endpoint):
     """Fill queue with urls to fetch
     """
-    for i in range(100):
-        await URL_QUEUE.put(f'test {i}')
 
-    print(URL_QUEUE)
+    url = ENDPOINT_URL[endpoint]
+    url = url.format(API_URL)
+    response = await fetch(url, session)
+    json_body = await response.json()
+
+    total = len(json_body[endpoint])
+    log.info('%s: size %s', endpoint, total)
+    for i in json_body[endpoint]:
+        await URL_QUEUE.put(i)
+    return total
 
 
 async def run_workers(endpoint, workers=WORKERS):
-    """
-    Run X workers processing search tasks
+    """Run X workers processing fetching tasks
     """
     # start job of puting data into database
-    store_data = asyncio.ensure_future(result_reader(), loop=loop)
-
-    # get login credentials
-
-    # for each endpoint get a list of items to pick up
-    await fill_url_queue(endpoint)
+    store_data = asyncio.ensure_future(store_results(endpoint), loop=loop)
+    # for endpoint get a list of items to pick up
 
     async with ClientSession() as session:
-        workers = [
-            asyncio.ensure_future(do_request(i, session, endpoint), loop=loop)
-            for i in range(workers)]
+        await login.set_login_cookies(session)
+        total = await fill_url_queue(session, endpoint)
 
-        for _ in range(len(workers)):
-            await URL_QUEUE.put(None)
+    progress = asyncio.ensure_future(log_progress(total), loop=loop)
 
-        await asyncio.gather(*workers, loop=loop)
+    log.info('Starting %d workers %s', workers, endpoint)
 
-    await RESULT_QUEUE.put(None)
-    await store_data
+    workers = [
+        asyncio.ensure_future(do_request(i, session, endpoint), loop=loop)
+        for i in range(workers)]
+
+    # Terminate instructions for all workers
+    for _ in range(len(workers)):
+        await URL_QUEUE.put('terminate')
+
+    # wait till they are done
+    await asyncio.gather(*workers, loop=loop)
+    progress.cancel()
+
+    await RESULT_QUEUE.put('terminate')
+    # wait untill all data is stored in database
     # start x workers
     # request all details of list
     log.debug('done!')
@@ -277,6 +296,7 @@ async def main(args):
 
 if __name__ == '__main__':
 
+    start = time.time()
     desc = "Scrape API."
     inputparser = argparse.ArgumentParser(desc)
 
@@ -288,12 +308,15 @@ if __name__ == '__main__':
         nargs=1)
 
     inputparser.add_argument(
-        '--dedupe',
+        '--debug',
         action='store_true',
         default=False,
-        help="Remove duplicates")
+        help="Enable debugging")
 
     args = inputparser.parse_args()
-    main(args)
     loop = asyncio.get_event_loop()
+    if args.debug:
+        loop.set_debug(True)
+        log.setLevel(logging.DEBUG)
     loop.run_until_complete(main(args))
+    log.info('Took: %s', time.time() - start)

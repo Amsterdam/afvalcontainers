@@ -6,7 +6,8 @@ author: Stephan Preeker.
 About.
 ------
 
-iohttp scraper for bammens api about garbade containers
+iohttp scraper for bammens api about garbadge containers
+inserts data directly into database
 
 
 Instructions.
@@ -29,7 +30,8 @@ set `BAMMENS_PASSWORD` you can find it in rattic/password management
         python slurp_api.py wells
         python slurp_api.py containertypes
 
-# Data is now stored in tables, with a raw json field.
+# Data is now stored in tables, with a raw data json field.
+# ready for further processing
 
 
 Tests

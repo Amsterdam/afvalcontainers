@@ -16,3 +16,6 @@ TESTING = {
 
 BAMMENS_API_USERNAME = os.getenv('BAMMENS_API_USERNAME')
 BAMMENS_API_PASSWORD = os.getenv('BAMMENS_API_PASSWORD')
+
+
+API_URL = 'https://bammensservice.nl'

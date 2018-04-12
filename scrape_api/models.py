@@ -8,6 +8,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import Sequence
 from sqlalchemy import create_engine
+# from aiopg.sa import create_engine as aiopg_engine
 from sqlalchemy.engine.url import URL
 
 from sqlalchemy_utils.functions import database_exists
@@ -78,11 +79,9 @@ class Containers(Base):
     """
     Raw json containers
     """
-    __tablename__ = f'bammens_container'
+    __tablename__ = f'bammens_container_raw'
     id = Column(Integer, Sequence('grl_seq'), primary_key=True)
-    place_id = Column(String, index=True)
     scraped_at = Column(TIMESTAMP, index=True)
-    name = Column(String)
     data = Column(JSONB)
 
 
@@ -90,11 +89,9 @@ class Well(Base):
     """
     Raw json location of wells
     """
-    __tablename__ = f'bammens_well'
+    __tablename__ = f'bammens_well_raw'
     id = Column(Integer, Sequence('grl_seq'), primary_key=True)
-    place_id = Column(String, index=True)
     scraped_at = Column(TIMESTAMP, index=True)
-    name = Column(String)
     data = Column(JSONB)
 
 
@@ -102,14 +99,14 @@ class ContainerTypes(Base):
     """
     Raw json proxy for api.
     """
-    __tablename__ = f'bammens_containertypes'
+    __tablename__ = f'bammens_containertype_raw'
     id = Column(Integer, Sequence('grl_seq'), primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
     data = Column(JSONB)
 
 
 async def main(args):
-    """
+    """Main
     """
     engine = make_engine()
 
