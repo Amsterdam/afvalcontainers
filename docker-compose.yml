@@ -1,5 +1,6 @@
 version: '2.0'
 services:
+
   database:
     image: amsterdam/postgres
     ports:
@@ -8,6 +9,7 @@ services:
       POSTGRES_DB: afvalcontainers
       POSTGRES_USER: afvalcontainers
       POSTGRES_PASSWORD: insecure
+
   cmsdownloader:
     build: ./cmsdownloader
     links:
@@ -17,3 +19,31 @@ services:
       BAMMENS_API_USERNAME:
       BAMMENS_API_PASSWORD:
 
+  scrape_api:
+    build: ./scrape_api
+    links:
+      - database
+    environment:
+      BAMMENS_API_USERNAME:
+      BAMMENS_API_PASSWORD:
+
+  api:
+    build: ./api
+    ports:
+      - "8001:8001"
+    links:
+      - database
+    environment:
+      - DB_NAME=afvalcontainers
+      - DB_PASSWORD=insecure
+      - UWSGI_HTTP=0.0.0.0:8001
+      - UWSGI_MASTER=1
+      - UWSGI_STATIC_INDEX=index.html
+      - UWSGI_STATIC_MAP=/=/static
+      - UWSGI_CALLABLE=application
+      - UWSGI_VACUUM=1
+      - UWSGI_STATIC_EXPIRES=/* 3600
+      - UWSGI_OFFLOAD_THREADS=1
+      - UWSGI_HARAKIRI=15
+      - UWSGI_DIE_ON_TERM=1
+      - UWSGI_MODULE=afvalcontainers.wsgi:application

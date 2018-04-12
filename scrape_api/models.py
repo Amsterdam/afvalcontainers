@@ -75,7 +75,7 @@ def set_engine(engine):
     return session
 
 
-class Containers(Base):
+class Container(Base):
     """
     Raw json containers
     """
@@ -95,7 +95,7 @@ class Well(Base):
     data = Column(JSONB)
 
 
-class ContainerTypes(Base):
+class ContainerType(Base):
     """
     Raw json proxy for api.
     """

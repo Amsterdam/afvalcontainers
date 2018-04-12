@@ -42,8 +42,8 @@ ENDPOINTS = [
 ]
 
 ENDPOINT_MODEL = {
-    'container_types': models.ContainerTypes,
-    'containers': models.Containers,
+    'container_types': models.ContainerType,
+    'containers': models.Container,
     'wells': models.Well
 }
 
@@ -120,10 +120,11 @@ def add_items_to_db(endpoint, json: list):
     db_model = ENDPOINT_MODEL[endpoint]
 
     # make new session
-    db_session = models.Session()
+    db_session = models.session
 
-    log.debug(f"Storing {len(json)} items")
+    log.info(f"Storing {len(json)} items")
 
+    log.info(json)
     # Store the location json!
     for item in json:
 
@@ -138,35 +139,7 @@ def add_items_to_db(endpoint, json: list):
 
     db_session.commit()
 
-    log.debug(f"Updated {len(json)} items")
-
-
-def delete_duplicates(db_model):
-    """
-    Remove duplacates from table.
-    """
-    # make new session
-    session = models.Session()
-
-    if session.query(db_model).count() == 0:
-        raise ValueError('NO DATA RECIEVED WHATSOEVER!')
-
-    log.debug('Count before %d', session.query(db_model).count())
-
-    tablename = db_model.__table__.name
-    session.execute(f"""
-DELETE FROM {tablename} a USING (
-     SELECT MIN(ctid) AS ctid, place_id, scraped_at
-        FROM {tablename}
-        GROUP BY (scraped_at, place_id) HAVING COUNT(*) > 1
- ) dups
- WHERE a.place_id = dups.place_id
- AND a.scraped_at = dups.scraped_at
- AND a.ctid <> dups.ctid
-    """)
-    session.commit()
-
-    log.debug('Count after %d', session.query(db_model).count())
+    log.info(f"Updated {len(json)} items")
 
 
 async def do_request(work_id, session, endpoint, params={}):
@@ -183,6 +156,7 @@ async def do_request(work_id, session, endpoint, params={}):
             if item == 'terminate':
                 break
             url = ENDPOINT_URL[endpoint]
+            log.exception(item)
             _id = item['id']
             json_response = await get_the_json(session, endpoint, _id)
             _type = list(json_response.keys())[0]
@@ -218,7 +192,7 @@ async def store_results(endpoint):
             break
 
         results.append(value)
-        if len(results) > 5:
+        if len(results) > 50:
             # save items
             add_items_to_db(endpoint, results)
             results = []
@@ -243,7 +217,6 @@ async def fill_url_queue(session, endpoint):
     url = url.format(API_URL)
     response = await fetch(url, session)
     json_body = await response.json()
-
     total = len(json_body[endpoint])
     log.info('%s: size %s', endpoint, total)
     for i in json_body[endpoint]:
@@ -255,19 +228,19 @@ async def run_workers(endpoint, workers=WORKERS):
     """Run X workers processing fetching tasks
     """
     # start job of puting data into database
-    store_data = asyncio.ensure_future(store_results(endpoint), loop=loop)
+    store_data = asyncio.ensure_future(store_results(endpoint))
     # for endpoint get a list of items to pick up
 
     async with ClientSession() as session:
         await login.set_login_cookies(session)
         total = await fill_url_queue(session, endpoint)
 
-    progress = asyncio.ensure_future(log_progress(total), loop=loop)
+    progress = asyncio.ensure_future(log_progress(total))
 
     log.info('Starting %d workers %s', workers, endpoint)
 
     workers = [
-        asyncio.ensure_future(do_request(i, session, endpoint), loop=loop)
+        asyncio.ensure_future(do_request(i, session, endpoint))
         for i in range(workers)]
 
     # Terminate instructions for all workers
@@ -275,7 +248,7 @@ async def run_workers(endpoint, workers=WORKERS):
         await URL_QUEUE.put('terminate')
 
     # wait till they are done
-    await asyncio.gather(*workers, loop=loop)
+    await asyncio.gather(*workers)
     progress.cancel()
 
     await RESULT_QUEUE.put('terminate')
@@ -285,18 +258,23 @@ async def run_workers(endpoint, workers=WORKERS):
     log.debug('done!')
 
 
-async def main(args):
-    endpoint = args.endpoint[0]
+async def main(endpoint, workers=WORKERS):
     engine = models.make_engine(section='docker')
     # models.Base.metadata.create_all(engine)
     models.set_engine(engine)
     # scrape the data!
-    await run_workers(endpoint)
+    await run_workers(endpoint, workers=workers)
+
+
+def start_import(args, workers=WORKERS):
+    start = time.time()
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main(args, workers=workers))
+    log.info('Took: %s', time.time() - start)
 
 
 if __name__ == '__main__':
 
-    start = time.time()
     desc = "Scrape API."
     inputparser = argparse.ArgumentParser(desc)
 
@@ -314,9 +292,8 @@ if __name__ == '__main__':
         help="Enable debugging")
 
     args = inputparser.parse_args()
-    loop = asyncio.get_event_loop()
     if args.debug:
-        loop.set_debug(True)
+        # loop.set_debug(True)
         log.setLevel(logging.DEBUG)
-    loop.run_until_complete(main(args))
-    log.info('Took: %s', time.time() - start)
+    endpoint = args.endpoint[0]
+    start_import(endpoint)
