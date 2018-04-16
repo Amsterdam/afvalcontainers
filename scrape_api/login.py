@@ -21,8 +21,8 @@ async def set_login_cookies(session):
     csrf = soup.find("input", type="hidden")
 
     payload = {
-        '_username': os.environ['BAMMENS_API_USERNAME'],
-        '_password': os.environ['BAMMENS_API_PASSWORD'],
+        '_username': os.getenv('BAMMENS_API_USERNAME', ''),
+        '_password': os.getenv('BAMMENS_API_PASSWORD', ''),
         '_csrf_token': csrf['value'],
     }
 

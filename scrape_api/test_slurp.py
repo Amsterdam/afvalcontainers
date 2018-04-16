@@ -10,6 +10,7 @@ import slurp_api
 import models
 import logging
 from settings import BASE_DIR
+from settings import TESTING
 
 log = logging.getLogger(__name__)
 
@@ -23,6 +24,7 @@ session = []
 
 def setup_module():
     global transaction, connection, engine, session
+    TESTING['running'] = True
     models.create_db()
     engine = models.make_engine(section='test')
     connection = engine.connect()
@@ -39,6 +41,7 @@ def teardown_module():
     engine.dispose()
     connection.close()
     models.drop_db()
+    TESTING['running'] = False
 
 
 class MockResponse():

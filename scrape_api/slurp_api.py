@@ -55,12 +55,12 @@ ENDPOINT_URL = {
 
 
 api_config = {
-    'password': os.getenv('BAMMENS_API_PASSWORD'),
+    'password': os.getenv('BAMMENS_API_PASSWORD', ''),
     'hosts': {
         'production': 'https://bammens.nl/api/',
     },
     # 'port': 3001,
-    'username': os.getenv('BAMMENS_API_USERNAME')
+    'username': os.getenv('BAMMENS_API_USERNAME', '')
 }
 
 
