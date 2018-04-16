@@ -1,0 +1,23 @@
+version: '3.0'
+services:
+
+  database:
+    image: amsterdam/postgres
+    environment:
+      POSTGRES_PASSWORD: insecure
+      POSTGRES_USER: parkeervakken
+      POSTGRES_DB: parkeervakken
+
+  tests:
+    build: ../../
+    links:
+      - database:parkeervakken_db
+    environment:
+      DATABASE_NAME: parkeervakken
+      DATABASE_USER: parkeervakken
+      DATABASE_PASSWORD: insecure
+      PARKEERVAKKEN_OS_PASSWORD:
+      ENVIRONMENT: test
+    volumes:
+        - ./run_tests.sh:/app/run_tests.sh
+    command: /app/run_tests.sh
