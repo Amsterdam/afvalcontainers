@@ -3,57 +3,55 @@ import os
 from afvalcontainers.settings_common import *  # noqa F403
 from afvalcontainers.settings_common import INSTALLED_APPS
 
-from afvalcontainers.settings_databases import LocationKey, \
-    get_docker_host, \
-    get_database_key, \
-    OVERRIDE_HOST_ENV_VAR, \
-    OVERRIDE_PORT_ENV_VAR
+from afvalcontainers.settings_databases import (
+    LocationKey,
+    get_docker_host,
+    get_database_key,
+    OVERRIDE_HOST_ENV_VAR,
+    OVERRIDE_PORT_ENV_VAR,
+)
 
 # Application definition
 
-INSTALLED_APPS += [
-    'afvalcontainers',
-]
+INSTALLED_APPS += ["afvalcontainers"]
 
-ROOT_URLCONF = 'afvalcontainers.urls'
+ROOT_URLCONF = "afvalcontainers.urls"
 
-WSGI_APPLICATION = 'afvalcontainers.wsgi.application'
+WSGI_APPLICATION = "afvalcontainers.wsgi.application"
 
 
 DATABASE_OPTIONS = {
     LocationKey.docker: {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': os.getenv('DATABASE_NAME', 'afvalcontainers'),
-        'USER': os.getenv('DATABASE_USER', 'afvalcontainers'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'insecure'),
-        'HOST': 'database',
-        'PORT': '5432'
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
+        "NAME": os.getenv("DATABASE_NAME", "afvalcontainers"),
+        "USER": os.getenv("DATABASE_USER", "afvalcontainers"),
+        "PASSWORD": os.getenv("DATABASE_PASSWORD", "insecure"),
+        "HOST": "database",
+        "PORT": "5432",
     },
     LocationKey.local: {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': os.getenv('DATABASE_NAME', 'afvalcontainers'),
-        'USER': os.getenv('DATABASE_USER', 'afvalcontainers'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'insecure'),
-        'HOST': get_docker_host(),
-        'PORT': '5432'
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
+        "NAME": os.getenv("DATABASE_NAME", "afvalcontainers"),
+        "USER": os.getenv("DATABASE_USER", "afvalcontainers"),
+        "PASSWORD": os.getenv("DATABASE_PASSWORD", "insecure"),
+        "HOST": get_docker_host(),
+        "PORT": "5432",
     },
     LocationKey.override: {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': os.getenv('DATABASE_NAME', 'afvalcontainers'),
-        'USER': os.getenv('DATABASE_USER', 'afvalcontainers'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD', 'insecure'),
-        'HOST': os.getenv(OVERRIDE_HOST_ENV_VAR),
-        'PORT': os.getenv(OVERRIDE_PORT_ENV_VAR, '5432')
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
+        "NAME": os.getenv("DATABASE_NAME", "afvalcontainers"),
+        "USER": os.getenv("DATABASE_USER", "afvalcontainers"),
+        "PASSWORD": os.getenv("DATABASE_PASSWORD", "insecure"),
+        "HOST": os.getenv(OVERRIDE_HOST_ENV_VAR),
+        "PORT": os.getenv(OVERRIDE_PORT_ENV_VAR, "5432"),
     },
 }
 
 # Database
 
-DATABASES = {
-    'default': DATABASE_OPTIONS[get_database_key()]
-}
+DATABASES = {"default": DATABASE_OPTIONS[get_database_key()]}
 
-HEALTH_MODEL = 'afvalcontainers.Container'
+HEALTH_MODEL = "afvalcontainers.Container"
 
 # The following JWKS data was obtained in the authz project :  jwkgen -create -alg ES256   # noqa
 # This is a test public/private key def and added for testing .
@@ -76,6 +74,4 @@ JWKS_TEST_KEY = """
     }
 """
 
-DATAPUNT_AUTHZ = {
-    'JWKS': os.getenv('PUB_JWKS', JWKS_TEST_KEY)
-}
+DATAPUNT_AUTHZ = {"JWKS": os.getenv("PUB_JWKS", JWKS_TEST_KEY)}

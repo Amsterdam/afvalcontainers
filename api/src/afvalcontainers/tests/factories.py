@@ -9,15 +9,19 @@ from factory import fuzzy
 from parkeervakken_api.models import Parkeervak
 
 
-vierkantje = Polygon([
+vierkantje = Polygon(
+    [
         (121849.65, 487303.93),
         (121889.65, 487303.93),
         (121889.65, 487373.93),
-        (121849.65, 487303.93)
-], srid=28992)
+        (121849.65, 487303.93),
+    ],
+    srid=28992,
+)
 
 
 class ParkeervakFactory(factory.DjangoModelFactory):
+
     class Meta:
         model = Parkeervak
 

@@ -10,54 +10,68 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Container',
+            name="Container",
             fields=[
-                ('id', models.IntegerField(primary_key=True, serialize=False)),
-                ('id_number', models.CharField(db_index=True, max_length=35)),
-                ('serial_number', models.CharField(db_index=True, max_length=45)),
-                ('owner', django.contrib.postgres.fields.jsonb.JSONField()),
-                ('active', models.NullBooleanField()),
-                ('waste_type', models.IntegerField(null=True)),
-                ('placeing_date', models.DateTimeField(null=True)),
-                ('operational_date', models.DateTimeField(null=True)),
-                ('warranty_date', models.DateTimeField(null=True)),
+                ("id", models.IntegerField(primary_key=True, serialize=False)),
+                ("id_number", models.CharField(db_index=True, max_length=35)),
+                ("serial_number", models.CharField(db_index=True, max_length=45)),
+                ("owner", django.contrib.postgres.fields.jsonb.JSONField()),
+                ("active", models.NullBooleanField()),
+                ("waste_type", models.IntegerField(null=True)),
+                ("placeing_date", models.DateTimeField(null=True)),
+                ("operational_date", models.DateTimeField(null=True)),
+                ("warranty_date", models.DateTimeField(null=True)),
             ],
         ),
         migrations.CreateModel(
-            name='ContainerType',
+            name="ContainerType",
             fields=[
-                ('id', models.IntegerField(primary_key=True, serialize=False)),
-                ('name', models.TextField()),
-                ('volume', models.IntegerField()),
+                ("id", models.IntegerField(primary_key=True, serialize=False)),
+                ("name", models.TextField()),
+                ("volume", models.IntegerField()),
             ],
         ),
         migrations.CreateModel(
-            name='Well',
+            name="Well",
             fields=[
-                ('id', models.IntegerField(primary_key=True, serialize=False)),
-                ('id_number', models.CharField(db_index=True, max_length=35)),
-                ('serial_number', models.CharField(db_index=True, max_length=45)),
-                ('active', models.NullBooleanField()),
-                ('owner', django.contrib.postgres.fields.jsonb.JSONField()),
-                ('geometrie', django.contrib.gis.db.models.fields.PointField(srid=4326)),
-                ('stadsdeel', models.CharField(max_length=1, null=True)),
-                ('buurt_code', models.CharField(max_length=4, null=True)),
-                ('address', django.contrib.postgres.fields.jsonb.JSONField(null=True)),
-                ('created_at', models.DateTimeField(null=True)),
-                ('placing_date', models.DateTimeField(null=True)),
-                ('warranty_date', models.DateTimeField(null=True)),
-                ('operational_date', models.DateTimeField(null=True)),
-                ('containers', models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='wells', to='afvalcontainers.Container')),
+                ("id", models.IntegerField(primary_key=True, serialize=False)),
+                ("id_number", models.CharField(db_index=True, max_length=35)),
+                ("serial_number", models.CharField(db_index=True, max_length=45)),
+                ("active", models.NullBooleanField()),
+                ("owner", django.contrib.postgres.fields.jsonb.JSONField()),
+                (
+                    "geometrie",
+                    django.contrib.gis.db.models.fields.PointField(srid=4326),
+                ),
+                ("stadsdeel", models.CharField(max_length=1, null=True)),
+                ("buurt_code", models.CharField(max_length=4, null=True)),
+                ("address", django.contrib.postgres.fields.jsonb.JSONField(null=True)),
+                ("created_at", models.DateTimeField(null=True)),
+                ("placing_date", models.DateTimeField(null=True)),
+                ("warranty_date", models.DateTimeField(null=True)),
+                ("operational_date", models.DateTimeField(null=True)),
+                (
+                    "containers",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.DO_NOTHING,
+                        related_name="wells",
+                        to="afvalcontainers.Container",
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='container',
-            name='container_type',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='containers', to='afvalcontainers.ContainerType'),
+            model_name="container",
+            name="container_type",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.DO_NOTHING,
+                related_name="containers",
+                to="afvalcontainers.ContainerType",
+            ),
         ),
     ]

@@ -35,26 +35,20 @@ class ContainerRouter(routers.DefaultRouter):
 
 
 containers = ContainerRouter()
-containers.register(r'containers', api_views.ContainerList,
-                    base_name='container')
-containers.register(r'wells', api_views.WellList,
-                    base_name='well')
-containers.register(r'types', api_views.TypeList,
-                    base_name='containertype')
+containers.register(r"containers", api_views.ContainerList, base_name="container")
+containers.register(r"wells", api_views.WellList, base_name="well")
+containers.register(r"types", api_views.TypeList, base_name="containertype")
 
 urls = containers.urls
 
 urlpatterns = [
-    url(r'^afval/', include(urls)),
-    url(r'^status/', include('afvalcontainers.health.urls'))
+    url(r"^afval/", include(urls)),
+    url(r"^status/", include("afvalcontainers.health.urls")),
 ]
 
 
 @api_view()
 @renderer_classes([CoreJSONRenderer])
 def afval_schema_view(request):
-    generator = schemas.SchemaGenerator(
-        title='Geo Endpoints',
-        patterns=urlpatterns
-    )
+    generator = schemas.SchemaGenerator(title="Geo Endpoints", patterns=urlpatterns)
     return response.Response(generator.get_schema(request=request))

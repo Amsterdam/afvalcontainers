@@ -18,14 +18,14 @@ class ContainerFilter(FilterSet):
     class Meta(object):
         model = Container
         fields = (
-            'id',
-            'id_number',
-            'serial_number',
-            'active',
-            'waste_type',
-            'placeing_date',
-            'operational_date',
-            'warranty_date',
+            "id",
+            "id_number",
+            "serial_number",
+            "active",
+            "waste_type",
+            "placeing_date",
+            "operational_date",
+            "warranty_date",
             # 'buurtcode',
             # 'stadsdeel',
             # 'straatnaam',
@@ -38,7 +38,7 @@ class ContainerFilter(FilterSet):
 class ContainerList(DatapuntViewSet):
     """View of Containers.
     """
-    queryset = Container.objects.all().order_by('id')
+    queryset = Container.objects.all().order_by("id")
     serializer_detail_class = ContainerSerializer
     serializer_class = ContainerSerializer
     filter_backends = (DjangoFilterBackend,)
@@ -52,22 +52,22 @@ class WellFilter(FilterSet):
     class Meta(object):
         model = Well
         fields = (
-            'id',
-            'id_number',
-            'serial_number',
-            'buurt_code',
-            'created_at',
-            'placing_date',
-            'operational_date',
-            'warranty_date',
-            'containers',
+            "id",
+            "id_number",
+            "serial_number",
+            "buurt_code",
+            "created_at",
+            "placing_date",
+            "operational_date",
+            "warranty_date",
+            "containers",
         )
 
 
 class WellList(DatapuntViewSet):
     """View of Wells.
     """
-    queryset = Well.objects.all().order_by('id')
+    queryset = Well.objects.all().order_by("id")
     serializer_detail_class = WellSerializer
     serializer_class = WellSerializer
     filter_backends = (DjangoFilterBackend,)
@@ -78,7 +78,7 @@ class WellList(DatapuntViewSet):
 class TypeList(DatapuntViewSet):
     """View of Types.
     """
-    queryset = ContainerType.objects.all().order_by('id')
+    queryset = ContainerType.objects.all().order_by("id")
     serializer_detail_class = TypeSerializer
     serializer_class = TypeSerializer
     filter_backends = (DjangoFilterBackend,)

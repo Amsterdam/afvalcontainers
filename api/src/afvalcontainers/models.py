@@ -32,8 +32,7 @@ class Container(models.Model):
     active = models.NullBooleanField(null=True)
     waste_type = models.IntegerField(null=True)
     container_type = models.ForeignKey(
-        'ContainerType',
-        related_name='containers', on_delete=models.DO_NOTHING
+        "ContainerType", related_name="containers", on_delete=models.DO_NOTHING
     )
     placeing_date = models.DateTimeField(null=True)
     operational_date = models.DateTimeField(null=True)
@@ -83,12 +82,10 @@ class Well(models.Model):
 
     buurt_code = models.CharField(max_length=4)
     containers = models.ForeignKey(
-        'Container',
-        null=True,
-        related_name='wells', on_delete=models.DO_NOTHING
+        "Container", null=True, related_name="wells", on_delete=models.DO_NOTHING
     )
 
-    geometrie = models.PointField(name='geometrie')
+    geometrie = models.PointField(name="geometrie")
 
     stadsdeel = models.CharField(null=True, max_length=1)
     buurt_code = models.CharField(null=True, max_length=4)
