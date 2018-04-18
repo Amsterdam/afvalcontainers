@@ -118,7 +118,6 @@ async def main(args):
     log.warning('CREATING DEFINED TABLES')
     # recreate tables
     Base.metadata.create_all(engine)
-    # create tables
 
 
 if __name__ == '__main__':

@@ -15,14 +15,21 @@ async def set_login_cookies(session):
     """
     baseUrl = settings.API_URL
     log.debug("start login")
-    loginPage = await session.get(baseUrl + '/login', ssl=False)
+    loginPage = await session.get(baseUrl + '/login', ssl=True)
     text = await loginPage.text()
     soup = BeautifulSoup(text, "html.parser")
     csrf = soup.find("input", type="hidden")
 
+    password = os.getenv('BAMMENS_API_PASSWORD', '')
+    user = os.getenv('BAMMENS_API_USERNAME', '')
+
+    if not settings.TESTING['running']:
+        assert os.getenv('BAMMENS_API_PASSWORD')
+        assert os.getenv('BAMMENS_API_USERNAME')
+
     payload = {
-        '_username': os.getenv('BAMMENS_API_USERNAME', ''),
-        '_password': os.getenv('BAMMENS_API_PASSWORD', ''),
+        '_username': user,
+        '_password': password,
         '_csrf_token': csrf['value'],
     }
 

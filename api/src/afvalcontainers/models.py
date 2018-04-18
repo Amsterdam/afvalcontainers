@@ -25,8 +25,8 @@ class Container(models.Model):
     Container object
     """
     id = models.IntegerField(primary_key=True)
-    id_number = models.CharField(max_length=15, null=False, db_index=True)
-    serial_number = models.CharField(max_length=15, null=False, db_index=True)
+    id_number = models.CharField(max_length=35, null=False, db_index=True)
+    serial_number = models.CharField(max_length=25, null=False, db_index=True)
     owner = JSONField(null=False)
     # well = models.ForeignKey('Well')
     active = models.NullBooleanField(null=True)
@@ -75,18 +75,24 @@ class Well(models.Model):
     Wells contain containers
     """
     id = models.IntegerField(primary_key=True)
-    id_number = models.CharField(max_length=15, db_index=True)
-    serial_number = models.CharField(max_length=15, db_index=True)
+    id_number = models.CharField(max_length=35, db_index=True)
+    serial_number = models.CharField(max_length=25, db_index=True)
+    active = models.NullBooleanField(null=True)
 
     owner = JSONField()
 
     buurt_code = models.CharField(max_length=4)
     containers = models.ForeignKey(
         'Container',
+        null=True,
         related_name='wells', on_delete=models.DO_NOTHING
     )
 
     geometrie = models.PointField(name='geometrie')
+
+    stadsdeel = models.CharField(null=True, max_length=1)
+    buurt_code = models.CharField(null=True, max_length=4)
+    adres = models.TextField(null=True)
 
     created_at = models.DateTimeField(null=True)
     placing_date = models.DateTimeField(null=True)
@@ -110,3 +116,6 @@ class ContainerType(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.TextField()
     volume = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.name} - {self.volume}M3"

@@ -3,7 +3,9 @@ Save external bammens API container sources
 """
 
 import aiohttp
+import random
 import time
+import dateparser
 # import aiopg
 from aiohttp import ClientSession
 import asyncio
@@ -21,12 +23,12 @@ from dateutil import parser
 import login
 
 log = logging.getLogger('slurp_api')
-log.setLevel(logging.INFO)
+log.setLevel(logging.DEBUG)
 logging.getLogger('urllib3').setLevel(logging.ERROR)
 
 ENVIRONMENT = os.getenv('ENVIRONMENT', 'acceptance')
 
-WORKERS = 12
+WORKERS = 3
 
 STATUS = {
     'done': False
@@ -68,13 +70,21 @@ AUTH = (api_config['username'], api_config.get('password'))
 
 
 async def fetch(url, session, params=None, auth=None):
-    response = await session.get(url, ssl=False)
-    return response
+    try:
+        response = await session.get(url, ssl=True)
+        return response
+    except(aiohttp.client_exceptions.ServerDisconnectedError):
+        log.error('Server disconnect..')
+        asyncio.sleep(random.random() * 10)
+        return None
 
 
 async def get_the_json(session, endpoint, _id=None) -> list:
     """
     Get some json of endpoint!
+
+    retry x times on failure
+    return json
     """
     json = []
     params = {}
@@ -82,30 +92,38 @@ async def get_the_json(session, endpoint, _id=None) -> list:
     url = ENDPOINT_URL[endpoint]
     if _id:
         url = f'{url}/{_id}.json'
-    response = await fetch(url, session)
 
-    if response is None:
-        log.error('RESPONSE NONE %s %s', url, params)
-        return []
-    elif response.status == 200:
-        log.debug(f' OK  {response.status}:{url}')
-    elif response.status == 401:
-        log.error(f' AUTH {response.status}:{url}')
-    elif response.status == 500:
-        log.debug(f'FAIL {response.status}:{url}')
+    retry = 5
 
-    # WE did WRONG requests. crash hard!
-    elif response.status == 400:
-        log.error(f' 400 {response.status}:{url}')
-        raise ValueError('400. wrong request.')
-    elif response.status == 404:
-        log.error(f' 404 {response.status}:{url}')
-        raise ValueError('404. NOT FOUND wrong request.')
+    retry_codes = [500, 502, 503, 504]
 
-    if response:
-        json = await response.json()
+    while retry > 0:
+        json = None
+        retry -= 1
+        response = await fetch(url, session)
 
-    return json
+        if response is None:
+            log.error('RESPONSE NONE %s %s', url, params)
+            continue
+        elif response.status == 200:
+            log.debug(f' OK  {response.status}:{url}')
+        elif response.status == 401:
+            log.error(f' AUTH {response.status}:{url}')
+        elif response.status in retry_codes:
+            log.debug(f'FAIL {response.status}:{url}')
+            continue
+        # WE did WRONG requests. crash hard!
+        elif response.status == 400:
+            log.error(f' 400 {response.status}:{url}')
+            raise ValueError('400. wrong request.')
+        elif response.status == 404:
+            log.error(f' 404 {response.status}:{url}')
+            raise ValueError('404. NOT FOUND wrong request.')
+
+        if response:
+            json = await response.json()
+
+        return json
 
 
 def add_items_to_db(endpoint, json: list):
@@ -122,9 +140,6 @@ def add_items_to_db(endpoint, json: list):
     # make new session
     db_session = models.session
 
-    log.info(f"Storing {len(json)} items")
-
-    log.info(json)
     # Store the location json!
     for item in json:
 
@@ -139,29 +154,55 @@ def add_items_to_db(endpoint, json: list):
 
     db_session.commit()
 
-    log.info(f"Updated {len(json)} items")
+    log.debug(f"Stored {len(json)} items")
 
 
-async def do_request(work_id, session, endpoint, params={}):
+async def do_request(work_id, endpoint, params={}):
     """
-    Do request
+    Do request in our own private session
     """
+    count = 0
+    session = None
 
-    async with ClientSession() as session:
-        # set login credentials in session
-        await login.set_login_cookies(session)
+    while True:
 
-        while True:
-            item = await URL_QUEUE.get()
-            if item == 'terminate':
-                break
-            url = ENDPOINT_URL[endpoint]
-            log.exception(item)
-            _id = item['id']
-            json_response = await get_the_json(session, endpoint, _id)
-            _type = list(json_response.keys())[0]
-            item = json_response[_type]
-            await RESULT_QUEUE.put(item)
+        if not session:
+            session = ClientSession()
+            # set login credentials in session
+            try:
+                await login.set_login_cookies(session)
+            except(aiohttp.client_exceptions.ServerDisconnectedError):
+                log.exception('Server disconnect..wait a bit')
+                await session.close()
+                asyncio.sleep(5)
+                session = None
+                # try again
+                continue
+
+        item = await URL_QUEUE.get()
+
+        if item == 'terminate':
+            break
+
+        url = ENDPOINT_URL[endpoint]
+        _id = item['id']
+        json_response = await get_the_json(session, endpoint, _id)
+
+        if not json_response:
+            URL_QUEUE.put(item)
+            log.debug('skipping')
+            continue
+
+        _type = list(json_response.keys())[0]
+        item = json_response[_type]
+        cleaned = validate_timestamps(item)
+        await RESULT_QUEUE.put(cleaned)
+
+        count += 1
+        if count > 40:
+            await session.close()
+            session = None
+            count = 0
 
     log.debug(f'Done {work_id}')
 
@@ -177,6 +218,27 @@ def clear_current_table(endpoint):
     session.commit()
 
 
+def validate_timestamps(item):
+    """We recieve invalid timestamps
+    so we clean them up here.
+    """
+    timestamp_keys = [
+        'created_at', 'placing_date', 'warranty_date',
+        'operational_date',
+    ]
+
+    for key in timestamp_keys:
+        date = item.get(key)
+        if not date:
+            continue
+        d = dateparser.parse(date)
+        if not d:
+            log.error('Invalid %s %s %s', key, date, item['id'])
+            item[key] = None
+
+    return item
+
+
 async def store_results(endpoint):
 
     clear_current_table(endpoint)
@@ -189,7 +251,7 @@ async def store_results(endpoint):
             break
 
         results.append(value)
-        if len(results) > 50:
+        if len(results) > 5:
             # save items
             add_items_to_db(endpoint, results)
             results = []
@@ -209,14 +271,15 @@ async def log_progress(total):
 async def fill_url_queue(session, endpoint):
     """Fill queue with urls to fetch
     """
-
     url = ENDPOINT_URL[endpoint]
     url = url.format(API_URL)
     response = await fetch(url, session)
     json_body = await response.json()
     total = len(json_body[endpoint])
     log.info('%s: size %s', endpoint, total)
-    for i in json_body[endpoint]:
+    all_items = list(json_body[endpoint])
+    random.shuffle(all_items)
+    for i in all_items:
         await URL_QUEUE.put(i)
     return total
 
@@ -237,7 +300,7 @@ async def run_workers(endpoint, workers=WORKERS):
     log.info('Starting %d workers %s', workers, endpoint)
 
     workers = [
-        asyncio.ensure_future(do_request(i, session, endpoint))
+        asyncio.ensure_future(do_request(i, endpoint))
         for i in range(workers)]
 
     # Terminate instructions for all workers
@@ -250,6 +313,7 @@ async def run_workers(endpoint, workers=WORKERS):
 
     await RESULT_QUEUE.put('terminate')
     # wait untill all data is stored in database
+    await asyncio.gather(store_data)
     # start x workers
     # request all details of list
     log.debug('done!')
@@ -266,7 +330,8 @@ async def main(endpoint, workers=WORKERS, make_engine=True):
 def start_import(args, workers=WORKERS, make_engine=True):
     start = time.time()
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main(args, workers=workers, make_engine=make_engine))
+    loop.run_until_complete(
+        main(args, workers=workers, make_engine=make_engine))
     log.info('Took: %s', time.time() - start)
 
 
