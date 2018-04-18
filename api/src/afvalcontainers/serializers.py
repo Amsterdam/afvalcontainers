@@ -23,8 +23,7 @@ class ContainerSerializer(HALSerializer):
             "straatnaam",
             "aantal",
             "type",
-            "geometrie"
-
+            "geometrie",
             "warranty_date",
             "operational_date",
             "placing_date",
@@ -55,10 +54,4 @@ class TypeSerializer(HALSerializer):
 
     class Meta(object):
         model = ContainerType
-        fields = [
-            "_links",
-            "_display",
-            "id",
-            "name",
-            "volume",
-        ]
+        fields = ["_links", "_display", "id", "name", "volume"]
