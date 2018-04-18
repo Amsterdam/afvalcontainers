@@ -222,7 +222,8 @@ def validate_timestamps(item):
         if not date:
             continue
 
-        d = dateparser.parse(date)
+        # d = dateparser.parse(date)
+        d = parser.parse(date)
         if not d:
             log.error("Invalid %s %s %s", key, date, item["id"])
             item[key] = None

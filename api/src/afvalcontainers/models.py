@@ -27,14 +27,15 @@ class Container(models.Model):
     id = models.IntegerField(primary_key=True)
     id_number = models.CharField(max_length=35, null=False, db_index=True)
     serial_number = models.CharField(max_length=45, null=False, db_index=True)
-    owner = JSONField(null=False)
+    owner = JSONField(null=True)
     # well = models.ForeignKey('Well')
     active = models.NullBooleanField(null=True)
     waste_type = models.IntegerField(null=True)
     container_type = models.ForeignKey(
         "ContainerType", related_name="containers", on_delete=models.DO_NOTHING
     )
-    placeing_date = models.DateTimeField(null=True)
+    created_at = models.DateTimeField(null=True)
+    placing_date = models.DateTimeField(null=True)
     operational_date = models.DateTimeField(null=True)
     warranty_date = models.DateTimeField(null=True)
 

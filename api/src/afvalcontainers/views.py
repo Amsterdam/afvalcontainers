@@ -23,7 +23,7 @@ class ContainerFilter(FilterSet):
             "serial_number",
             "active",
             "waste_type",
-            "placeing_date",
+            "placing_date",
             "operational_date",
             "warranty_date",
             # 'buurtcode',
