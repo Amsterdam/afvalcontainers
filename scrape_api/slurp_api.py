@@ -6,6 +6,7 @@ import aiohttp
 import random
 import time
 import dateparser
+
 # import aiopg
 from aiohttp import ClientSession
 import asyncio
@@ -22,59 +23,52 @@ from dateutil import parser
 
 import login
 
-log = logging.getLogger('slurp_api')
+log = logging.getLogger("slurp_api")
 log.setLevel(logging.DEBUG)
-logging.getLogger('urllib3').setLevel(logging.ERROR)
+logging.getLogger("urllib3").setLevel(logging.ERROR)
 
-ENVIRONMENT = os.getenv('ENVIRONMENT', 'acceptance')
+ENVIRONMENT = os.getenv("ENVIRONMENT", "acceptance")
 
-WORKERS = 3
+WORKERS = 7
 
-STATUS = {
-    'done': False
-}
+STATUS = {"done": False}
 
 URL_QUEUE = asyncio.Queue()
 RESULT_QUEUE = asyncio.Queue()
 
-ENDPOINTS = [
-    'container_types',
-    'containers',
-    'wells'
-]
+ENDPOINTS = ["container_types", "containers", "wells"]
 
 ENDPOINT_MODEL = {
-    'container_types': models.ContainerType,
-    'containers': models.Container,
-    'wells': models.Well
+    "container_types": models.ContainerType,
+    "containers": models.Container,
+    "wells": models.Well,
 }
 
 ENDPOINT_URL = {
-    'container_types': f'{API_URL}/api/containertypes',
-    'wells': f'{API_URL}/api/wells',
-    'containers': f'{API_URL}/api/containers',
+    "container_types": f"{API_URL}/api/containertypes",
+    "wells": f"{API_URL}/api/wells",
+    "containers": f"{API_URL}/api/containers",
 }
 
 
 api_config = {
-    'password': os.getenv('BAMMENS_API_PASSWORD', ''),
-    'hosts': {
-        'production': 'https://bammens.nl/api/',
-    },
+    "password": os.getenv("BAMMENS_API_PASSWORD", ""),
+    "hosts": {"production": "https://bammens.nl/api/"},
     # 'port': 3001,
-    'username': os.getenv('BAMMENS_API_USERNAME', '')
+    "username": os.getenv("BAMMENS_API_USERNAME", ""),
 }
 
 
-AUTH = (api_config['username'], api_config.get('password'))
+AUTH = (api_config["username"], api_config.get("password"))
 
 
 async def fetch(url, session, params=None, auth=None):
     try:
         response = await session.get(url, ssl=True)
         return response
-    except(aiohttp.client_exceptions.ServerDisconnectedError):
-        log.error('Server disconnect..')
+
+    except (aiohttp.client_exceptions.ServerDisconnectedError):
+        log.error("Server disconnect..")
         asyncio.sleep(random.random() * 10)
         return None
 
@@ -91,7 +85,7 @@ async def get_the_json(session, endpoint, _id=None) -> list:
     response = None
     url = ENDPOINT_URL[endpoint]
     if _id:
-        url = f'{url}/{_id}.json'
+        url = f"{url}/{_id}.json"
 
     retry = 5
 
@@ -103,22 +97,25 @@ async def get_the_json(session, endpoint, _id=None) -> list:
         response = await fetch(url, session)
 
         if response is None:
-            log.error('RESPONSE NONE %s %s', url, params)
+            log.error("RESPONSE NONE %s %s", url, params)
             continue
+
         elif response.status == 200:
-            log.debug(f' OK  {response.status}:{url}')
+            log.debug(f" OK  {response.status}:{url}")
         elif response.status == 401:
-            log.error(f' AUTH {response.status}:{url}')
+            log.error(f" AUTH {response.status}:{url}")
         elif response.status in retry_codes:
-            log.debug(f'FAIL {response.status}:{url}')
+            log.debug(f"FAIL {response.status}:{url}")
             continue
+
         # WE did WRONG requests. crash hard!
         elif response.status == 400:
-            log.error(f' 400 {response.status}:{url}')
-            raise ValueError('400. wrong request.')
+            log.error(f" 400 {response.status}:{url}")
+            raise ValueError("400. wrong request.")
+
         elif response.status == 404:
-            log.error(f' 404 {response.status}:{url}')
-            raise ValueError('404. NOT FOUND wrong request.')
+            log.error(f" 404 {response.status}:{url}")
+            raise ValueError("404. NOT FOUND wrong request.")
 
         if response:
             json = await response.json()
@@ -132,7 +129,7 @@ def add_items_to_db(endpoint, json: list):
     """
 
     if not json:
-        log.error('No data recieved')
+        log.error("No data recieved")
         return
 
     db_model = ENDPOINT_MODEL[endpoint]
@@ -145,11 +142,7 @@ def add_items_to_db(endpoint, json: list):
 
         scraped_at = datetime.datetime.now()
 
-        grj = db_model(
-            id=item['id'],
-            scraped_at=scraped_at,
-            data=item,
-        )
+        grj = db_model(id=item["id"], scraped_at=scraped_at, data=item)
         db_session.add(grj)
 
     db_session.commit()
@@ -171,8 +164,8 @@ async def do_request(work_id, endpoint, params={}):
             # set login credentials in session
             try:
                 await login.set_login_cookies(session)
-            except(aiohttp.client_exceptions.ServerDisconnectedError):
-                log.exception('Server disconnect..wait a bit')
+            except (aiohttp.client_exceptions.ServerDisconnectedError):
+                log.exception("Server disconnect..wait a bit")
                 await session.close()
                 asyncio.sleep(5)
                 session = None
@@ -181,16 +174,16 @@ async def do_request(work_id, endpoint, params={}):
 
         item = await URL_QUEUE.get()
 
-        if item == 'terminate':
+        if item == "terminate":
             break
 
         url = ENDPOINT_URL[endpoint]
-        _id = item['id']
+        _id = item["id"]
         json_response = await get_the_json(session, endpoint, _id)
 
         if not json_response:
             URL_QUEUE.put(item)
-            log.debug('skipping')
+            log.debug("skipping")
             continue
 
         _type = list(json_response.keys())[0]
@@ -204,7 +197,7 @@ async def do_request(work_id, endpoint, params={}):
             session = None
             count = 0
 
-    log.debug(f'Done {work_id}')
+    log.debug(f"Done {work_id}")
 
 
 def clear_current_table(endpoint):
@@ -222,18 +215,16 @@ def validate_timestamps(item):
     """We recieve invalid timestamps
     so we clean them up here.
     """
-    timestamp_keys = [
-        'created_at', 'placing_date', 'warranty_date',
-        'operational_date',
-    ]
+    timestamp_keys = ["created_at", "placing_date", "warranty_date", "operational_date"]
 
     for key in timestamp_keys:
         date = item.get(key)
         if not date:
             continue
+
         d = dateparser.parse(date)
         if not d:
-            log.error('Invalid %s %s %s', key, date, item['id'])
+            log.error("Invalid %s %s %s", key, date, item["id"])
             item[key] = None
 
     return item
@@ -247,7 +238,7 @@ async def store_results(endpoint):
     while True:
         value = await RESULT_QUEUE.get()
 
-        if value == 'terminate':
+        if value == "terminate":
             break
 
         results.append(value)
@@ -264,7 +255,7 @@ async def store_results(endpoint):
 async def log_progress(total):
     while True:
         size = URL_QUEUE.qsize()
-        log.info('Progress %s %s', size, total)
+        log.info("Progress %s %s", size, total)
         await asyncio.sleep(10)
 
 
@@ -276,7 +267,7 @@ async def fill_url_queue(session, endpoint):
     response = await fetch(url, session)
     json_body = await response.json()
     total = len(json_body[endpoint])
-    log.info('%s: size %s', endpoint, total)
+    log.info("%s: size %s", endpoint, total)
     all_items = list(json_body[endpoint])
     random.shuffle(all_items)
     for i in all_items:
@@ -297,32 +288,30 @@ async def run_workers(endpoint, workers=WORKERS):
 
     progress = asyncio.ensure_future(log_progress(total))
 
-    log.info('Starting %d workers %s', workers, endpoint)
+    log.info("Starting %d workers %s", workers, endpoint)
 
-    workers = [
-        asyncio.ensure_future(do_request(i, endpoint))
-        for i in range(workers)]
+    workers = [asyncio.ensure_future(do_request(i, endpoint)) for i in range(workers)]
 
     # Terminate instructions for all workers
     for _ in range(len(workers)):
-        await URL_QUEUE.put('terminate')
+        await URL_QUEUE.put("terminate")
 
     # wait till they are done
     await asyncio.gather(*workers)
     progress.cancel()
 
-    await RESULT_QUEUE.put('terminate')
+    await RESULT_QUEUE.put("terminate")
     # wait untill all data is stored in database
     await asyncio.gather(store_data)
     # start x workers
     # request all details of list
-    log.debug('done!')
+    log.debug("done!")
 
 
 async def main(endpoint, workers=WORKERS, make_engine=True):
     # when testing we do not want an engine.
     if make_engine:
-        engine = models.make_engine(section='docker')
+        engine = models.make_engine(section="docker")
         models.set_engine(engine)
     await run_workers(endpoint, workers=workers)
 
@@ -330,28 +319,27 @@ async def main(endpoint, workers=WORKERS, make_engine=True):
 def start_import(args, workers=WORKERS, make_engine=True):
     start = time.time()
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(
-        main(args, workers=workers, make_engine=make_engine))
-    log.info('Took: %s', time.time() - start)
+    loop.run_until_complete(main(args, workers=workers, make_engine=make_engine))
+    log.info("Took: %s", time.time() - start)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     desc = "Scrape API."
     inputparser = argparse.ArgumentParser(desc)
 
     inputparser.add_argument(
-        'endpoint', type=str,
-        default='qa_realtime',
+        "endpoint",
+        type=str,
+        default="qa_realtime",
         choices=ENDPOINTS,
         help="Provide Endpoint to scrape",
-        nargs=1)
+        nargs=1,
+    )
 
     inputparser.add_argument(
-        '--debug',
-        action='store_true',
-        default=False,
-        help="Enable debugging")
+        "--debug", action="store_true", default=False, help="Enable debugging"
+    )
 
     args = inputparser.parse_args()
     if args.debug:

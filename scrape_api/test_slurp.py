@@ -14,7 +14,7 @@ from settings import TESTING
 
 log = logging.getLogger(__name__)
 
-FIX_DIR = BASE_DIR + '/scrape_api'
+FIX_DIR = BASE_DIR + "/scrape_api"
 
 transaction = []
 connection = []
@@ -24,14 +24,14 @@ session = []
 
 def setup_module():
     global transaction, connection, engine, session
-    TESTING['running'] = True
+    TESTING["running"] = True
     models.create_db()
-    engine = models.make_engine(section='test')
+    engine = models.make_engine(section="test")
     connection = engine.connect()
     transaction = connection.begin()
     models.Base.metadata.drop_all(bind=engine)
     models.Base.metadata.create_all(bind=engine)
-    session = models.set_engine(engine)
+    session = models.set_session(engine)
 
 
 def teardown_module():
@@ -41,7 +41,7 @@ def teardown_module():
     engine.dispose()
     connection.close()
     models.drop_db()
-    TESTING['running'] = False
+    TESTING["running"] = False
 
 
 class MockResponse():
@@ -56,14 +56,14 @@ class TestDBWriting(unittest.TestCase):
     Test writing to database
     """
 
-    @asynctest.patch('slurp_api.get_the_json')
-    @asynctest.patch('slurp_api.fetch')
+    @asynctest.patch("slurp_api.get_the_json")
+    @asynctest.patch("slurp_api.fetch")
     def test_containers(self, fetch_mock, get_json_mock):
 
-        with open(FIX_DIR + '/fixtures/containers.json') as detail_json:
+        with open(FIX_DIR + "/fixtures/containers.json") as detail_json:
             detail_json = json.loads(detail_json.read())
 
-        with open(FIX_DIR + '/fixtures/containers.list.json') as list_json:
+        with open(FIX_DIR + "/fixtures/containers.list.json") as list_json:
             list_json = json.loads(list_json.read())
 
         mr = MockResponse()
@@ -72,18 +72,18 @@ class TestDBWriting(unittest.TestCase):
         get_json_mock.side_effect = detail_json[:6]
         fetch_mock.side_effect = [mr]
 
-        slurp_api.start_import('containers', workers=2, make_engine=False)
+        slurp_api.start_import("containers", workers=2, make_engine=False)
         count = session.query(models.Container).count()
         self.assertEqual(count, 5)
 
-    @asynctest.patch('slurp_api.get_the_json')
-    @asynctest.patch('slurp_api.fetch')
+    @asynctest.patch("slurp_api.get_the_json")
+    @asynctest.patch("slurp_api.fetch")
     def test_wells(self, fetch_mock, get_json_mock):
 
-        with open(FIX_DIR + '/fixtures/wells.json') as detail_json:
+        with open(FIX_DIR + "/fixtures/wells.json") as detail_json:
             detail_json = json.loads(detail_json.read())
 
-        with open(FIX_DIR + '/fixtures/wells.list.json') as list_json:
+        with open(FIX_DIR + "/fixtures/wells.list.json") as list_json:
             list_json = json.loads(list_json.read())
 
         mr = MockResponse()
@@ -92,18 +92,18 @@ class TestDBWriting(unittest.TestCase):
         get_json_mock.side_effect = detail_json[:4]
         fetch_mock.side_effect = [mr]
 
-        slurp_api.start_import('wells', workers=2, make_engine=False)
+        slurp_api.start_import("wells", workers=2, make_engine=False)
         count = session.query(models.Well).count()
         self.assertEqual(count, 4)
 
-    @asynctest.patch('slurp_api.get_the_json')
-    @asynctest.patch('slurp_api.fetch')
+    @asynctest.patch("slurp_api.get_the_json")
+    @asynctest.patch("slurp_api.fetch")
     def test_container_types(self, fetch_mock, get_json_mock):
 
-        with open(FIX_DIR + '/fixtures/containertypes.json') as detail_json:
+        with open(FIX_DIR + "/fixtures/containertypes.json") as detail_json:
             detail_json = json.loads(detail_json.read())
 
-        with open(FIX_DIR + '/fixtures/containertypes.list.json') as list_json:
+        with open(FIX_DIR + "/fixtures/containertypes.list.json") as list_json:
             list_json = json.loads(list_json.read())
 
         mr = MockResponse()
@@ -112,6 +112,6 @@ class TestDBWriting(unittest.TestCase):
         get_json_mock.side_effect = detail_json[:3]
         fetch_mock.side_effect = [mr]
 
-        slurp_api.start_import('container_types', workers=2, make_engine=False)
+        slurp_api.start_import("container_types", workers=2, make_engine=False)
         count = session.query(models.ContainerType).count()
         self.assertEqual(count, 3)
