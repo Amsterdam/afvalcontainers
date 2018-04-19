@@ -81,9 +81,9 @@ class Well(models.Model):
 
     owner = JSONField()
 
-    buurt_code = models.CharField(max_length=4)
     containers = models.ForeignKey(
-        "Container", null=True, related_name="wells", on_delete=models.DO_NOTHING
+        "Container", null=True,
+        related_name="wells", on_delete=models.DO_NOTHING
     )
 
     geometrie = models.PointField(name="geometrie")

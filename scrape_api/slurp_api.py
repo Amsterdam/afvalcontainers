@@ -14,12 +14,14 @@ import asyncio
 import datetime
 import os
 import models
+
 import logging
 import argparse
 import settings
 from settings import API_URL
 import os.path
 from dateutil import parser
+
 
 import login
 
@@ -29,7 +31,7 @@ logging.getLogger("urllib3").setLevel(logging.ERROR)
 
 ENVIRONMENT = os.getenv("ENVIRONMENT", "acceptance")
 
-WORKERS = 7
+WORKERS = 8
 
 STATUS = {"done": False}
 
@@ -37,12 +39,6 @@ URL_QUEUE = asyncio.Queue()
 RESULT_QUEUE = asyncio.Queue()
 
 ENDPOINTS = ["container_types", "containers", "wells"]
-
-ENDPOINT_MODEL = {
-    "container_types": models.ContainerType,
-    "containers": models.Container,
-    "wells": models.Well,
-}
 
 ENDPOINT_URL = {
     "container_types": f"{API_URL}/api/containertypes",
@@ -128,23 +124,25 @@ def add_items_to_db(endpoint, json: list):
     Given json api response, store data in database
     """
 
+    log.debug(f"Storeing {len(json)} items")
+
     if not json:
         log.error("No data recieved")
         return
 
-    db_model = ENDPOINT_MODEL[endpoint]
+    db_model = models.ENDPOINT_MODEL[endpoint]
 
-    # make new session
+    # get the session
     db_session = models.session
 
+    objects = []
     # Store the location json!
     for item in json:
-
         scraped_at = datetime.datetime.now()
+        grj = dict(id=item["id"], scraped_at=scraped_at, data=item)
+        objects.append(grj)
 
-        grj = db_model(id=item["id"], scraped_at=scraped_at, data=item)
-        db_session.add(grj)
-
+    db_session.bulk_insert_mappings(db_model, objects)
     db_session.commit()
 
     log.debug(f"Stored {len(json)} items")
@@ -169,12 +167,12 @@ async def do_request(work_id, endpoint, params={}):
                 await session.close()
                 asyncio.sleep(5)
                 session = None
-                # try again
                 continue
 
         item = await URL_QUEUE.get()
 
         if item == "terminate":
+            await session.close()
             break
 
         url = ENDPOINT_URL[endpoint]
@@ -188,8 +186,7 @@ async def do_request(work_id, endpoint, params={}):
 
         _type = list(json_response.keys())[0]
         item = json_response[_type]
-        cleaned = validate_timestamps(item)
-        await RESULT_QUEUE.put(cleaned)
+        await RESULT_QUEUE.put(item)
 
         count += 1
         if count > 40:
@@ -206,29 +203,9 @@ def clear_current_table(endpoint):
     """
     # make new session
     session = models.Session()
-    db_model = ENDPOINT_MODEL[endpoint]
+    db_model = models.ENDPOINT_MODEL[endpoint]
     session.query(db_model).delete()
     session.commit()
-
-
-def validate_timestamps(item):
-    """We recieve invalid timestamps
-    so we clean them up here.
-    """
-    timestamp_keys = ["created_at", "placing_date", "warranty_date", "operational_date"]
-
-    for key in timestamp_keys:
-        date = item.get(key)
-        if not date:
-            continue
-
-        # d = dateparser.parse(date)
-        d = parser.parse(date)
-        if not d:
-            log.error("Invalid %s %s %s", key, date, item["id"])
-            item[key] = None
-
-    return item
 
 
 async def store_results(endpoint):
@@ -236,6 +213,7 @@ async def store_results(endpoint):
     clear_current_table(endpoint)
 
     results = []
+
     while True:
         value = await RESULT_QUEUE.get()
 
@@ -243,8 +221,8 @@ async def store_results(endpoint):
             break
 
         results.append(value)
-        if len(results) > 5:
-            # save items
+
+        if len(results) > 25:
             add_items_to_db(endpoint, results)
             results = []
 
@@ -291,7 +269,9 @@ async def run_workers(endpoint, workers=WORKERS):
 
     log.info("Starting %d workers %s", workers, endpoint)
 
-    workers = [asyncio.ensure_future(do_request(i, endpoint)) for i in range(workers)]
+    workers = [
+        asyncio.ensure_future(do_request(i, endpoint))
+        for i in range(workers)]
 
     # Terminate instructions for all workers
     for _ in range(len(workers)):
@@ -300,7 +280,6 @@ async def run_workers(endpoint, workers=WORKERS):
     # wait till they are done
     await asyncio.gather(*workers)
     progress.cancel()
-
     await RESULT_QUEUE.put("terminate")
     # wait untill all data is stored in database
     await asyncio.gather(store_data)
@@ -313,14 +292,15 @@ async def main(endpoint, workers=WORKERS, make_engine=True):
     # when testing we do not want an engine.
     if make_engine:
         engine = models.make_engine(section="docker")
-        models.set_engine(engine)
+        models.set_session(engine)
     await run_workers(endpoint, workers=workers)
 
 
 def start_import(args, workers=WORKERS, make_engine=True):
     start = time.time()
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main(args, workers=workers, make_engine=make_engine))
+    loop.run_until_complete(
+        main(args, workers=workers, make_engine=make_engine))
     log.info("Took: %s", time.time() - start)
 
 

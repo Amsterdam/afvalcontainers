@@ -19,14 +19,15 @@ class ContainerSerializer(HALSerializer):
             "_links",
             "_display",
             "id",
-            "buurtcode",
-            "straatnaam",
-            "aantal",
-            "type",
-            "geometrie",
+            "id_number",
+            "owner",
+            "active",
+            "waste_type",
+            "container_type",
             "warranty_date",
             "operational_date",
             "placing_date",
+            "wells",
         ]
 
 
@@ -46,6 +47,7 @@ class WellSerializer(HALSerializer):
             "created_at",
             "warranty_date",
             "operational_date",
+            "containers"
         ]
 
 

@@ -2,10 +2,12 @@
 Copy raw data into django api models
 """
 
+import random
 import argparse
 import models
 import logging
-from slurp_api import validate_timestamps
+from sqlalchemy.sql import select
+from sqlalchemy import bindparam
 
 log = logging.getLogger(__name__)
 
@@ -81,26 +83,84 @@ def update_wells():
     session.commit()
 
 
-def cleanup_dates():
+def validate_timestamps(item):
+    """We recieve invalid timestamps
+    so we clean them up here.
+    """
+    timestamp_keys = (
+        "created_at",
+        "placing_date",
+        "warranty_date",
+        "operational_date")
+
+    for key in timestamp_keys:
+        date = item.get(key)
+        if not date:
+            continue
+
+        invalid = False
+        # d2 = dateparser.parse(date)
+        # d = parser.parse(date)
+        if date.startswith('000'):
+            invalid = True
+        elif date.startswith('-0'):
+            invalid = True
+        elif date.startswith('-10'):
+            invalid = True
+        if invalid:
+            log.error("Invalid %s %s %s", key, date, item["id"])
+            item[key] = None
+
+    return item
+
+
+def cleanup_dates(endpoint):
     """
     If some bad dates slipped into the
-    json. We can clean it up..
+    json. We can clean it up.
     """
-    for i, m in enumerate(session.query(models.Container).all()):
-        if i % 10 == 0:
-            log.debug(i)
-        data = validate_timestamps(m.data)
-        m.data = data
-        session.add(m)
-        session.commit()
+    conn = engine.connect()
+    dbitem = models.ENDPOINT_MODEL[endpoint]
+
+    s = select([dbitem])
+    results = conn.execute(s)
+    cleaned = []
+    for row in results:
+        data = validate_timestamps(row[2])
+        new = {'id': row[0], 'scraped_at': row[1], 'data': data}
+        cleaned.append(new)
+
+    upd_stmt = (
+        dbitem.__table__.update()
+        .where(dbitem.id == bindparam('id'))
+        .values(id=bindparam('id'))
+    )
+    conn.execute(upd_stmt, cleaned)
 
 
 OPTIONS = {
-    "types": update_types,
+    "container_types": update_types,
     "containers": update_containers,
     "wells": update_wells,
-    "cleanup": cleanup_dates,
 }
+
+
+def main():
+    if args.cleanup:
+        if args.endpoint:
+            endpoint = args.endpoint[0]
+            cleanup_dates(endpoint)
+        else:
+            for endpoint in OPTIONS.items():
+                cleanup_dates(endpoint)
+        return
+
+    if args.endpoint:
+        endpoint = args.endpoint[0]
+        OPTIONS[endpoint]()
+    else:
+        for func in OPTIONS.items():
+            func()
 
 
 if __name__ == "__main__":
@@ -116,14 +176,14 @@ if __name__ == "__main__":
         nargs=1,
     )
 
+    inputparser.add_argument(
+        "--cleanup", action="store_true",
+        default=False, help="Cleanup"
+    )
+
     args = inputparser.parse_args()
 
     engine = models.make_engine()
     session = models.set_session(engine)
 
-    if args.endpoint:
-        endpoint = args.endpoint[0]
-        OPTIONS[endpoint]()
-    else:
-        for func in OPTIONS.items():
-            func()
+    main()

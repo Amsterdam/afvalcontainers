@@ -106,6 +106,13 @@ class ContainerType(Base):
     data = Column(JSONB)
 
 
+ENDPOINT_MODEL = {
+    "container_types": ContainerType,
+    "containers": Container,
+    "wells": Well,
+}
+
+
 async def main(args):
     """Main
     """
