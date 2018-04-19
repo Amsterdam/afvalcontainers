@@ -5,8 +5,8 @@ services:
     image: amsterdam/postgres
     environment:
       POSTGRES_PASSWORD: insecure
-      POSTGRES_DB: citydynamics
-      POSTGRES_USER: citydynamics
+      POSTGRES_DB: afvalcontainers
+      POSTGRES_USER: afvalcontainers
 
   importer:
     build: ../../
