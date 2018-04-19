@@ -12,4 +12,7 @@ six==1.11.0
 SQLAlchemy==1.2.6
 SQLAlchemy-Utils==0.33.2
 yarl==1.1.1
+async-timeout==2.0.1
+asyncpg==0.15.0
+asynctest==0.12.0
 pytest==3.5.0
