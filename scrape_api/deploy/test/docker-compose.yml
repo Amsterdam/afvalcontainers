@@ -1,0 +1,22 @@
+version: '3.0'
+services:
+
+  database:
+    image: amsterdam/postgres
+    environment:
+      POSTGRES_PASSWORD: insecure
+      POSTGRES_DB: citydynamics
+      POSTGRES_USER: citydynamics
+
+  importer:
+    build: ../../
+    links:
+      - database
+    environment:
+      DATABASE_NAME: afvalcontainers
+      DATABASE_USER: afvalcontainers
+      DATABASE_PASSWORD: insecure
+      DATABASE_HOST_OVERRIDE: database
+      DATABASE_PORT_OVERRIDE: 5432
+      STADSWERKEN_OBJECTSTORE_PASSWORD:
+      PYTHONPATH: /app/scrape_api
