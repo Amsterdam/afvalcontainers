@@ -14,7 +14,7 @@ from settings import TESTING
 
 log = logging.getLogger(__name__)
 
-FIX_DIR = BASE_DIR + "/scrape_api"
+FIX_DIR = BASE_DIR
 
 transaction = []
 connection = []

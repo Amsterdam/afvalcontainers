@@ -5,9 +5,13 @@ venv/
 # Python ephemerals:
 *.pyc
 __pycache__
+*__pycache__*
+*__pycache__
 *.egg-info
 .eggs
 *.pytest*
+.pytest_cache
+*.pytest_cache*
 
 # Python setuptools
 /build
