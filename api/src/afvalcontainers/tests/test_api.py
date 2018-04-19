@@ -7,16 +7,19 @@ from . import factories
 class BrowseDatasetsTestCase(APITestCase):
 
     datasets = [
-        "parkeervakken/parkeervakken",
-        "parkeervakken/geosearch",
-        "parkeervakken/geoselection",
+        "afval/containers",
+        "afval/wells",
+        "afval/containertypes",
     ]
 
-    with_count = ["parkeervakken/parkeervakken"]
-
     def setUp(self):
-
-        self.p = factories.ParkeervakFactory()
+        self.t = factories.ContainerTypeFactory()
+        self.c = factories.ContainerFactory(
+            container_type=self.t
+        )
+        self.w = factories.WellFactory(
+            containers=self.c
+        )
 
     def valid_html_response(self, url, response):
         """
@@ -34,7 +37,7 @@ class BrowseDatasetsTestCase(APITestCase):
         )
 
     def test_index_pages(self):
-        url = "parkeervakken"
+        url = "afval"
 
         response = self.client.get("/{}/".format(url))
 
@@ -56,10 +59,9 @@ class BrowseDatasetsTestCase(APITestCase):
                 "Wrong Content-Type for {}".format(url),
             )
 
-            if url in self.with_count:
-                self.assertIn(
-                    "count", response.data, "No count attribute in {}".format(url)
-                )
+            self.assertIn(
+                "count", response.data, "No count attribute in {}".format(url)
+            )
 
     def test_lists_html(self):
         for url in self.datasets:
@@ -67,7 +69,6 @@ class BrowseDatasetsTestCase(APITestCase):
 
             self.valid_html_response(url, response)
 
-            if url in self.with_count:
-                self.assertIn(
-                    "count", response.data, "No count attribute in {}".format(url)
-                )
+            self.assertIn(
+                "count", response.data, "No count attribute in {}".format(url)
+            )

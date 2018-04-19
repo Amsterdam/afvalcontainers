@@ -1,38 +1,57 @@
 import factory
 from random import randint
 
-from django.contrib.gis.geos import Polygon
-from django.contrib.gis.geos import MultiPolygon
+from django.contrib.gis.geos import Point
 
 from factory import fuzzy
 
-from parkeervakken_api.models import Parkeervak
+
+from afvalcontainers.models import Container
+from afvalcontainers.models import Well
+from afvalcontainers.models import ContainerType
+
+# Amsterdam.
+BBOX = [52.03560, 4.58565, 52.48769, 5.31360]
 
 
-vierkantje = Polygon(
-    [
-        (121849.65, 487303.93),
-        (121889.65, 487303.93),
-        (121889.65, 487373.93),
-        (121849.65, 487303.93),
-    ],
-    srid=28992,
-)
+def get_puntje():
+
+    lat = fuzzy.FuzzyFloat(BBOX[0], BBOX[2]).fuzz()
+    lon = fuzzy.FuzzyFloat(BBOX[1], BBOX[3]).fuzz()
+    return Point(float(lat), float(lon))
 
 
-class ParkeervakFactory(factory.DjangoModelFactory):
+class ContainerFactory(factory.DjangoModelFactory):
 
     class Meta:
-        model = Parkeervak
+        model = Container
 
-    id = fuzzy.FuzzyText(length=30)
-    buurtcode = fuzzy.FuzzyText(length=4)
+    id = factory.Sequence(lambda n: n)
+    owner = {}
+    serial_number = fuzzy.FuzzyText(length=4)
+    id_number = fuzzy.FuzzyText(length=10)
+    active = fuzzy.FuzzyChoice([True, False])
+    waste_type = fuzzy.FuzzyInteger(0, 42)
+
+
+class WellFactory(factory.DjangoModelFactory):
+
+    class Meta:
+        model = Well
+
+    id = factory.Sequence(lambda n: n)
+    owner = {}
+    buurt_code = fuzzy.FuzzyText(length=4)
     stadsdeel = fuzzy.FuzzyText(length=1)
-    straatnaam = fuzzy.FuzzyText(length=40)
+    address = fuzzy.FuzzyText(length=40)
+    geometrie = get_puntje()
 
-    # aantal = models.IntegerField(null=True)
-    # soort = models.CharField(max_length=20, null=True)
-    # type = models.CharField(max_length=20, null=True)
-    # e_type = models.CharField(max_length=5, null=True)
-    # bord = models.CharField(max_length=50, null=True)
-    geometrie = MultiPolygon([vierkantje])
+
+class ContainerTypeFactory(factory.DjangoModelFactory):
+
+    class Meta:
+        model = ContainerType
+
+    id = factory.Sequence(lambda n: n)
+    name = fuzzy.FuzzyText(length=40)
+    volume = fuzzy.FuzzyInteger(0, 42)

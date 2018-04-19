@@ -37,7 +37,7 @@ class ContainerRouter(routers.DefaultRouter):
 containers = ContainerRouter()
 containers.register(r"containers", api_views.ContainerList, base_name="container")
 containers.register(r"wells", api_views.WellList, base_name="well")
-containers.register(r"types", api_views.TypeList, base_name="containertype")
+containers.register(r"containertypes", api_views.TypeList, base_name="containertype")
 
 urls = containers.urls
 
