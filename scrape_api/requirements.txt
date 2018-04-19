@@ -12,3 +12,4 @@ six==1.11.0
 SQLAlchemy==1.2.6
 SQLAlchemy-Utils==0.33.2
 yarl==1.1.1
+pytest==3.5.0
