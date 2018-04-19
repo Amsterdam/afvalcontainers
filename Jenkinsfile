@@ -32,11 +32,11 @@ node {
 
     stage("Build dockers") {
         tryStep "build", {
-            def importer = docker.build("build.app.amsterdam.nl:5000/stadswerken/afvalcontainers_importer:${env.BUILD_NUMBER}", "scrape_api")
+            def importer = docker.build("build.datapunt.amsterdam.nl:5000/afvalcontainers_importer:${env.BUILD_NUMBER}", "scrape_api")
                 importer.push()
                 importer.push("acceptance")
 
-            def api = docker.build("build.app.amsterdam.nl:5000/stadswerken/afvalcontainers:${env.BUILD_NUMBER}", ".")
+            def api = docker.build("build.datapunt.amsterdam.nl:5000/afvalcontainers:${env.BUILD_NUMBER}", ".")
                 api.push()
                 api.push("acceptance")
         }
@@ -77,8 +77,8 @@ if (BRANCH == "master") {
     node {
         stage('Push production image') {
             tryStep "image tagging", {
-                def api = docker.image("build.app.amsterdam.nl:5000/afvalcontainers:${env.BUILD_NUMBER}")
-                def importer = docker.image("build.app.amsterdam.nl:5000/afvalcontainers_importer:${env.BUILD_NUMBER}")
+                def api = docker.image("build.datapunt.amsterdam.nl:5000/afvalcontainers:${env.BUILD_NUMBER}")
+                def importer = docker.image("build.datapunt.amsterdam.nl:5000/afvalcontainers_importer:${env.BUILD_NUMBER}")
 
                 importer.push("production")
                 importer.push("latest")
