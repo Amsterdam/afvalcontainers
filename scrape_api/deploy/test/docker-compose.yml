@@ -19,4 +19,4 @@ services:
       DATABASE_HOST_OVERRIDE: database
       DATABASE_PORT_OVERRIDE: 5432
       STADSWERKEN_OBJECTSTORE_PASSWORD:
-      PYTHONPATH: /app/scrape_api
+      PYTHONPATH: /app/
