@@ -18,6 +18,7 @@ INSERT INTO afvalcontainers_well (
     serial_number,
     id_number,
     owner,
+    containers_bron,
     created_at,
     warranty_date,
     operational_date,
@@ -31,10 +32,11 @@ SELECT
     data->>'serial_number' as serial_number,
     data->>'id_number' as id_number,
     CAST(data->>'owner' as jsonb) as owner,
+    CAST(data->>'containers' as jsonb) as containers_bron,
     CAST(data->>'created_at' as timestamp) as created_at,
     CAST(data->>'warranty_date' as timestamp) as warranty_date,
-    CAST(data->>'placing_date' as timestamp) as placing_date,
     CAST(data->>'operational_date' as timestamp) as operational_date,
+    CAST(data->>'placing_date' as timestamp) as placing_date,
     CAST(data->>'active' as bool) as active,
     ST_SetSRID(
         ST_POINT(
@@ -47,21 +49,45 @@ SELECT
 
 
 INSERT_CONTAINERS = """
-
-
-"""
+INSERT INTO afvalcontainers_container (
+    id,
+    id_number,
+    serial_number,
+    owner,
+    created_at,
+    warranty_date,
+    operational_date,
+    placing_date,
+    active,
+    waste_type,
+    container_type_id
+)
+SELECT
+    id,
+    data->>'id_number' as id_number,
+    data->>'serial_number' as serial_number,
+    CAST(data->>'owner' as jsonb) as owner,
+    CAST(data->>'created_at' as timestamp) as created_at,
+    CAST(data->>'warranty_date' as timestamp) as warranty_date,
+    CAST(data->>'operational_date' as timestamp) as operational_date,
+    CAST(data->>'placing_date' as timestamp) as placing_date,
+    CAST(data->>'active' as bool) as active,
+    CAST(data->>'waste_type' as int) as waste_type,
+    CAST(data->>'container_type' as int) as waste_type
+    FROM bammens_container_raw;
+"""  # noqa
 
 
 INSERT_TYPES = """
 INSERT INTO afvalcontainers_containertype
-SELECT id, name, CAST("data"->>'volume' as INT)
-FROM bammens_containertypes_raw
+SELECT id, data->>'name', CAST("data"->>'volume' as INT)
+FROM bammens_containertype_raw
 """
 
 
 def update_types():
     sql = INSERT_TYPES
-    session.execute("TRUNCATE TABLE afvalcontainers_well;")
+    # session.execute("TRUNCATE TABLE afvalcontainers_containertype")
     session.execute(sql)
     session.commit()
 
@@ -71,14 +97,14 @@ def update_types():
 
 def update_containers():
     sql = INSERT_CONTAINERS
-    session.execute("TRUNCATE TABLE afvalcontainers_container;")
+    # session.execute("TRUNCATE TABLE afvalcontainers_container;")
     session.execute(sql)
     session.commit()
 
 
 def update_wells():
     insert = INSERT_WELLS
-    session.execute("TRUNCATE TABLE afvalcontainers_well")
+    # session.execute("TRUNCATE TABLE afvalcontainers_well")
     session.execute(insert)
     session.commit()
 
@@ -137,6 +163,21 @@ def cleanup_dates(endpoint):
     )
     conn.execute(upd_stmt, cleaned)
 
+LINK_SQL = """
+UPDATE afvalcontainers_container bc
+SET well_id = wlist.id
+FROM (
+    SELECT ww.id, ww.cid::int from  (
+        SELECT w.id, jsonb_array_elements_text(w.containers_bron) AS cid
+        FROM afvalcontainers_well w) as  ww) as wlist
+WHERE wlist.cid = bc.id
+"""
+
+def link_containers_to_wells():
+    sql = LINK_SQL
+    session.execute(sql)
+    session.commit()
+
 
 OPTIONS = {
     "container_types": update_types,
@@ -146,6 +187,9 @@ OPTIONS = {
 
 
 def main():
+    if args.linkcontainers:
+        link_containers_to_wells()
+        return
     if args.cleanup:
         if args.endpoint:
             endpoint = args.endpoint[0]
@@ -178,6 +222,11 @@ if __name__ == "__main__":
 
     inputparser.add_argument(
         "--cleanup", action="store_true",
+        default=False, help="Cleanup"
+    )
+
+    inputparser.add_argument(
+        "--linkcontainers", action="store_true",
         default=False, help="Cleanup"
     )
 

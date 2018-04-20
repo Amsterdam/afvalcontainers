@@ -31,7 +31,7 @@ class ContainerFilter(FilterSet):
             # 'straatnaam',
             # 'soort',
             # 'volume',
-            "wells",
+            # "wells",
             "container_type",
         )
 

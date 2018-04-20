@@ -28,7 +28,10 @@ class Container(models.Model):
     id_number = models.CharField(max_length=35, null=False, db_index=True)
     serial_number = models.CharField(max_length=45, null=False, db_index=True)
     owner = JSONField(null=True)
-    # well = models.ForeignKey('Well')
+    well = models.ForeignKey(
+        'Well', null=True,
+        related_name="containers", on_delete=models.DO_NOTHING
+    )
     active = models.NullBooleanField(null=True)
     waste_type = models.IntegerField(null=True)
 
@@ -82,10 +85,7 @@ class Well(models.Model):
 
     owner = JSONField()
 
-    containers = models.ForeignKey(
-        "Container", null=True,
-        related_name="wells", on_delete=models.DO_NOTHING
-    )
+    containers_bron = JSONField()
 
     geometrie = models.PointField(name="geometrie")
 
