@@ -28,23 +28,24 @@ dc build
 
 echo "Bringing up and waiting for database"
 dc up -d database
-dc run importer /deploy/docker-wait.sh
+dc run importer /app/deploy/docker-wait.sh
 
-dc exec -T database update-table.sh bag bag_buurt public afvalcontainers
+# dc exec -T database update-table.sh bag bag_buurt public afvalcontainers
 
 echo "Importing data into database"
 
+dc run --rm api python manage.py migrate
 dc run --rm importer python models.py
 # importeer alle objectstore bronnen
-dc run --rm importer python scrape_api container_types
-dc run --rm importer python scrape_api containers
-dc run --rm importer python scrape_api wells
+dc run --rm importer python slurp_api.py container_types
+dc run --rm importer python slurp_api.py containers
+dc run --rm importer python slurp_api.py wells
 
-dc run --rm importer python copy_to_django wells --cleanup
-dc run --rm importer python copy_to_django containers --cleanup
-dc run --rm importer python copy_to_django containers
-dc run --rm importer python copy_to_django wells
-dc run --rm importer python copy_to_django container_types
+dc run --rm importer python copy_to_django.py wells --cleanup
+dc run --rm importer python copy_to_django.py containers --cleanup
+dc run --rm importer python copy_to_django.py containers
+dc run --rm importer python copy_to_django.py wells
+dc run --rm importer python copy_to_django.py container_types
 # link containers to wells
 dc run --rm importer python copy_to_django containers --linkcontainers
 

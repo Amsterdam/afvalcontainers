@@ -10,7 +10,7 @@ services:
       - ./backups:/tmp/backups
 
   api:
-    image: build.datapunt.amsterdam.nl:5000/datapunt/afvalcontainers:${ENVIRONMENT}
+    image: build.datapunt.amsterdam.nl:5000/afvalcontainers:${ENVIRONMENT}
     links:
       - database
     environment:
@@ -18,13 +18,15 @@ services:
       DATABASE_USER: afvalcontainers
 
   importer:
-    image: build.datapunt.amsterdam.nl:5000/datapunt/afvalcontainers_importer:${ENVIRONMENT}
+    image: build.datapunt.amsterdam.nl:5000/afvalcontainers_importer:${ENVIRONMENT}
     links:
       - database
     environment:
       DATABASE_NAME: afvalcontainers
       DATABASE_USER: afvalcontainers
       DATABASE_PASSWORD: insecure
+      BAMMENS_API_USERNAME:
+      BAMMENS_API_PASSWORD:
     volumes:
       - afvalcontainers_import_cache:/data
     command: >
