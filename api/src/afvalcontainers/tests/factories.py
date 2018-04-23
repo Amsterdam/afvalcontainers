@@ -41,6 +41,7 @@ class WellFactory(factory.DjangoModelFactory):
 
     id = factory.Sequence(lambda n: n)
     owner = {}
+    containers_bron = {}
     buurt_code = fuzzy.FuzzyText(length=4)
     stadsdeel = fuzzy.FuzzyText(length=1)
     address = fuzzy.FuzzyText(length=40)

@@ -14,11 +14,10 @@ class BrowseDatasetsTestCase(APITestCase):
 
     def setUp(self):
         self.t = factories.ContainerTypeFactory()
+        self.w = factories.WellFactory()
         self.c = factories.ContainerFactory(
-            container_type=self.t
-        )
-        self.w = factories.WellFactory(
-            containers=self.c
+            container_type=self.t,
+            well=self.w
         )
 
     def valid_html_response(self, url, response):
