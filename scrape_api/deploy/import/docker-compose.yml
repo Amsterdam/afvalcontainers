@@ -1,0 +1,34 @@
+version: '3.0'
+services:
+  database:
+    image: amsterdam/postgres
+    environment:
+      POSTGRES_PASSWORD: insecure
+      POSTGRES_USER: afvalcontainers
+      POSTGRES_DB: afvalcontainers
+    volumes:
+      - ./backups:/tmp/backups
+
+  api:
+    image: build.datapunt.amsterdam.nl:5000/datapunt/afvalcontainers:${ENVIRONMENT}
+    links:
+      - database
+    environment:
+      DATABASE_NAME: afvalcontainers
+      DATABASE_USER: afvalcontainers
+
+  importer:
+    image: build.datapunt.amsterdam.nl:5000/datapunt/afvalcontainers_scrapeapi:${ENVIRONMENT}
+    links:
+      - database
+    environment:
+      DATABASE_NAME: afvalcontainers
+      DATABASE_USER: afvalcontainers
+      DATABASE_PASSWORD: insecure
+    volumes:
+      - afvalcontainers_import_cache:/data
+    command: >
+      bash -c "/deploy/import/import.sh"
+
+volumes:
+  afvalcontainers_import_cache:

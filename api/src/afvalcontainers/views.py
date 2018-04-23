@@ -30,8 +30,9 @@ class ContainerFilter(FilterSet):
             # 'stadsdeel',
             # 'straatnaam',
             # 'soort',
-            # 'volume',
-            # "wells",
+            "well__buurt_code",
+            "well__stadsdeel",
+            "well",
             "container_type",
         )
 
