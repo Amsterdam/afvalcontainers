@@ -1,16 +1,11 @@
-Parkeervakken
+Afvalcontainers
 =============
 
-Imports parkeervakken shape file into database.
+
 provides the WFS services with the actual parkingsport dataset
 
-- ALL parking spots.
-- parking spot data like (FISCAAL / MULDER) ficscaal means non free spots. Mulder are spots for handicaped people.
-- TVM ( tijdelijke verkeersmaatregelen ) dataset.
-- park sign information. (Electric / laden lossen etc)
-
-NO WEB API YET besides a mapserver wfs.
-
+- all containers.
+- all wells.
 
 Docker Installation
 ===================
@@ -24,7 +19,7 @@ Manual Installation
 ===================
 
 
- 1. Create a parkeervakken database.
+ 1. Create a afvalcontainers database.
 
  2. Add the postgis extension
 
@@ -35,26 +30,18 @@ Create the tables
 =================
 
 ::
-    python3 import_data.py --user postgres --password insecure --host 127.0.0.1 --port 5409 --database parkeervakken initialize
+    python3 manage.py migrate
 
 Load the data
 =============
 
 ::
-    python3 import_data.py --user postgres --password insecure --host 127.0.0.1 --port 5409 --database parkeervakken update  --source PWD
+    See instructions in scrape_api README.
 
 
-The data pipeline overview
-==========================
+For local datapunt developement/developers
 
- 1. Raw shapefiles get loaded in the 'his' schema.
-
- 2. Some business logic and transformations are applied in the  'bm' schema
-
- 3. In the 'bv' (Business View) provides the latest data
-    now it is possible to query per day the reservations
-
- 4. A geoview is created for the mapserver
+docker-compose database update-db.sh afvalcontainers
 
 
 remove old geoviews:

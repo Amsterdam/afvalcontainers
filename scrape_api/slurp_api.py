@@ -26,7 +26,7 @@ from dateutil import parser
 import login
 
 log = logging.getLogger("slurp_api")
-log.setLevel(logging.DEBUG)
+log.setLevel(logging.INFO)
 logging.getLogger("urllib3").setLevel(logging.ERROR)
 
 ENVIRONMENT = os.getenv("ENVIRONMENT", "acceptance")
