@@ -60,6 +60,7 @@ INSERT INTO afvalcontainers_container (
     placing_date,
     active,
     waste_type,
+    waste_name,
     container_type_id
 )
 SELECT
@@ -73,6 +74,7 @@ SELECT
     CAST(data->>'placing_date' as timestamp) as placing_date,
     CAST(data->>'active' as bool) as active,
     CAST(data->>'waste_type' as int) as waste_type,
+    data->>'waste_name' as waste_name,
     CAST(data->>'container_type' as int) as waste_type
     FROM bammens_container_raw;
 """  # noqa
@@ -83,6 +85,44 @@ INSERT INTO afvalcontainers_containertype
 SELECT id, data->>'name', CAST("data"->>'volume' as INT)
 FROM bammens_containertype_raw
 """
+
+CREATE_CONTAINER_VIEW = """
+CREATE OR REPLACE VIEW container_locations AS
+SELECT
+    c.id,
+    c.id_number,
+    c.serial_number,
+    c.active,
+    c.operational_date,
+    c.placing_date,
+    c.owner,
+    c.waste_type,
+    c.waste_name,
+    c.container_type_id,
+    w.stadsdeel,
+    w.buurt_code,
+    w.geometrie
+FROM afvalcontainers_container c, afvalcontainers_well w
+WHERE c.well_id = w.id
+"""
+
+
+WASTE_DESCRIPTIONS = {
+    1:  "Rest",
+    2:  "Glas",
+    3:  "Glas",
+    6:  "Papier",
+    5:  "Wat is dit?",
+    7:  "Textiel",
+    9:  "Wormen",
+    14: "We weten het niet",
+    17: "geen idee",
+    20: "Glas",
+    25: "Plastic",
+    31: "Blipvert",
+    -1: "Unkown",
+    None: "Unknown",
+}
 
 
 def update_types():
@@ -106,6 +146,12 @@ def update_wells():
     insert = INSERT_WELLS
     # session.execute("TRUNCATE TABLE afvalcontainers_well")
     session.execute(insert)
+    session.commit()
+
+
+def create_container_view():
+    create_view = CREATE_CONTAINER_VIEW
+    session.execute(create_view)
     session.commit()
 
 
@@ -163,6 +209,35 @@ def cleanup_dates(endpoint):
     )
     conn.execute(upd_stmt, cleaned)
 
+
+def add_waste_name_to_data(data):
+    """Try to determine what kind of waste goes into container
+    """
+    waste_name = WASTE_DESCRIPTIONS[data.get('waste_type', -1)]
+    data['waste_name'] = waste_name
+    return data
+
+
+def add_waste_name():
+    conn = engine.connect()
+    dbitem = models.ENDPOINT_MODEL['containers']
+
+    s = select([dbitem])
+    results = conn.execute(s)
+    cleaned = []
+    for row in results:
+        data = add_waste_name_to_data(row[2])
+        new = {'id': row[0], 'scraped_at': row[1], 'data': data}
+        cleaned.append(new)
+
+    upd_stmt = (
+        dbitem.__table__.update()
+        .where(dbitem.id == bindparam('id'))
+        .values(id=bindparam('id'))
+    )
+    conn.execute(upd_stmt, cleaned)
+
+
 LINK_SQL = """
 UPDATE afvalcontainers_container bc
 SET well_id = wlist.id
@@ -172,6 +247,7 @@ FROM (
         FROM afvalcontainers_well w) as  ww) as wlist
 WHERE wlist.cid = bc.id
 """
+
 
 def link_containers_to_wells():
     sql = LINK_SQL
@@ -187,6 +263,12 @@ OPTIONS = {
 
 
 def main():
+    if args.geoview:
+        create_container_view()
+        return
+    if args.wastename:
+        add_waste_name()
+        return
     if args.linkcontainers:
         link_containers_to_wells()
         return
@@ -214,15 +296,25 @@ if __name__ == "__main__":
     inputparser.add_argument(
         "endpoint",
         type=str,
-        default="qa_realtime",
+        default="",
         choices=list(OPTIONS.keys()),
         help="Provide Endpoint to scrape",
         nargs=1,
     )
 
     inputparser.add_argument(
+        "--geoview", action="store_true",
+        default=False, help="Geoview containers"
+    )
+
+    inputparser.add_argument(
         "--cleanup", action="store_true",
         default=False, help="Cleanup"
+    )
+
+    inputparser.add_argument(
+        "--wastename", action="store_true",
+        default=False, help="Add waste name to containers"
     )
 
     inputparser.add_argument(

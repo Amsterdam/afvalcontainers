@@ -34,6 +34,7 @@ class Container(models.Model):
     )
     active = models.NullBooleanField(null=True)
     waste_type = models.IntegerField(null=True)
+    waste_name = models.CharField(max_length=20)
 
     container_type = models.ForeignKey(
         "ContainerType", related_name="containers", on_delete=models.DO_NOTHING
