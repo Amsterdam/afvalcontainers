@@ -45,9 +45,9 @@ dc run --rm importer python slurp_api.py wells
 dc run --rm importer python copy_to_django.py wells --cleanup
 dc run --rm importer python copy_to_django.py containers --wastename
 dc run --rm importer python copy_to_django.py containers --cleanup
-dc run --rm importer python copy_to_django.py containers
-dc run --rm importer python copy_to_django.py wells
 dc run --rm importer python copy_to_django.py container_types
+dc run --rm importer python copy_to_django.py wells
+dc run --rm importer python copy_to_django.py containers
 # Link containers to wells
 dc run --rm importer python copy_to_django containers --linkcontainers
 dc run --rm importer python copy_to_django containers --geoview
