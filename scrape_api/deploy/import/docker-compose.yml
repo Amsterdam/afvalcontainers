@@ -18,7 +18,7 @@ services:
       DATABASE_USER: afvalcontainers
 
   importer:
-    image: build.datapunt.amsterdam.nl:5000/datapunt/afvalcontainers_scrapeapi:${ENVIRONMENT}
+    image: build.datapunt.amsterdam.nl:5000/datapunt/afvalcontainers_importer:${ENVIRONMENT}
     links:
       - database
     environment:
