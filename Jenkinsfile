@@ -36,7 +36,7 @@ node {
                 importer.push()
                 importer.push("acceptance")
 
-            def api = docker.build("build.datapunt.amsterdam.nl:5000/afvalcontainers:${env.BUILD_NUMBER}", ".")
+            def api = docker.build("build.datapunt.amsterdam.nl:5000/afvalcontainers:${env.BUILD_NUMBER}", "api")
                 api.push()
                 api.push("acceptance")
         }
