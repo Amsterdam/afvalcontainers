@@ -132,9 +132,6 @@ def update_types():
     session.commit()
 
 
-# session.commit()
-
-
 def update_containers():
     sql = INSERT_CONTAINERS
     # session.execute("TRUNCATE TABLE afvalcontainers_container;")
@@ -248,10 +245,37 @@ FROM (
 WHERE wlist.cid = bc.id
 """
 
+UPDATE_BUURT = """
+UPDATE {target_table} tt
+SET buurt_code = b.vollcode
+FROM (SELECT * from buurt_simple) as b
+WHERE ST_DWithin(b.wkb_geometry, tt.geometrie, 0)
+"""
+
+UPDATE_STADSDEEL = """
+UPDATE {target_table} tt
+SET stadsdeel = s.code
+FROM (SELECT * from stadsdeel) as s
+WHERE ST_DWithin(s.wkb_geometry, tt.geometrie, 0)
+"""
+
 
 def link_containers_to_wells():
     sql = LINK_SQL
     session.execute(sql)
+    session.commit()
+
+
+def link_gebieden():
+    sql = UPDATE_BUURT
+    target_table = 'afvalcontainers_well'
+    u_sql = UPDATE_STADSDEEL.format(target_table=target_table)
+    session.execute(u_sql)
+    session.commit()
+
+    target_table = 'afvalcontainers_well'
+    u_sql = UPDATE_BUURT.format(target_table=target_table)
+    session.execute(u_sql)
     session.commit()
 
 
@@ -292,6 +316,9 @@ def validate_counts():
 
 
 def main():
+    if args.link_gebieden:
+        link_gebieden()
+        return
     if args.validate:
         validate_counts()
         return
@@ -335,6 +362,11 @@ if __name__ == "__main__":
     )
 
     inputparser.add_argument(
+        "--link_gebieden", action="store_true",
+        default=False, help="Voeg stadsdeel / buurt to aan datasets"
+    )
+
+    inputparser.add_argument(
         "--validate", action="store_true",
         default=False, help="Validate counts to check import was OK"
     )
@@ -365,3 +397,5 @@ if __name__ == "__main__":
     session = models.set_session(engine)
 
     main()
+
+    session.close()
