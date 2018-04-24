@@ -5,6 +5,7 @@
 
 from datapunt_api.rest import DisplayField
 from datapunt_api.rest import HALSerializer
+from datapunt_api.rest import RelatedSummaryField
 from afvalcontainers.models import Container
 from afvalcontainers.models import Well
 from afvalcontainers.models import ContainerType
@@ -33,6 +34,8 @@ class ContainerSerializer(HALSerializer):
 
 class WellSerializer(HALSerializer):
     _display = DisplayField()
+
+    containers = RelatedSummaryField()
 
     class Meta(object):
         model = Well

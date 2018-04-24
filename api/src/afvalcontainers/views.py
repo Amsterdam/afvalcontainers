@@ -1,8 +1,12 @@
 from django_filters.rest_framework import FilterSet
 from django_filters.rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.serializers import ValidationError
+from django.contrib.gis.geos import Polygon
+from django.contrib.gis.measure import Distance
 
 from datapunt_api.rest import DatapuntViewSet
+from datapunt_api import bbox
 
 from afvalcontainers.models import Container
 from afvalcontainers.models import Well
@@ -14,6 +18,10 @@ from afvalcontainers.serializers import TypeSerializer
 
 class ContainerFilter(FilterSet):
     id = filters.CharFilter()
+    in_bbox = filters.CharFilter(method='in_bbox_filter', label='bbox')
+    no_well = filters.BooleanFilter(method='no_well_filter', label='no_well')
+    location = filters.CharFilter(
+            method="locatie_filter", label='x,y,r')
 
     class Meta(object):
         model = Container
@@ -26,30 +34,56 @@ class ContainerFilter(FilterSet):
             "placing_date",
             "operational_date",
             "warranty_date",
-            # 'buurtcode',
-            # 'stadsdeel',
-            # 'straatnaam',
-            # 'soort',
             "well__buurt_code",
             "well__stadsdeel",
             "well",
+            "no_well",
             "container_type",
+            "in_bbox",
+            "location",
         )
 
+    def in_bbox_filter(self, qs, name, value):
+        bbox_values, err = bbox.valid_bbox(value)
+        lat1, lon1, lat2, lon2 = bbox_values
+        poly_bbox = Polygon.from_bbox((lon1, lat1, lon2, lat2))
 
-class ContainerList(DatapuntViewSet):
+        if err:
+            raise ValidationError(f"bbox invalid {err}:{bbox_values}")
+        return qs.filter(well__geometrie__bboverlaps=(poly_bbox))
+
+    def no_well_filter(self, qs, name, value):
+        return qs.filter(well=None)
+
+    def locatie_filter(self, qs, name, value):
+        point, radius = bbox.parse_xyr(value)
+        return qs.filter(
+            well__geometrie__dwithin=(point, radius))
+
+
+class ContainerView(DatapuntViewSet):
     """View of Containers.
     """
-    queryset = Container.objects.all().order_by("id")
+    queryset = (
+        Container.objects.all()
+        .order_by("id")
+        .select_related('well')
+    )
     serializer_detail_class = ContainerSerializer
     serializer_class = ContainerSerializer
+    bbox_filter_field = 'well__geometrie'
     filter_backends = (DjangoFilterBackend,)
     filter_class = ContainerFilter
-    queryset_detail = (Container.objects.all())
 
 
 class WellFilter(FilterSet):
     id = filters.CharFilter()
+    in_bbox = filters.CharFilter(method='in_bbox_filter', label='bbox')
+    no_container = filters.BooleanFilter(
+        method='no_container_filter', label='no_container')
+
+    location = filters.CharFilter(
+        method="locatie_filter", label='x,y,r')
 
     class Meta(object):
         model = Well
@@ -63,25 +97,46 @@ class WellFilter(FilterSet):
             "operational_date",
             "warranty_date",
             "containers",
+            "in_bbox",
+            "location",
+            "no_container",
         )
 
+    def locatie_filter(self, qs, name, value):
+        point, radius = bbox.parse_xyr(value)
+        return qs.filter(geometrie__dwithin=(point, radius))
 
-class WellList(DatapuntViewSet):
+    def in_bbox_filter(self, qs, name, value):
+        bbox_values, err = bbox.valid_bbox(value)
+        lat1, lon1, lat2, lon2 = bbox_values
+        poly_bbox = Polygon.from_bbox((lon1, lat1, lon2, lat2))
+
+        if err:
+            raise ValidationError(f"bbox invalid {err}:{bbox_values}")
+        return qs.filter(geometrie__bboverlaps=(poly_bbox))
+
+    def no_container_filter(self, qs, name, value):
+        return qs.filter(containers=None)
+
+
+class WellView(DatapuntViewSet):
     """View of Wells.
     """
-    queryset = Well.objects.all().order_by("id")
+    queryset = (
+        Well.objects.all()
+        .order_by("id")
+        .prefetch_related('containers')
+    )
     serializer_detail_class = WellSerializer
     serializer_class = WellSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_class = WellFilter
-    queryset_detail = (Well.objects.all())
 
 
-class TypeList(DatapuntViewSet):
+class TypeView(DatapuntViewSet):
     """View of Types.
     """
     queryset = ContainerType.objects.all().order_by("id")
     serializer_detail_class = TypeSerializer
     serializer_class = TypeSerializer
     filter_backends = (DjangoFilterBackend,)
-    queryset_detail = (ContainerType.objects.all())
