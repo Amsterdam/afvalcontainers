@@ -52,6 +52,8 @@ dc run --rm importer python copy_to_django.py containers
 dc run --rm importer python copy_to_django.py containers --linkcontainers
 dc run --rm importer python copy_to_django.py containers --geoview
 
+# validate import counts
+dc run --rm importer python copy_to_django.py containers --validate
 
 echo "Running backups"
 dc exec -T database backup-db.sh afvalcontainers

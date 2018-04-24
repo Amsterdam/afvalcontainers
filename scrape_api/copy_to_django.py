@@ -261,8 +261,40 @@ OPTIONS = {
     "wells": update_wells,
 }
 
+TABLE_COUNTS = [
+    ('afvalcontainers_well', 12000),
+    ('afvalcontainers_container', 12000),
+    ('afvalcontainers_containertype', 200),
+    ('container_locations', 12000),
+]
+
+
+def validate_counts():
+    """
+    """
+    failed = False
+
+    for tablename, target_count in TABLE_COUNTS:
+        sql = f"select count(*) from {tablename}"
+        data = session.execute(sql).fetchall()
+
+        table_count = data[0][0]
+        if table_count < target_count:
+            failed = True
+            log.error('\n\n\n FAILED Count %s %d is not > %d \n\n',
+                      tablename, table_count, target_count)
+        else:
+            log.info('Count OK %s %d > %d',
+                     tablename, table_count, target_count)
+
+    if failed:
+        raise ValueError('Table counts not at target!')
+
 
 def main():
+    if args.validate:
+        validate_counts()
+        return
     if args.geoview:
         create_container_view()
         return
@@ -300,6 +332,11 @@ if __name__ == "__main__":
         choices=list(OPTIONS.keys()),
         help="Provide Endpoint to scrape",
         nargs=1,
+    )
+
+    inputparser.add_argument(
+        "--validate", action="store_true",
+        default=False, help="Validate counts to check import was OK"
     )
 
     inputparser.add_argument(
