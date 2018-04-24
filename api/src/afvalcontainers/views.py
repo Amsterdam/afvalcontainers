@@ -84,5 +84,4 @@ class TypeList(DatapuntViewSet):
     serializer_detail_class = TypeSerializer
     serializer_class = TypeSerializer
     filter_backends = (DjangoFilterBackend,)
-    # filter_class = ContainerFilter
     queryset_detail = (ContainerType.objects.all())

@@ -27,7 +27,7 @@ class ContainerSerializer(HALSerializer):
             "warranty_date",
             "operational_date",
             "placing_date",
-            # "wells",
+            "well",
         ]
 
 

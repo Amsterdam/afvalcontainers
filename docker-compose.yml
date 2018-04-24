@@ -39,7 +39,7 @@ services:
       - UWSGI_HTTP=0.0.0.0:8001
       - UWSGI_MASTER=1
       - UWSGI_STATIC_INDEX=index.html
-      - UWSGI_STATIC_MAP=/=/static
+      - UWSGI_STATIC_MAP=/afval/static=/static
       - UWSGI_CALLABLE=application
       - UWSGI_VACUUM=1
       - UWSGI_STATIC_EXPIRES=/* 3600

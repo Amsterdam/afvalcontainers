@@ -51,6 +51,11 @@ DATABASE_OPTIONS = {
 
 DATABASES = {"default": DATABASE_OPTIONS[get_database_key()]}
 
+STATIC_URL = '/afval/static/'
+
+STATIC_ROOT = '/static/'
+
+
 HEALTH_MODEL = "afvalcontainers.Container"
 
 # The following JWKS data was obtained in the authz project :  jwkgen -create -alg ES256   # noqa
