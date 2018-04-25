@@ -14,9 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url, include
-from rest_framework import response, schemas
-from rest_framework.decorators import api_view, renderer_classes
-from rest_framework.renderers import CoreJSONRenderer
+
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
 from rest_framework import routers
 
@@ -41,14 +41,25 @@ containers.register(r"containertypes", api_views.TypeView, base_name="containert
 
 urls = containers.urls
 
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Afval Container API",
+      default_version='v1',
+      description="Afvalcontainers en Wells in Amsterdam",
+      terms_of_service="https://data.amsterdam.nl/",
+      contact=openapi.Contact(email="datapunt@amsterdam.nl"),
+      license=openapi.License(name="CC0 1.0 Universal"),
+   ),
+   validators=['flex', 'ssv'],
+   public=True,
+   # permission_classes=(permissions.AllowAny,),
+)
+
+
 urlpatterns = [
+    url(r'^afval/swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=None), name='schema-json'),
+    url(r'^afval/swagger/$', schema_view.with_ui('swagger', cache_timeout=None), name='schema-swagger-ui'),
+    url(r'^afval/redoc/$', schema_view.with_ui('redoc', cache_timeout=None), name='schema-redoc'),
     url(r"^afval/", include(urls)),
     url(r"^status/", include("afvalcontainers.health.urls")),
 ]
-
-
-@api_view()
-@renderer_classes([CoreJSONRenderer])
-def afval_schema_view(request):
-    generator = schemas.SchemaGenerator(title="Geo Endpoints", patterns=urlpatterns)
-    return response.Response(generator.get_schema(request=request))

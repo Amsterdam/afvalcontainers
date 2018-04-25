@@ -89,6 +89,7 @@ DUMP_DIR = "mks-dump"
 
 TESTING = len(sys.argv) > 1 and sys.argv[1] == "test"
 
+
 REST_FRAMEWORK = dict(
     PAGE_SIZE=100,
     MAX_PAGINATE_BY=100,

@@ -13,7 +13,7 @@ from afvalcontainers.settings_databases import (
 
 # Application definition
 
-INSTALLED_APPS += ["afvalcontainers"]
+INSTALLED_APPS += ["drf_yasg", "afvalcontainers"]
 
 ROOT_URLCONF = "afvalcontainers.urls"
 
