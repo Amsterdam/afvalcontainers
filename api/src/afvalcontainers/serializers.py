@@ -1,7 +1,7 @@
 # import json
 # import logging
 
-# from rest_framework import serializers
+from rest_framework import serializers
 
 from datapunt_api.rest import DisplayField
 from datapunt_api.rest import HALSerializer
@@ -11,8 +11,17 @@ from afvalcontainers.models import Well
 from afvalcontainers.models import ContainerType
 
 
+class ContainerTypeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ContainerType
+        fields = '__all__'
+
+
 class ContainerSerializer(HALSerializer):
     _display = DisplayField()
+
+    container_type = ContainerTypeSerializer()
 
     class Meta(object):
         model = Container

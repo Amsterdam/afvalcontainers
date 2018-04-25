@@ -106,6 +106,7 @@ class ContainerView(DatapuntViewSet):
         Container.objects.all()
         .order_by("id")
         .select_related('well')
+        .select_related('container_type')
     )
     serializer_detail_class = ContainerSerializer
     serializer_class = ContainerSerializer
