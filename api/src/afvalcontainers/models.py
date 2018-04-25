@@ -119,3 +119,14 @@ class ContainerType(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.volume}M3"
+
+
+class Buurten(models.Model):
+    data = JSONField(null=True)
+    ogc_fid = models.IntegerField(primary_key=True)
+    id = models.CharField(max_length=14)
+    vollcode = models.CharField(max_length=4)
+    naam = models.CharField(max_length=40)
+
+    class Meta:
+        db_table = 'buurt_simple'
