@@ -16,12 +16,29 @@ from afvalcontainers.serializers import WellSerializer
 from afvalcontainers.serializers import TypeSerializer
 
 
+WASTE_DESCRIPTIONS = (
+    ("Rest"),
+    ("Glas"),
+    ("Glas"),
+    ("Papier"),
+    ("Textiel"),
+    ("Wormen"),
+    ("Glas"),
+    ("Plastic"),
+    ("Blipvert"),
+)
+
+WASTE_CHOICES = [(w, w) for w in WASTE_DESCRIPTIONS]
+
+
 class ContainerFilter(FilterSet):
     id = filters.CharFilter()
     in_bbox = filters.CharFilter(method='in_bbox_filter', label='bbox')
     no_well = filters.BooleanFilter(method='no_well_filter', label='no_well')
     location = filters.CharFilter(
             method="locatie_filter", label='x,y,r')
+
+    waste_name = filters.ChoiceFilter(choices=WASTE_CHOICES, label='waste name')
 
     class Meta(object):
         model = Container
@@ -31,6 +48,7 @@ class ContainerFilter(FilterSet):
             "serial_number",
             "active",
             "waste_type",
+            "waste_name",
             "placing_date",
             "operational_date",
             "warranty_date",

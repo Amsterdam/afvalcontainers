@@ -106,7 +106,6 @@ FROM afvalcontainers_container c, afvalcontainers_well w
 WHERE c.well_id = w.id
 """
 
-
 WASTE_DESCRIPTIONS = {
     1:  "Rest",
     2:  "Glas",
