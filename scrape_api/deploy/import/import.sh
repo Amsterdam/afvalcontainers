@@ -38,7 +38,7 @@ dc run --rm api python manage.py migrate
 dc run --rm importer python models.py
 
 # importeer buurt informatie.
-dc run --rm python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/gebieden buurt_simple,stadsdeel 4326
+dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/gebieden buurt_simple,stadsdeel 4326
 
 # Importeer bammens api endpoints
 dc run --rm importer python slurp_api.py container_types
