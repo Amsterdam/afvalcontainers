@@ -44,7 +44,7 @@ class WellFactory(factory.DjangoModelFactory):
     containers_bron = {}
     buurt_code = fuzzy.FuzzyText(length=4)
     stadsdeel = fuzzy.FuzzyText(length=1)
-    address = fuzzy.FuzzyText(length=40)
+    address = {}
     geometrie = get_puntje()
 
 
