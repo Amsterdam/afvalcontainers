@@ -64,7 +64,7 @@ set `BAMMENS_PASSWORD` you can find it in rattic/password management
 # now link the containers to the wells
 
 ::
-        python copy_to_django.py wells --linkcontainers
+        python copy_to_django.py wells --link_containers
 
 Tests
 ======

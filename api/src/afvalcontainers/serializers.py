@@ -11,36 +11,6 @@ from afvalcontainers.models import Well
 from afvalcontainers.models import ContainerType
 
 
-class ContainerTypeSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = ContainerType
-        fields = '__all__'
-
-
-class ContainerSerializer(HALSerializer):
-    _display = DisplayField()
-
-    container_type = ContainerTypeSerializer()
-
-    class Meta(object):
-        model = Container
-        fields = [
-            "_links",
-            "_display",
-            "id",
-            "id_number",
-            "owner",
-            "active",
-            "waste_type",
-            "container_type",
-            "warranty_date",
-            "operational_date",
-            "placing_date",
-            "well",
-        ]
-
-
 class WellSerializer(HALSerializer):
     _display = DisplayField()
 
@@ -55,11 +25,46 @@ class WellSerializer(HALSerializer):
             "id_number",
             "serial_number",
             "buurt_code",
+            "stadsdeel",
             "geometrie",
             "created_at",
             "warranty_date",
             "operational_date",
-            "containers"
+            "containers",
+            "address",
+        ]
+
+
+class ContainerTypeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ContainerType
+        fields = '__all__'
+
+
+class ContainerSerializer(HALSerializer):
+    _display = DisplayField()
+
+    container_type = ContainerTypeSerializer()
+
+    # well = WellSerializer()
+
+    class Meta(object):
+        model = Container
+        fields = [
+            "_links",
+            "_display",
+            "id",
+            "id_number",
+            "owner",
+            "active",
+            "waste_type",
+            "waste_name",
+            "container_type",
+            "warranty_date",
+            "operational_date",
+            "placing_date",
+            "well",
         ]
 
 

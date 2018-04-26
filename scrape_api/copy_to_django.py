@@ -101,7 +101,8 @@ SELECT
     c.container_type_id,
     w.stadsdeel,
     w.buurt_code,
-    w.geometrie
+    w.geometrie,
+    CAST(w.address->>'summary' as text)
 FROM afvalcontainers_container c, afvalcontainers_well w
 WHERE c.well_id = w.id
 """
@@ -327,7 +328,7 @@ def main():
     if args.wastename:
         add_waste_name()
         return
-    if args.linkcontainers:
+    if args.link_containers:
         link_containers_to_wells()
         return
     if args.cleanup:
@@ -386,7 +387,7 @@ if __name__ == "__main__":
     )
 
     inputparser.add_argument(
-        "--linkcontainers", action="store_true",
+        "--link_containers", action="store_true",
         default=False, help="Cleanup"
     )
 
