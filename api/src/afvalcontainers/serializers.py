@@ -47,6 +47,7 @@ class ContainerSerializer(HALSerializer):
 
     container_type = ContainerTypeSerializer()
 
+    address = serializers.SerializerMethodField()
     # well = WellSerializer()
 
     class Meta(object):
@@ -65,12 +66,26 @@ class ContainerSerializer(HALSerializer):
             "operational_date",
             "placing_date",
             "well",
+            "address",
         ]
+
+    def get_address(self, obj):
+        if obj.well:
+            return obj.well.address.get('summary')
 
 
 class TypeSerializer(HALSerializer):
     _display = DisplayField()
 
+    containers = RelatedSummaryField()
+
     class Meta(object):
         model = ContainerType
-        fields = ["_links", "_display", "id", "name", "volume"]
+        fields = [
+            "_links",
+            "_display",
+            "id",
+            "name",
+            "volume",
+            "containers"
+        ]

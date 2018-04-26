@@ -77,6 +77,7 @@ class ContainerFilter(FilterSet):
             "well",
             "no_well",
             "container_type",
+            "container_type__volume",
             "in_bbox",
             "location",
         )
@@ -179,7 +180,11 @@ class WellView(DatapuntViewSet):
 class TypeView(DatapuntViewSet):
     """View of Types.
     """
-    queryset = ContainerType.objects.all().order_by("id")
+    queryset = (
+        ContainerType.objects.all()
+        .order_by("id").prefetch_related("containers")
+    )
     serializer_detail_class = TypeSerializer
     serializer_class = TypeSerializer
     filter_backends = (DjangoFilterBackend,)
+    filter_fields = ['volume', 'name']
