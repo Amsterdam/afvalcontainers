@@ -119,6 +119,7 @@ WASTE_DESCRIPTIONS = {
     17: "geen idee",
     20: "Glas",
     25: "Plastic",
+    26: "Iets nieuws",
     31: "Blipvert",
     -1: "Unkown",
     None: "Unknown",
