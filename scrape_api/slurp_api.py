@@ -245,9 +245,12 @@ async def fill_url_queue(session, endpoint):
     url = url.format(API_URL)
     response = await fetch(url, session)
     json_body = await response.json()
-    total = len(json_body[endpoint])
+    itemkeys = list(json_body.keys())
+    assert len(itemkeys) == 1
+    itemname = itemkeys[0]
+    total = len(json_body[itemname])
     log.info("%s: size %s", endpoint, total)
-    all_items = list(json_body[endpoint])
+    all_items = list(json_body[itemname])
     random.shuffle(all_items)
     for i in all_items:
         await URL_QUEUE.put(i)
