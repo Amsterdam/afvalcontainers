@@ -20,7 +20,7 @@ class BrowseDatasetsTestCase(APITestCase):
             well=self.w
         )
 
-    def valid_html_response(self, url, response):
+    def valid_response(self, url, response, content_type):
         """
         Helper method to check common status/json
         """
@@ -30,7 +30,7 @@ class BrowseDatasetsTestCase(APITestCase):
         )
 
         self.assertEqual(
-            "text/html; charset=utf-8",
+            f"{content_type}",
             response["Content-Type"],
             "Wrong Content-Type for {}".format(url),
         )
@@ -49,8 +49,11 @@ class BrowseDatasetsTestCase(APITestCase):
             response = self.client.get("/{}/".format(url))
 
             self.assertEqual(
-                response.status_code, 200, "Wrong response code for {}".format(url)
+                response.status_code, 200,
+                "Wrong response code for {}".format(url)
             )
+            # default should be json
+            self.valid_response(url, response, 'application/json')
 
             self.assertEqual(
                 response["Content-Type"],
@@ -66,7 +69,28 @@ class BrowseDatasetsTestCase(APITestCase):
         for url in self.datasets:
             response = self.client.get("/{}/?format=api".format(url))
 
-            self.valid_html_response(url, response)
+            self.valid_response(url, response, 'text/html; charset=utf-8')
+
+            self.assertIn(
+                "count", response.data, "No count attribute in {}".format(url)
+            )
+
+    def test_lists_csv(self):
+        for url in self.datasets:
+            response = self.client.get("/{}/?format=csv".format(url))
+
+            self.valid_response(url, response, 'text/csv; charset=utf-8')
+
+            self.assertIn(
+                "count", response.data, "No count attribute in {}".format(url)
+            )
+
+    def test_lists_xml(self):
+        for url in self.datasets:
+            response = self.client.get("/{}/?format=xml".format(url))
+
+            self.valid_response(
+                url, response, 'application/xml; charset=utf-8')
 
             self.assertIn(
                 "count", response.data, "No count attribute in {}".format(url)

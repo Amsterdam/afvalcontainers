@@ -102,7 +102,10 @@ REST_FRAMEWORK = dict(
     DEFAULT_PAGINATION_CLASS=("datapunt_api.pagination.HALPagination",),
     DEFAULT_RENDERER_CLASSES=(
         "rest_framework.renderers.JSONRenderer",
+        "datapunt_api.renderers.PaginatedCSVRenderer",
         "rest_framework.renderers.BrowsableAPIRenderer",
+        # must be lowest!
+        "rest_framework_xml.renderers.XMLRenderer",
     ),
     DEFAULT_FILTER_BACKENDS=(
         # 'rest_framework.filters.SearchFilter',
@@ -132,7 +135,7 @@ LOGGING = {
     },
     "root": {"level": "DEBUG", "handlers": ["console"]},
     "loggers": {
-        "django.db": {"handlers": ["console"], "level": "ERROR"},
+        "django.db": {"handlers": ["console"], "level": "DEBUG"},
         "django": {"handlers": ["console"], "level": "ERROR"},
         # Debug all batch jobs
         "doc": {"handlers": ["console"], "level": "INFO", "propagate": False},

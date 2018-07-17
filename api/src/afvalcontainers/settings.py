@@ -2,6 +2,7 @@ import os
 
 from afvalcontainers.settings_common import *  # noqa F403
 from afvalcontainers.settings_common import INSTALLED_APPS
+from afvalcontainers.settings_common import REST_FRAMEWORK
 
 from afvalcontainers.settings_databases import (
     LocationKey,

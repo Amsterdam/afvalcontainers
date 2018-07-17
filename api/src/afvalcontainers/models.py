@@ -99,6 +99,8 @@ class Well(models.Model):
     warranty_date = models.DateTimeField(null=True)
     operational_date = models.DateTimeField(null=True)
 
+    extra_attributes = JSONField(default={})
+
 
 """
 {

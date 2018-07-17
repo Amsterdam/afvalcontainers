@@ -128,6 +128,15 @@ class WellFilter(FilterSet):
     stadsdeel = filters.ChoiceFilter(choices=STADSDELEN)
     buurt_code = filters.ChoiceFilter(choices=buurt_choices)
 
+    no_bgt = filters.BooleanFilter(
+        method='no_bgt_filter', label='no_bgt_afvalbag')
+
+    in_weg = filters.BooleanFilter(
+        method='in_weg_filter', label='in_weg')
+
+    in_pand = filters.BooleanFilter(
+        method='in_pand_filter', label='in_pand')
+
     class Meta(object):
         model = Well
         fields = (
@@ -161,6 +170,15 @@ class WellFilter(FilterSet):
 
     def no_container_filter(self, qs, name, value):
         return qs.filter(containers=None)
+
+    def in_weg_filter(self, qs, name, value):
+        return qs.filter(extra_attributes__in_wegdeel=value)
+
+    def in_pand_filter(self, qs, name, value):
+        return qs.filter(extra_attributes__in_pand=value)
+
+    def no_bgt_filter(self, qs, name, value):
+        return qs.filter(extra_attributes__missing_bgt_afval=value)
 
 
 class WellView(DatapuntViewSet):

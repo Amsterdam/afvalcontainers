@@ -8,6 +8,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import Sequence
 from sqlalchemy import create_engine
+from geoalchemy2 import Geometry
 
 # from aiopg.sa import create_engine as aiopg_engine
 from sqlalchemy.engine.url import URL
@@ -94,6 +95,18 @@ class Well(Base):
     id = Column(Integer, Sequence("grl_seq"), primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
     data = Column(JSONB)
+
+
+class WellBGT(Base):
+    """
+    Well with nearby BGT objects
+    """
+    __tablename__ = f"well_bgt"
+    id = Column(Integer, Sequence("grl_seq"), primary_key=True)
+    well_id = Column(Integer, primary_key=True)
+    geometrie = Column(Geometry('POINT', srid=4326))
+    bgt = Column(Geometry('MULTIPOLYGON', srid=4326))
+    cluster = Column(Geometry('POINT', srid=4326))
 
 
 class ContainerType(Base):
