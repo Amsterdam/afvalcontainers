@@ -28,10 +28,11 @@ from {source_table}
 
 BGT_DWITHIN = """
 SELECT
-    w.id, w.geometrie, b.identificatie_lokaalid, b.geometrie,
-    ST_DISTANCE(w.geometrie, b.geometrie)
+    w.id, w.geometrie, b.identificatie_lokaalid, ST_AsText(b.geometrie),
+    ST_DISTANCE(w.geometrie, b.geometrie),
+    GeometryType(b.geometrie)
 FROM afvalcontainers_well w
-LEFT JOIN {bgt_table} b ON (st_dwithin(b.geometrie, w.geometrie, 0.00004))
+LEFT JOIN {bgt_table} b ON (st_dwithin(b.geometrie, w.geometrie, {distance}))
 WHERE b.ogc_fid IS NOT null
 """
 
@@ -46,26 +47,28 @@ WHERE b.ogc_fid IS NOT null
 # );
 # """
 
+FOUR_METER = '0.000089'
+ON_TOP = '0.000009'
+
 BGT_TABLES = [
-    ('bgt."BGTPLUS_BAK_afval_apart_plaats"', 'MultiPoint'),
-    ('bgt."BGT_WGL_voetpad"', 'MultiPolygon'),
-    ('bgt."BGT_WGL_voetgangersgebied"', 'MultiPolygon'),
-    ('bgt."BGT_WGL_woonerf"', 'MultiPolygon'),
-    ('bgt."BGT_OTRN_open_verharding"', 'MultiPolygon'),
-    ('bgt."BGT_OTRN_transitie"', 'MultiPolygon'),
-    ('bgt."BGT_OWGL_berm"', 'MultiPolygon'),
-    ('bgt."BGT_WGL_fietspad"', 'MultiPolygon'),
-    ('bgt."BGT_WGL_parkeervlak"', 'MultiPolygon'),
-    ('bgt."BGT_WGL_rijbaan_lokale_weg"', 'MultiPolygon'),
-    ('bgt."BGT_OTRN_erf"', 'MultiPolygon'),
-    ('bgt."BGT_BTRN_groenvoorziening"', 'MultiPolygon'),
-    ('bgt."BGT_OTRN_onverhard"', 'MultiPolygon'),
-    ('bgt."BGT_OTRN_onverhard"', 'MultiPolygon'),
+    ('bgt."BGTPLUS_BAK_afval_apart_plaats"', 'MultiPoint', ON_TOP),
+    ('bgt."BGT_WGL_voetpad"', 'MultiPolygon', ON_TOP),
+    ('bgt."BGT_WGL_voetgangersgebied"', 'MultiPolygon', FOUR_METER),
+    ('bgt."BGT_WGL_woonerf"', 'MultiPolygon', FOUR_METER),
+    ('bgt."BGT_OTRN_open_verharding"', 'MultiPolygon', FOUR_METER),
+    ('bgt."BGT_OTRN_transitie"', 'MultiPolygon', FOUR_METER),
+    ('bgt."BGT_OWGL_berm"', 'MultiPolygon', FOUR_METER),
+    ('bgt."BGT_WGL_fietspad"', 'MultiPolygon', FOUR_METER),
+    ('bgt."BGT_WGL_parkeervlak"', 'MultiPolygon', FOUR_METER),
+    ('bgt."BGT_WGL_rijbaan_lokale_weg"', 'MultiPolygon', FOUR_METER),
+    ('bgt."BGT_OTRN_erf"', 'MultiPolygon', FOUR_METER),
+    ('bgt."BGT_BTRN_groenvoorziening"', 'MultiPolygon', FOUR_METER),
+    ('bgt."BGT_OTRN_onverhard"', 'MultiPolygon', FOUR_METER),
 ]
 
 
 def convert_tables_4326():
-    for bgt_table, geo_type in BGT_TABLES:
+    for bgt_table, geo_type, _distance in BGT_TABLES:
         log.debug('Converting %s %s', bgt_table, geo_type)
         f_convert = TRANSFORM_4326.format(
             tablename=bgt_table,
@@ -77,6 +80,7 @@ def convert_tables_4326():
 
 WELL_POINT_MAP = {}
 WELL_BGT_MAP = {}
+
 BGT_WELL_MAP = {}
 BGT_GEOMETRY_MAP = {}
 
@@ -91,51 +95,77 @@ def map_results(results):
         well_point = row[1]
         bgt = row[2]
         bgt_geom = row[3]
+
+        # store bgt info with well
         bgts = WELL_BGT_MAP.setdefault(well_id, [])
         bgts.append((bgt, bgt_geom))
         bgts.sort()
+
         WELL_POINT_MAP[well_id] = well_point
 
+    log.debug('WELLS matched %d', len(WELL_BGT_MAP))
+
+
+def make_bgt_geom_map():
     for w_id, bgts in WELL_BGT_MAP.items():
-        bgt_key = "-".join([str(_id) for _id, _ in bgts])
-        bgt_well = BGT_WELL_MAP.setdefault(bgt_key, [])
-        bgt_well.append(well_id)
+        # bgt_key = "-".join([str(_id) for _id, _ in bgts])
+
+        # bgt_well = BGT_WELL_MAP.setdefault(bgt_key, [])
+        # bgt_well.append(w_id)
+
         bgt_geoms = []
         for bgt_id, geometrie in bgts:
             bgt_geoms.append(geometrie)
 
         BGT_GEOMETRY_MAP[w_id] = bgt_geoms
 
-    # import q
-    # q.d()
+    log.debug('BGTS matched %d', len(BGT_GEOMETRY_MAP))
 
 
 def create_well_bgt_geometry_table():
     """
     """
     conn = engine.connect()
-    dbitem = models.WellBGT
+    db_model = models.WellBGT
 
-    insert_items = []
+    bgt_items = []
+    bgt_bak_items = []
 
-    for key, row in WELL_BGT_MAP.items():
+    for key, bgts in WELL_BGT_MAP.items():
         point = WELL_POINT_MAP[key]
-        geometries = BGT_GEOMETRY_MAP[key]
-        for geom in geometries:
+        # geometries = BGT_GEOMETRY_MAP[key]
+
+        for bgt_id, geom in bgts:
+            bgt_geo = geom
             new = {
-                'well_id': key,
-                'geometrie': point,
-                'bgt': geom,
+                    'well_id': key,
+                    'geometrie': point,
             }
-            insert_items.append(new)
+
+            if geom.startswith('MULTIPOINT'):
+                new['bgt_bak'] = bgt_geo
+                bgt_bak_items.append(new)
+            else:
+                new['bgt'] = bgt_geo,
+                bgt_items.append(new)
 
     insert_stmt = (
-        dbitem.__table__.insert()
+        db_model.__table__.insert()
         .values(
-            bgt=func.ST_Multi(bindparam('bgt'))
+            bgt=func.ST_GeomFromText(bindparam('bgt'), 4326)
         )
     )
-    conn.execute(insert_stmt, insert_items)
+    conn.execute(insert_stmt, bgt_items)
+
+    insert_stmt = (
+        db_model.__table__.insert()
+        .values(
+            bgt_bak=func.ST_Dump(
+                func.ST_GeomFromText(bindparam('bgt_bak'), 4326)).geom
+        )
+    )
+
+    conn.execute(insert_stmt, bgt_bak_items)
 
 
 def collect_bgt_for_wells():
@@ -143,13 +173,15 @@ def collect_bgt_for_wells():
     For every well collect BGT items
     """
     log.info('Matching wells with BGT.')
-    all_results = []
-    for bgt_table, _geo_type in BGT_TABLES:
-        f_bgt_dwithin = BGT_DWITHIN.format(bgt_table=bgt_table)
-        results = session.execute(f_bgt_dwithin)
-        all_results.extend(results)
 
-    map_results(all_results)
+    for bgt_table, geo_type, distance in BGT_TABLES:
+        log.debug('Working on %s %s %s', bgt_table, geo_type, distance)
+        f_bgt_dwithin = BGT_DWITHIN.format(
+            bgt_table=bgt_table, distance=distance)
+        results = session.execute(f_bgt_dwithin)
+        map_results(results)
+
+    # make_bgt_geom_map()
     # session.commit()
     create_well_bgt_geometry_table()
 

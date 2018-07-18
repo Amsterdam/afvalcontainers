@@ -27,23 +27,6 @@ echo "Bringing up and waiting for database"
 dc up -d database
 dc run importer /app/deploy/docker-wait.sh
 
-# load BGT objects of everything on the ground.
-dc exec -T database update-table.sh basiskaart BGT_OWGL_verkeerseiland bgt afvalcontainers
-dc exec -T database update-table.sh basiskaart BGT_OWGL_berm bgt afvalcontainers
-dc exec -T database update-table.sh basiskaart BGT_OTRN_open_verharding bgt afvalcontainers
-dc exec -T database update-table.sh basiskaart BGT_OTRN_transitie bgt afvalcontainers
-dc exec -T database update-table.sh basiskaart BGT_WGL_fietspad bgt afvalcontainers
-dc exec -T database update-table.sh basiskaart BGT_WGL_voetgangersgebied bgt afvalcontainers
-dc exec -T database update-table.sh basiskaart BGT_WGL_voetpad bgt afvalcontainers
-
-dc exec -T database update-table.sh basiskaart BGT_WGL_parkeervlak bgt afvalcontainers
-dc exec -T database update-table.sh basiskaart BGT_WGL_rijbaan_lokale_weg bgt afvalcontainers
-dc exec -T database update-table.sh basiskaart BGT_WGL_rijbaan_regionale_weg bgt afvalcontainers
-
-dc exec -T database update-table.sh basiskaart BGT_BTRN_groenvoorziening bgt afvalcontainers
-dc exec -T database update-table.sh basiskaart BGT_OTRN_onverhard bgt afvalcontainers
-dc exec -T database update-table.sh basiskaart BGT_OTRN_erf bgt afvalcontainers
-
 echo "Importing data into database"
 
 dc run --rm api python manage.py migrate

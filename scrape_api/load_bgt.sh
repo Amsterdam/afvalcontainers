@@ -14,6 +14,8 @@ dc() {
 }
 
 # load BGT objects of everything on the ground.
+
+dc exec -T database update-table.sh basiskaart BGTPLUS_BAK_afval_apart_plaats bgt afvalcontainers spreeker
 dc exec -T database update-table.sh basiskaart BGT_OWGL_verkeerseiland bgt afvalcontainers spreeker
 dc exec -T database update-table.sh basiskaart BGT_OWGL_berm bgt afvalcontainers spreeker
 dc exec -T database update-table.sh basiskaart BGT_OTRN_open_verharding bgt afvalcontainers spreeker
