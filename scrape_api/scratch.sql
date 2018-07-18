@@ -95,3 +95,9 @@ and stadsdeel.code is not null
 ALTER TABLE bag_nummeraanduiding
  ALTER COLUMN _geom TYPE geometry('Geometry',4326)
   USING ST_Transform(_geom,4326);
+
+
+DROP table rest_voronoi;
+SELECT uuid_generate_v4(), (st_dump(st_VoronoiPolygons(st_collect(geometrie), 0.0018))).geom as geom into rest_voronoi from afvalcontainers_well w, afvalcontainers_container c
+WHERE c.well_id = w.id
+AND c.waste_name = 'Rest'
