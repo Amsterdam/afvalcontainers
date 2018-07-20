@@ -46,7 +46,7 @@ WHERE b.ogc_fid IS NOT null
 """
 
 CREATE_PAND_DISTANCE_TO_WELL = """
-DROP table pand_distance_to_well;
+DROP table IF EXISTS pand_distance_to_well;
 SELECT
     p.ogc_fid,
     p.wkb_geometry,
@@ -311,6 +311,9 @@ def create_clusters():
     session.execute(CREATE_BGT_CLUSTERS)
     session.commit()
     # match with current containers
+    with open('sqlcode/create_sites.sql') as sqltxt:
+        statements = sqltxt.read()
+        session.execute(statements)
 
     # create clusters of left containers
     # merge them
