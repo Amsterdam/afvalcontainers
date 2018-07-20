@@ -129,7 +129,7 @@ class WellFilter(FilterSet):
     buurt_code = filters.ChoiceFilter(choices=buurt_choices)
 
     no_bgt = filters.BooleanFilter(
-        method='no_bgt_filter', label='no_bgt_afvalbag')
+        method='no_bgt_filter', label='no_bgt_afvalbak')
 
     in_weg = filters.BooleanFilter(
         method='in_weg_filter', label='in_weg')

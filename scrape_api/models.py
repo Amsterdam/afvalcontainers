@@ -103,11 +103,12 @@ class WellBGT(Base):
     """
     __tablename__ = f"well_bgt"
     id = Column(Integer, Sequence("grl_seq"), primary_key=True)
-    well_id = Column(Integer, primary_key=True)
-    geometrie = Column(Geometry('POINT', srid=4326))
-    bgt = Column(Geometry('MULTIPOLYGON', srid=4326))
-    bgt_bak = Column(Geometry('POINT', srid=4326))
-    cluster = Column(Geometry('POINT', srid=4326))
+    well_id = Column(Integer, primary_key=True, index=True)
+    geometrie = Column(Geometry('POINT', srid=28992))
+    bgt = Column(Geometry('MULTIPOLYGON', srid=28992))
+    bgt_bak = Column(Geometry('POINT', srid=28992))
+    # cluster = Column(Geometry('POINT', srid=4326))
+    # cluster_rd = Column(Geometry('POINT', srid=28992))
 
 
 class ContainerType(Base):

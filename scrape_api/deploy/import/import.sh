@@ -32,9 +32,8 @@ echo "Importing data into database"
 dc run --rm api python manage.py migrate
 dc run --rm importer python models.py
 
-# importeer buurt/stadseel/pand/verblijfsobject informatie.
-dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/gebieden buurt_simple,stadsdeel 4326
-dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/bag verblijfsobjecten,pand 4326
+# importeer buurt/stadseel
+dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/gebieden buurt_simple,stadsdeel 28992
 
 
 # Importeer bammens api endpoints

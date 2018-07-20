@@ -88,7 +88,8 @@ class Well(models.Model):
 
     containers_bron = JSONField()
 
-    geometrie = models.PointField(name="geometrie")
+    geometrie = models.PointField(name="geometrie", srid=4326)
+    geometrie_rd = models.PointField(name="geometrie_rd", srid=28992, null=True)
 
     stadsdeel = models.CharField(null=True, max_length=1)
     buurt_code = models.CharField(null=True, max_length=4)
@@ -100,6 +101,25 @@ class Well(models.Model):
     operational_date = models.DateTimeField(null=True)
 
     extra_attributes = JSONField(default={})
+
+    site = models.ForeignKey(
+        'Site', null=True,
+        related_name="wells", on_delete=models.DO_NOTHING
+    )
+
+
+class Site(models.Model):
+    id = models.CharField(max_length=30, primary_key=True)
+    buurtcode = models.CharField(max_length=20, null=False)
+    stadsdeel = models.CharField(max_length=1, null=False)
+    stadsdeel_naam = models.CharField(max_length=20, null=False)
+    straatnaam = models.CharField(max_length=40, null=False)
+    huisnummer = models.IntegerField(null=True)
+
+    centroid = models.PointField(name='centroid', srid=4326)
+    geometrie = models.PolygonField(name='geometrie', srid=28992)
+
+    extra_attributes = JSONField(null=True)
 
 
 """

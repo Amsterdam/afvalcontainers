@@ -12,13 +12,18 @@ from sqlalchemy import bindparam
 log = logging.getLogger(__name__)
 
 
-# bgt."BGT_WGL_rijbaan_lokale_weg
+# TRANSFORM_4326 = """
+# ALTER TABLE {tablename}
+#  ALTER COLUMN geometrie TYPE geometry({geo_type},4326)
+#   USING ST_Transform(geometrie,4326);
+# """
 
-TRANSFORM_4326 = """
+TRANSFORM_28992 = """
 ALTER TABLE {tablename}
- ALTER COLUMN geometrie TYPE geometry({geo_type},4326)
-  USING ST_Transform(geometrie,4326);
+ ALTER COLUMN geometrie TYPE geometry({geo_type},28992)
+  USING ST_Transform(geometrie,28992);
 """
+
 
 BGT_COLLECTION = """
 select ogc_fid, bgt_type, geometrie
@@ -28,12 +33,35 @@ from {source_table}
 
 BGT_DWITHIN = """
 SELECT
-    w.id, w.geometrie, b.identificatie_lokaalid, ST_AsText(b.geometrie),
-    ST_DISTANCE(w.geometrie, b.geometrie),
+    w.id,
+    w.geometrie_rd,
+    b.identificatie_lokaalid,
+    ST_AsText(b.geometrie),
+    ST_DISTANCE(w.geometrie_rd, b.geometrie),
     GeometryType(b.geometrie)
 FROM afvalcontainers_well w
-LEFT JOIN {bgt_table} b ON (st_dwithin(b.geometrie, w.geometrie, {distance}))
+LEFT JOIN {bgt_table} b
+ON (st_dwithin(b.geometrie, w.geometrie_rd, {distance}))
 WHERE b.ogc_fid IS NOT null
+"""
+
+CREATE_PAND_DISTANCE_TO_WELL = """
+DROP table pand_distance_to_well;
+SELECT
+    p.ogc_fid,
+    p.wkb_geometry,
+    ST_Distance(well.geometrie_rd, p.wkb_geometry),
+    well.id
+INTO pand_distance_to_well
+FROM pand p
+CROSS JOIN LATERAL
+    (SELECT
+        w.id,
+        w.geometrie_rd
+     FROM afvalcontainers_well w
+     ORDER BY
+        w.geometrie_rd <-> p.wkb_geometry
+     LIMIT 1) AS well
 """
 
 # CREATE_WELL_BGT = """
@@ -47,8 +75,8 @@ WHERE b.ogc_fid IS NOT null
 # );
 # """
 
-FOUR_METER = '0.000089'
-ON_TOP = '0.000009'
+FOUR_METER = '4'
+ON_TOP = '1'
 
 BGT_TABLES = [
     ('bgt."BGTPLUS_BAK_afval_apart_plaats"', 'MultiPoint', ON_TOP),
@@ -65,17 +93,6 @@ BGT_TABLES = [
     ('bgt."BGT_BTRN_groenvoorziening"', 'MultiPolygon', FOUR_METER),
     ('bgt."BGT_OTRN_onverhard"', 'MultiPolygon', FOUR_METER),
 ]
-
-
-def convert_tables_4326():
-    for bgt_table, geo_type, _distance in BGT_TABLES:
-        log.debug('Converting %s %s', bgt_table, geo_type)
-        f_convert = TRANSFORM_4326.format(
-            tablename=bgt_table,
-            geo_type=geo_type
-        )
-        session.execute(f_convert)
-        session.commit()
 
 
 WELL_POINT_MAP = {}
@@ -123,7 +140,10 @@ def make_bgt_geom_map():
 
 
 def create_well_bgt_geometry_table():
-    """
+    """Store well information with bgt information.
+
+    creates records for each bgt item close to a well_id.
+    so each well should have around ~8 items nearby.
     """
     conn = engine.connect()
     db_model = models.WellBGT
@@ -133,7 +153,6 @@ def create_well_bgt_geometry_table():
 
     for key, bgts in WELL_BGT_MAP.items():
         point = WELL_POINT_MAP[key]
-        # geometries = BGT_GEOMETRY_MAP[key]
 
         for bgt_id, geom in bgts:
             bgt_geo = geom
@@ -146,22 +165,28 @@ def create_well_bgt_geometry_table():
                 new['bgt_bak'] = bgt_geo
                 bgt_bak_items.append(new)
             else:
-                new['bgt'] = bgt_geo,
+                new['bgt'] = bgt_geo
                 bgt_items.append(new)
+
+    if not bgt_items:
+        raise ValueError("nothing matched..")
 
     insert_stmt = (
         db_model.__table__.insert()
         .values(
-            bgt=func.ST_GeomFromText(bindparam('bgt'), 4326)
+            bgt=func.ST_GeomFromText(bindparam('bgt'), 28992)
         )
     )
     conn.execute(insert_stmt, bgt_items)
+
+    if not bgt_bak_items:
+        raise ValueError("nothing matched..")
 
     insert_stmt = (
         db_model.__table__.insert()
         .values(
             bgt_bak=func.ST_Dump(
-                func.ST_GeomFromText(bindparam('bgt_bak'), 4326)).geom
+                func.ST_GeomFromText(bindparam('bgt_bak'), 28992)).geom
         )
     )
 
@@ -188,14 +213,16 @@ def collect_bgt_for_wells():
 
 # bgt has plus information which is not complete
 # but should match with afvalcontainers/wells. if it does not
-# we should report this back.
+# we should report this back adding these attributes allow the api to
+# report back missing wells.
+
 UPDATE_WELL_NO_BGT_AFVAL = """
 UPDATE afvalcontainers_well wt
 SET "extra_attributes" = jsonb_set(
         wt."extra_attributes", '{missing_bgt_afval}', to_jsonb(true), true)
 FROM afvalcontainers_well w
 LEFT JOIN bgt."BGTPLUS_BAK_afval_apart_plaats" ap
-     ON (ST_DWithin(w.geometrie, ap.geometrie, 0.0008))
+     ON (ST_DWithin(w.geometrie_rd, ap.geometrie, 1))
 WHERE ap.identificatie_lokaalid is null
 AND wt.id = w.id
 """
@@ -207,7 +234,7 @@ SET
         wt."extra_attributes", '{in_wegdeel}', to_jsonb(true), true)
 FROM afvalcontainers_well w
 LEFT JOIN bgt."BGT_WGL_rijbaan_lokale_weg" wd
-     ON (ST_Within(w.geometrie, wd.geometrie))
+     ON (ST_Within(w.geometrie_rd, wd.geometrie))
 WHERE
     wd.identificatie_lokaalid IS NOT NULL
     AND wt.id = w.id
@@ -218,10 +245,78 @@ UPDATE afvalcontainers_well wt
 SET "extra_attributes" =
     jsonb_set(wt."extra_attributes", '{in_pand}', to_jsonb(true), true)
 FROM afvalcontainers_well w
-LEFT JOIN pand p ON (ST_Within(w.geometrie, p.wkb_geometry))
+LEFT JOIN pand p ON (ST_Within(w.geometrie_rd, p.wkb_geometry))
 WHERE p.ogc_fid IS NOT NULL
 AND wt.id = w.id
 """
+
+UPDATE_WELL_IN_BGT_SITE = """
+UPDATE afvalcontainers_well wt
+wt.site_id = s.id
+FROM afvalcontainers_well w
+LEFT JOIN pand p ON (ST_Within(w.geometrie_rd, p.wkb_geometry))
+WHERE p.ogc_fid IS NOT NULL
+AND wt.id = w.id
+"
+"""
+
+CREATE_BGT_CLUSTERS = """
+DROP TABLE IF EXISTS bgt_clusters;
+
+SELECT
+    uid,
+    site_geometrie,
+    round(ST_X(ST_Centroid(site_geometrie))) as x,
+    round(ST_Y(ST_centroid(site_geometrie))) as y
+INTO bgt_clusters
+FROM (
+    SELECT uuid_generate_v4() AS uid,
+    ST_ConvexHull(
+        ST_CollectionExtract(
+            unnest(ST_ClusterIntersecting(
+                st_buffer(ba.geometrie, 8))), 3)
+    ) as site_geometrie
+    FROM bgt."BGTPLUS_BAK_afval_apart_plaats" ba
+    LEFT JOIN stadsdeel s
+    ON ST_Within(ba.geometrie, s.wkb_geometry)
+    WHERE s.id is not null
+) AS s
+"""
+
+COPY_CLUSTERS_TO_API = """
+INSERT INTO afvalcontainers_site
+SELECT
+    Concat(x, '-', y) as id,
+    ST_Transform(
+        ST_Centroid(site_geometrie), 28992) as centroid
+    site_geometrie as geometrie
+FROM bgt_clusters
+LEFT JOIN stadsdeel s on ST_Within(ba.geometrie, s.wkb_geometry)
+
+"""
+
+
+def create_pand_distance():
+    session.execute(CREATE_PAND_DISTANCE_TO_WELL)
+    session.commit()
+
+
+def create_clusters():
+    """
+    Cluster wells that should be together.
+
+    # TODO? load existing clusters
+    """
+    # create new bgt bases clusters
+    session.execute(CREATE_BGT_CLUSTERS)
+    session.commit()
+    # match with current containers
+
+    # create clusters of left containers
+    # merge them
+
+    # match them with stadseel, wegdeel,
+    pass
 
 
 def update_quality_in_extra_attributes():
@@ -240,12 +335,14 @@ def update_quality_in_extra_attributes():
 
 
 def main(args):
-    if args.convert_4326:
-        convert_tables_4326()
     if args.merge_bgt:
         collect_bgt_for_wells()
     if args.qa_wells:
         update_quality_in_extra_attributes()
+    if args.clusters:
+        create_clusters()
+    if args.pand_distance:
+        create_pand_distance()
 
 
 if __name__ == "__main__":
@@ -253,14 +350,6 @@ if __name__ == "__main__":
     """
     desc = "Merge wells with BGT and create sites"
     inputparser = argparse.ArgumentParser(desc)
-
-    inputparser.add_argument(
-        "--convert_4326",
-        default=False,
-        # choices=ENDPOINTS,
-        action="store_true",
-        help="Convert wells to RD",
-    )
 
     inputparser.add_argument(
         "--merge_bgt",
@@ -276,6 +365,20 @@ if __name__ == "__main__":
         # choices=ENDPOINTS,
         action="store_true",
         help="Quality Analysis Wells",
+    )
+
+    inputparser.add_argument(
+        "--clusters",
+        default=False,
+        action="store_true",
+        help="Create clusters of wells",
+    )
+
+    inputparser.add_argument(
+        "--pand_distance",
+        default=False,
+        action="store_true",
+        help="Create pand distance table",
     )
 
     inputparser.add_argument(

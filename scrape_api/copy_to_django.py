@@ -2,7 +2,6 @@
 Copy raw data into django api models
 """
 
-import random
 import argparse
 import models
 import logging
@@ -25,7 +24,9 @@ INSERT INTO afvalcontainers_well (
     placing_date,
     active,
     geometrie,
-    address
+    geometrie_rd,
+    address,
+    extra_attributes
 )
 SELECT
     id,
@@ -43,7 +44,14 @@ SELECT
             CAST(data->'location'->'position'->>'longitude' as float),
             CAST(data->'location'->'position'->>'latitude' as float)
         ), 4326) as geometrie,
-    CAST(data->'location'->>'address' as jsonb) as address
+    ST_Transform(
+        ST_SetSRID(
+            ST_POINT(
+                CAST(data->'location'->'position'->>'longitude' as float),
+                CAST(data->'location'->'position'->>'latitude' as float)
+            ), 4326), 28992) as geometrie,
+    CAST(data->'location'->>'address' as jsonb) as address,
+    '{}'
     FROM bammens_well_raw;
 """  # noqa
 
@@ -250,14 +258,14 @@ UPDATE_BUURT = """
 UPDATE {target_table} tt
 SET buurt_code = b.vollcode
 FROM (SELECT * from buurt_simple) as b
-WHERE ST_DWithin(b.wkb_geometry, tt.geometrie, 0)
+WHERE ST_DWithin(b.wkb_geometry, tt.geometrie_rd, 0)
 """
 
 UPDATE_STADSDEEL = """
 UPDATE {target_table} tt
 SET stadsdeel = s.code
 FROM (SELECT * from stadsdeel) as s
-WHERE ST_DWithin(s.wkb_geometry, tt.geometrie, 0)
+WHERE ST_DWithin(s.wkb_geometry, tt.geometrie_rd, 0)
 """
 
 
@@ -268,7 +276,6 @@ def link_containers_to_wells():
 
 
 def link_gebieden():
-    sql = UPDATE_BUURT
     target_table = 'afvalcontainers_well'
     u_sql = UPDATE_STADSDEEL.format(target_table=target_table)
     session.execute(u_sql)
@@ -291,6 +298,17 @@ TABLE_COUNTS = [
     ('afvalcontainers_container', 12000),
     ('afvalcontainers_containertype', 200),
     ('container_locations', 12000),
+]
+
+VALIDATE_SQL = [
+    ("""select count(*) from afvalcontainers_well
+        where stadsdeel is null""", 0, 5),
+    ("""select count(*) from afvalcontainers_well
+        where buurt_code is null""", 0, 5),
+
+    ("""select count(*) from afvalcontainers_well
+        where extra_attributes->'missing_bgt_afval' = 'true'""",
+        0, 5000)
 ]
 
 
@@ -316,12 +334,32 @@ def validate_counts():
         raise ValueError('Table counts not at target!')
 
 
+def validate_attribute_counts():
+
+    for sql, min_expected, max_expected in VALIDATE_SQL:
+        data = session.execute(sql).fetchall()
+        table_count = data[0][0]
+        failed = False
+
+        if min_expected >= table_count >= max_expected:
+            failed = True
+            log.error('\n\n\n FAILED %s %d < %d \n\n',
+                      sql, table_count, max_expected)
+        else:
+            log.info('Count OK %s %d < %d',
+                     sql, table_count, max_expected)
+
+    if failed:
+        raise ValueError('Table counts not within range!')
+
+
 def main():
     if args.link_gebieden:
         link_gebieden()
         return
     if args.validate:
         validate_counts()
+        validate_attribute_counts()
         return
     if args.geoview:
         create_container_view()
