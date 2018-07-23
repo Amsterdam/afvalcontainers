@@ -1,5 +1,5 @@
 """
-Create cluster id's
+Create cluster ID's
 """
 import logging
 import models
@@ -263,14 +263,13 @@ AND wt.id = w.id
 CREATE_BGT_CLUSTERS = """
 DROP TABLE IF EXISTS bgt_clusters;
 
-SELECT
-    uid,
+SELECT DISTINCT
     site_geometrie,
+    ST_Centroid(site_geometrie) as centroid,
     round(ST_X(ST_Centroid(site_geometrie))) as x,
-    round(ST_Y(ST_centroid(site_geometrie))) as y
+    round(ST_Y(ST_Centroid(site_geometrie))) as y
 INTO bgt_clusters
 FROM (
-    SELECT uuid_generate_v4() AS uid,
     ST_ConvexHull(
         ST_CollectionExtract(
             unnest(ST_ClusterIntersecting(
@@ -278,7 +277,7 @@ FROM (
     ) as site_geometrie
     FROM bgt."BGTPLUS_BAK_afval_apart_plaats" ba
     LEFT JOIN stadsdeel s
-    ON ST_Within(ba.geometrie, s.wkb_geometry)
+        ON ST_Within(ba.geometrie, s.wkb_geometry)
     WHERE s.id is not null
 ) AS s
 """
@@ -292,13 +291,19 @@ SELECT
     site_geometrie as geometrie
 FROM bgt_clusters
 LEFT JOIN stadsdeel s on ST_Within(ba.geometrie, s.wkb_geometry)
-
 """
 
 
 def create_pand_distance():
     session.execute(CREATE_PAND_DISTANCE_TO_WELL)
     session.commit()
+
+
+def execute_sqlfile(filename):
+    with open(filename) as sqltxt:
+        statements = sqltxt.read()
+        session.execute(statements)
+        session.commit()
 
 
 def create_clusters():
@@ -308,15 +313,12 @@ def create_clusters():
     # TODO? load existing clusters
     """
     # create new bgt bases clusters
-    session.execute(CREATE_BGT_CLUSTERS)
-    session.commit()
+    execute_sqlfile('sqlcode/create_bgt_clusters.sql')
     # match with current containers
-    with open('sqlcode/create_sites.sql') as sqltxt:
-        statements = sqltxt.read()
-        session.execute(statements)
-
-    # create clusters of left containers
-    # merge them
+    execute_sqlfile('sqlcode/create_sites.sql')
+    # match wells with bgt locations
+    execute_sqlfile('sqlcode/update_well_site_id.sql')
+    # Create clusters of left containers
 
     # match them with stadseel, wegdeel,
     pass

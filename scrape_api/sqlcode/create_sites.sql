@@ -1,19 +1,19 @@
 create index on bag_verblijfsobject(_openbare_ruimte_naam);
 
+
+INSERT INTO afvalcontainers_site
 SELECT
-    Concat(x, '-', y, '-', b.code) as id,
-    ST_Transform(
-        ST_Centroid(site_geometrie), 4326) as centroid,
-    site_geometrie as geometrie,
-    s.display as stadsdeel_naam,
+    Concat(x, '-', y, '-', s.code, b.code) as id,
+    b.code as buurtcode,
     s.code as stadseel,
+    s.display as stadsdeel_naam,
     opr.display as straatnaam,
-    vbo._huisnummer,
-    vbo._huisletter,
-    b.naam as buurt
+    cast(vbo._huisnummer as integer) as huisnummer,
+    ST_Transform(centroid, 4326) as centroid,
+    site_geometrie as geometrie
 FROM bgt_clusters c
-left join stadsdeel s on ST_DWithin(c.site_geometrie, s.wkb_geometry, 0)
-left join buurt_simple b on ST_DWithin(c.site_geometrie, b.wkb_geometry, 0)
+left join stadsdeel s on ST_DWithin(c.centroid, s.wkb_geometry, 0)
+left join buurt_simple b on ST_DWithin(c.centroid, b.wkb_geometry, 0)
 cross join lateral
 	(select
 		o.display,

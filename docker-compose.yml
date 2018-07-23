@@ -9,6 +9,8 @@ services:
       POSTGRES_DB: afvalcontainers
       POSTGRES_USER: afvalcontainers
       POSTGRES_PASSWORD: insecure
+    volumes:
+      - ~/.ssh/datapunt.key:/root/.ssh/datapunt.key
 
   cmsdownloader:
     build: ./cmsdownloader
