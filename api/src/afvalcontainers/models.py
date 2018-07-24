@@ -104,7 +104,7 @@ class Well(models.Model):
 
     site = models.ForeignKey(
         'Site', null=True,
-        related_name="wells", on_delete=models.DO_NOTHING
+        related_name="wells", on_delete=models.SET_NULL
     )
 
 
@@ -115,7 +115,7 @@ class Site(models.Model):
     stadsdeel_naam = models.CharField(max_length=20, null=False)
     straatnaam = models.CharField(max_length=40, null=False)
     huisnummer = models.IntegerField(null=True)
-
+    bgt_based = models.NullBooleanField()
     centroid = models.PointField(name='centroid', srid=4326)
     geometrie = models.PolygonField(name='geometrie', srid=28992)
 

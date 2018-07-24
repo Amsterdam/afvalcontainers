@@ -1,6 +1,5 @@
 create index on bag_verblijfsobject(_openbare_ruimte_naam);
 
-
 INSERT INTO afvalcontainers_site
 SELECT
     Concat(x, '-', y, '-', s.code, b.code) as id,
@@ -9,6 +8,7 @@ SELECT
     s.display as stadsdeel_naam,
     opr.display as straatnaam,
     cast(vbo._huisnummer as integer) as huisnummer,
+    true as bgt_based,
     ST_Transform(centroid, 4326) as centroid,
     site_geometrie as geometrie
 FROM bgt_clusters c
