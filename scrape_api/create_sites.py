@@ -323,10 +323,11 @@ def create_clusters():
     execute_sqlfile('sqlcode/update_well_site_id.sql')
     # Create clusters of left containers
     log.info('Create sites with leftover wells')
+    execute_sqlfile('sqlcode/create_well_cluster.sql')
     execute_sqlfile('sqlcode/create_sites_from_well_clusters.sql')
     # match left over wells with clusters
     log.info('Update left over wells with site_id')
-    execute_sqlfile('sqlcode/update_well_site_id_left.sql')
+    execute_sqlfile('sqlcode/update_well_site_id_nobgt.sql')
 
 
 def update_quality_in_extra_attributes():

@@ -22,11 +22,15 @@ services:
     links:
       - database
     environment:
-      DATABASE_NAME: afvalcontainers
       DATABASE_USER: afvalcontainers
       DATABASE_PASSWORD: insecure
       BAMMENS_API_USERNAME:
       BAMMENS_API_PASSWORD:
+      TENANT_NAME: BGE000081_afvalbakken
+      TENANT_ID: 97d77d9423fe46df8675937493b8521e
+      OBJECTSTORE_USER: afvalbakken
+      OBJECTSTORE_PASSWORD:
+
     volumes:
       - afvalcontainers_import_cache:/data
     command: >
