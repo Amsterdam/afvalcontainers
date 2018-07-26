@@ -71,7 +71,9 @@ dc exec -T database update-table.sh bag bag_verblijfsobject public afvalcontaine
 dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/gebieden buurt_simple,stadsdeel 28992
 
 # importeer buurt/stadseel/pand/verblijfsobject informatie.
-dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/bag openbareruimte,verblijfsobjecten,pand 28992
+dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/bag openbareruimte 28992
+dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/bag verblijfsobject 28992
+dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/bag pand 28992
 
 # create all tables if missing
 dc run --rm importer python models.py
@@ -80,3 +82,9 @@ dc run --rm importer python create_clusters.py --merge_bgt
 dc run --rm importer python create_clusters.py --qa_wells
 dc run --rm importer python create_clusters.py --pand_distance
 dc run --rm importer python create_clusters.py --clusters
+
+echo "Running backups"
+dc exec -T database backup-db.sh afvalcontainers
+
+echo "Store DB dump in objectstore for cleanup step"
+dc run --rm importer python -m objectstore.databasedumps /backups/database.dump db_cleaned --upload-db
