@@ -60,6 +60,7 @@ dc exec -T database update-table.sh basiskaart BGT_WGL_voetpad bgt afvalcontaine
 dc exec -T database update-table.sh basiskaart BGT_WGL_parkeervlak bgt afvalcontainers
 dc exec -T database update-table.sh basiskaart BGT_WGL_rijbaan_lokale_weg bgt afvalcontainers
 dc exec -T database update-table.sh basiskaart BGT_WGL_rijbaan_regionale_weg bgt afvalcontainers
+dc exec -T database update-table.sh basiskaart BGT_WGL_woonerf bgt afvalcontainers spreeker
 
 dc exec -T database update-table.sh basiskaart BGT_BTRN_groenvoorziening bgt afvalcontainers
 dc exec -T database update-table.sh basiskaart BGT_OTRN_onverhard bgt afvalcontainers
