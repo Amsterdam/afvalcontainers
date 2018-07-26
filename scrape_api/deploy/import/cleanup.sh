@@ -33,7 +33,7 @@ dc up -d database
 dc run importer /app/deploy/docker-wait.sh
 
 # Download latest dump from objectstore
-dc run --rm importer python -m objectstore.databasedumps /backups/database.dump dbdumps --download-db
+dc run --rm importer python -m objectstore.databasedumps /backups/database.dump db_dumps --download-db
 ENV='ACCEPTANCE'
 if [$ENVIRONMENT = 'production']; then
    ENV='PRODUCTION'
