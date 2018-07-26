@@ -32,6 +32,18 @@ echo "Bringing up and waiting for database"
 dc up -d database
 dc run importer /app/deploy/docker-wait.sh
 
+# Download latest dump from objectstore
+dc run --rm importer python -m objectstore.databasedumps /backups/database.dump dbdumps --download-db
+ENV='ACCEPTANCE'
+if [$ENVIRONMENT = 'production']; then
+   ENV='PRODUCTION'
+fi
+
+dc exec -T pg_restore --if-exists -j 4 -c -C -d postgres -U postgres /tmp/backups/database.$ENV
+
+#
+dc exec -T database update-db.sh bag bag_verblijfsobject public afvalcontainers
+
 # get the latest imported database
 dc exec -T database update-db.sh afvalcontainers
 
