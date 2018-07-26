@@ -43,9 +43,6 @@ fi
 
 dc exec -T database pg_restore --no-privileges --no-owner --if-exists -j 4 -c -C -d postgres -U postgres /data/database.$ENV
 
-#
-dc exec -T database update-db.sh bag bag_verblijfsobject public afvalcontainers
-
 # get the latest imported database
 dc exec -T database update-db.sh afvalcontainers
 
