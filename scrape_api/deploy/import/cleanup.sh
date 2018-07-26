@@ -45,7 +45,7 @@ fi
 dc exec -T database pg_restore --no-privileges --no-owner --if-exists -j 4 -c -C -d postgres -U postgres /data/database.$ENV
 
 # Sometimes the migrations could be behind.. since we could load older data
-dc exec -T api python manage.py migrate
+dc run --rm api python manage.py migrate
 
 # load BGT objects of everything related to containers on the ground.
 dc exec -T database update-table.sh basiskaart BGTPLUS_BAK_afval_apart_plaats bgt afvalcontainers spreeker
