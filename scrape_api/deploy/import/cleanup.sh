@@ -76,7 +76,7 @@ dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/m
 
 # importeer buurt/stadseel/pand/verblijfsobject informatie.
 dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/bag openbareruimte 28992
-dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/bag verblijfsobject 28992
+# dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/bag verblijfsobject 28992
 dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/bag pand 28992
 
 # create all tables if missing

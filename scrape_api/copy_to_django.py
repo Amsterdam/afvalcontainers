@@ -8,6 +8,10 @@ import logging
 from sqlalchemy.sql import select
 from sqlalchemy import bindparam
 
+from validation import validate_counts
+from validation import validate_attribute_counts
+
+
 log = logging.getLogger(__name__)
 
 
@@ -312,54 +316,13 @@ VALIDATE_SQL = [
 ]
 
 
-def validate_counts():
-    """
-    """
-    failed = False
-
-    for tablename, target_count in TABLE_COUNTS:
-        sql = f"select count(*) from {tablename}"
-        data = session.execute(sql).fetchall()
-
-        table_count = data[0][0]
-        if table_count < target_count:
-            failed = True
-            log.error('\n\n\n FAILED Count %s %d is not > %d \n\n',
-                      tablename, table_count, target_count)
-        else:
-            log.info('Count OK %s %d > %d',
-                     tablename, table_count, target_count)
-
-    if failed:
-        raise ValueError('Table counts not at target!')
-
-
-def validate_attribute_counts():
-
-    for sql, min_expected, max_expected in VALIDATE_SQL:
-        data = session.execute(sql).fetchall()
-        table_count = data[0][0]
-        failed = False
-
-        if min_expected >= table_count >= max_expected:
-            failed = True
-            log.error('\n\n\n FAILED %s %d < %d \n\n',
-                      sql, table_count, max_expected)
-        else:
-            log.info('Count OK %s %d < %d',
-                     sql, table_count, max_expected)
-
-    if failed:
-        raise ValueError('Table counts not within range!')
-
-
 def main():
     if args.link_gebieden:
         link_gebieden()
         return
     if args.validate:
-        validate_counts()
-        validate_attribute_counts()
+        validate_counts(TABLE_COUNTS)
+        validate_attribute_counts(VALIDATE_SQL)
         return
     if args.geoview:
         create_container_view()

@@ -1,7 +1,7 @@
 create index on bag_verblijfsobject(_openbare_ruimte_naam);
 
 INSERT INTO afvalcontainers_site
-SELECT
+SELECT DISTINCT
     Concat(x, '-', y, '-', s.code, b.code) as id,
     b.code as buurtcode,
     s.code as stadseel,

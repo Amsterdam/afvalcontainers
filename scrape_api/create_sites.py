@@ -8,6 +8,7 @@ import argparse
 from sqlalchemy import func
 # from sqlalchemy.sql import select
 from sqlalchemy import bindparam
+from validation import validate_attribute_counts
 
 log = logging.getLogger(__name__)
 
@@ -216,10 +217,17 @@ def collect_bgt_for_wells():
     create_well_bgt_geometry_table()
 
 
+def fill_rd_geometry():
+    """if well have geometrie and no rd geometry add it.
+    """
+    session.execute(TRANSFORM_28992)
+    session.commit()
+
 # bgt has plus information which is not complete
 # but should match with afvalcontainers/wells. if it does not
 # we should report this back adding these attributes allow the api to
 # report back missing wells.
+
 
 UPDATE_WELL_NO_BGT_AFVAL = """
 UPDATE afvalcontainers_well wt
@@ -317,11 +325,11 @@ def create_clusters():
 
     # TODO? load existing clusters
     """
-    log.info('Create BGT based clusters')
+    log.info('Create BGT based sites')
     # create new bgt bases clusters
     execute_sqlfile('sqlcode/create_bgt_clusters.sql')
     # match with current containers
-    log.info('Create BGT based sites')
+    log.info('Link containers with BGT sites ')
     execute_sqlfile('sqlcode/create_sites_from_bgt.sql')
     # match wells with bgt locations
     log.info('Update wells with site_id with BGT sites')
@@ -350,15 +358,39 @@ def update_quality_in_extra_attributes():
         session.commit()
 
 
+VALIDATE_SQL = [
+    ("""select count(*) from afvalcontainers_well
+        where stadsdeel is null""", 0, 5),
+    ("""select count(*) from afvalcontainers_well
+        where buurt_code is null""", 0, 5),
+
+    ("""select count(*) from afvalcontainers_well
+        where extra_attributes->'missing_bgt_afval' = 'true'""",
+        0, 5000),
+
+    ("""select count(*) from afvalcontainers_site
+        where bgt_based is true""",
+        8000, 15000),
+
+    ("""select count(*) from afvalcontainers_well
+        where site_id is null""",
+        0, 915),
+]
+
+
 def main(args):
     if args.merge_bgt:
         collect_bgt_for_wells()
+    if args.validate:
+        validate_attribute_counts(VALIDATE_SQL, session)
     if args.qa_wells:
         update_quality_in_extra_attributes()
     if args.clusters:
         create_clusters()
     if args.pand_distance:
         create_pand_distance()
+    if args.fill_rd:
+        fill_rd_geometry()
 
 
 if __name__ == "__main__":
@@ -368,11 +400,19 @@ if __name__ == "__main__":
     inputparser = argparse.ArgumentParser(desc)
 
     inputparser.add_argument(
+        "--fill_rd",
+        default=False,
+        # choices=ENDPOINTS,
+        action="store_true",
+        help="Add RD geometry to wells",
+    )
+
+    inputparser.add_argument(
         "--merge_bgt",
         default=False,
         # choices=ENDPOINTS,
         action="store_true",
-        help="Convert wells to RD",
+        help="Merge Wells with BGT objects",
     )
 
     inputparser.add_argument(
@@ -395,6 +435,13 @@ if __name__ == "__main__":
         default=False,
         action="store_true",
         help="Create pand distance table",
+    )
+
+    inputparser.add_argument(
+        "--validate",
+        default=False,
+        action="store_true",
+        help="validate counts",
     )
 
     inputparser.add_argument(
