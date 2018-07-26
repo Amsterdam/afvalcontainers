@@ -31,7 +31,6 @@ services:
       TENANT_ID: 010f69210d4f4d5c96da979f723350a9
       OBJECTSTORE_USER: afvalbakken
       OBJECTSTORE_PASSWORD:
-
     volumes:
       - afvalcontainers_import_cache:/data
     command: >

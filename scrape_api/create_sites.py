@@ -19,9 +19,12 @@ log = logging.getLogger(__name__)
 # """
 
 TRANSFORM_28992 = """
-ALTER TABLE {tablename}
- ALTER COLUMN geometrie TYPE geometry({geo_type},28992)
-  USING ST_Transform(geometrie,28992);
+UPDATE afvalcontainers_well wt
+SET geometrie_rd = ST_Transform(w.geometrie, 28992)
+FROM afvalcontainers_well w
+WHERE w.geometrie_rd is null
+AND w.geometrie is not null
+AND wt.id = w.id
 """
 
 
@@ -198,6 +201,8 @@ def collect_bgt_for_wells():
     For every well collect BGT items
     """
     log.info('Matching wells with BGT.')
+
+    # make sure we have an rd coordinate (migration issues)
 
     for bgt_table, geo_type, distance in BGT_TABLES:
         log.debug('Working on %s %s %s', bgt_table, geo_type, distance)

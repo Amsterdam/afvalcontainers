@@ -36,6 +36,7 @@ dc exec -T database touch /data/test.txt
 
 # Download latest dump from objectstore
 dc run --rm importer python -m objectstore.databasedumps /data db_dumps --download-db
+
 ENV='ACCEPTANCE'
 if [$ENVIRONMENT = 'production']; then
    ENV='PRODUCTION'
@@ -43,8 +44,8 @@ fi
 
 dc exec -T database pg_restore --no-privileges --no-owner --if-exists -j 4 -c -C -d postgres -U postgres /data/database.$ENV
 
-# get the latest imported database
-dc exec -T database update-db.sh afvalcontainers
+# Sometimes the migrations could be behind.. since we could load older data
+dc exec -T api python manage.py migrate
 
 # load BGT objects of everything related to containers on the ground.
 dc exec -T database update-table.sh basiskaart BGTPLUS_BAK_afval_apart_plaats bgt afvalcontainers spreeker

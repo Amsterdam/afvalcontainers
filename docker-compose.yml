@@ -1,6 +1,5 @@
 version: '2.0'
 services:
-
   database:
     image: amsterdam/postgres
     ports:
