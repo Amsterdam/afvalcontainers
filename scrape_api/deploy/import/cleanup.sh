@@ -15,15 +15,15 @@ dc() {
 	docker-compose -p scrapebammens${ENVIRONMENT} -f ${DIR}/docker-compose.yml $*
 }
 
-# trap 'dc kill ; dc rm -f' EXIT
+trap 'dc kill ; dc rm -f' EXIT
 
 # For database backups:
 rm -rf ${DIR}/backups
 mkdir -p ${DIR}/backups
 
-# dc down	-v
-# dc rm -f
-# dc pull
+dc down	-v
+dc rm -f
+dc pull
 
 echo "Building images"
 dc build
