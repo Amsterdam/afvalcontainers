@@ -321,8 +321,8 @@ def main():
         link_gebieden()
         return
     if args.validate:
-        validate_counts(TABLE_COUNTS)
-        validate_attribute_counts(VALIDATE_SQL)
+        validate_counts(TABLE_COUNTS, session)
+        validate_attribute_counts(VALIDATE_SQL, session)
         return
     if args.geoview:
         create_container_view()
