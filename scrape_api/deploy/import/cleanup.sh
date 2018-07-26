@@ -48,7 +48,7 @@ dc exec -T database pg_restore --no-privileges --no-owner --if-exists -j 4 -c -C
 dc run --rm api python manage.py migrate
 
 # load BGT objects of everything related to containers on the ground.
-dc exec -T database update-table.sh basiskaart BGTPLUS_BAK_afval_apart_plaats bgt afvalcontainers spreeker
+dc exec -T database update-table.sh basiskaart BGTPLUS_BAK_afval_apart_plaats bgt afvalcontainers
 
 dc exec -T database update-table.sh basiskaart BGT_OWGL_verkeerseiland bgt afvalcontainers
 dc exec -T database update-table.sh basiskaart BGT_OWGL_berm bgt afvalcontainers
@@ -61,7 +61,7 @@ dc exec -T database update-table.sh basiskaart BGT_WGL_voetpad bgt afvalcontaine
 dc exec -T database update-table.sh basiskaart BGT_WGL_parkeervlak bgt afvalcontainers
 dc exec -T database update-table.sh basiskaart BGT_WGL_rijbaan_lokale_weg bgt afvalcontainers
 dc exec -T database update-table.sh basiskaart BGT_WGL_rijbaan_regionale_weg bgt afvalcontainers
-dc exec -T database update-table.sh basiskaart BGT_WGL_woonerf bgt afvalcontainers spreeker
+dc exec -T database update-table.sh basiskaart BGT_WGL_woonerf bgt afvalcontainers
 
 dc exec -T database update-table.sh basiskaart BGT_BTRN_groenvoorziening bgt afvalcontainers
 dc exec -T database update-table.sh basiskaart BGT_OTRN_onverhard bgt afvalcontainers
