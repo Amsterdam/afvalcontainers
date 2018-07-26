@@ -8,6 +8,7 @@ services:
       POSTGRES_DB: afvalcontainers
     volumes:
       - ./backups:/tmp/backups
+      - afvalcontainers_import_cache:/data
 
   api:
     image: build.datapunt.amsterdam.nl:5000/afvalcontainers:${ENVIRONMENT}
