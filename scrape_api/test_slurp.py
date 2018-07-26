@@ -29,9 +29,11 @@ def setup_module():
     engine = models.make_engine(section="test")
     connection = engine.connect()
     transaction = connection.begin()
+    session = models.set_session(engine)
+    session.execute("CREATE EXTENSION postgis;")
+    session.commit()
     models.Base.metadata.drop_all(bind=engine)
     models.Base.metadata.create_all(bind=engine)
-    session = models.set_session(engine)
 
 
 def teardown_module():
