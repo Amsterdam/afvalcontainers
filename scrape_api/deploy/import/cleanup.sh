@@ -46,7 +46,9 @@ dc exec -T database pg_restore --no-privileges --no-owner --if-exists -j 4 -c -C
 # get the latest imported database
 dc exec -T database update-db.sh afvalcontainers
 
-# load BGT objects of everything on the ground.
+# load BGT objects of everything related to containers on the ground.
+dc exec -T database update-table.sh basiskaart BGTPLUS_BAK_afval_apart_plaats bgt afvalcontainers spreeker
+
 dc exec -T database update-table.sh basiskaart BGT_OWGL_verkeerseiland bgt afvalcontainers
 dc exec -T database update-table.sh basiskaart BGT_OWGL_berm bgt afvalcontainers
 dc exec -T database update-table.sh basiskaart BGT_OTRN_open_verharding bgt afvalcontainers
