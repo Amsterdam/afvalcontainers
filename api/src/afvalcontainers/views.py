@@ -12,6 +12,8 @@ from afvalcontainers.models import Container
 from afvalcontainers.models import Well
 from afvalcontainers.models import ContainerType
 from afvalcontainers.models import Buurten
+from afvalcontainers.models import Site
+
 from afvalcontainers.serializers import ContainerSerializer
 from afvalcontainers.serializers import WellSerializer
 from afvalcontainers.serializers import TypeSerializer

@@ -121,6 +121,9 @@ class Site(models.Model):
 
     extra_attributes = JSONField(null=True)
 
+    def __str__(self):
+        return f"{self.id} -{self.straatnaam} {self.huisnummer}"
+
 
 """
 {

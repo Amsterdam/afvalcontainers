@@ -9,6 +9,7 @@ from datapunt_api.rest import RelatedSummaryField
 from afvalcontainers.models import Container
 from afvalcontainers.models import Well
 from afvalcontainers.models import ContainerType
+from afvalcontainers.models import Site
 
 
 class WellSerializer(HALSerializer):
