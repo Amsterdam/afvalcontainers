@@ -68,6 +68,29 @@ CROSS JOIN LATERAL
      LIMIT 1) AS well
 """
 
+CREATE_PAND_DISTANCE_TO_FRACTION = """
+DROP table IF EXISTS pand_distance_to_{fraction};
+SELECT
+    p.ogc_fid,
+    p.wkb_geometry,
+    ST_Distance(well.geometrie_rd, p.wkb_geometry),
+    well.id
+INTO pand_distance_to_{fraction}
+FROM pand p
+CROSS JOIN LATERAL
+    (SELECT
+        w.id,
+        w.geometrie_rd
+     FROM afvalcontainers_well w, afvalcontainers_container c
+     WHERE w.id = c.well_id
+     AND c.waste_name = '{fraction}'
+     ORDER BY
+        w.geometrie_rd <-> p.wkb_geometry
+     LIMIT 1) AS well
+"""
+
+
+
 # CREATE_WELL_BGT = """
 # CREATE TABLE public.well_bgt (
 #         id int4 NULL,
@@ -307,9 +330,26 @@ LEFT JOIN stadsdeel s on ST_Within(ba.geometrie, s.wkb_geometry)
 """
 
 
+WASTE_DESCRIPTIONS = (
+    ("Rest"),
+    ("Glas"),
+    ("Papier"),
+    ("Textiel"),
+    ("Wormen"),
+    ("Plastic"),
+    ("Blipvert"),
+)
+
+
 def create_pand_distance():
     session.execute(CREATE_PAND_DISTANCE_TO_WELL)
     session.commit()
+    for fraction in WASTE_DESCRIPTIONS:
+        log.info('Distance for %s', fraction)
+        sql = CREATE_PAND_DISTANCE_TO_FRACTION.format(
+            fraction=fraction)
+        session.execute(sql)
+        session.commit()
 
 
 def execute_sqlfile(filename):
@@ -358,6 +398,10 @@ def update_quality_in_extra_attributes():
         session.commit()
 
 
+def create_site_views():
+    pass
+
+
 VALIDATE_SQL = [
     ("""select count(*) from afvalcontainers_well
         where stadsdeel is null""", 0, 5),
@@ -389,6 +433,8 @@ def main(args):
         create_clusters()
     if args.pand_distance:
         create_pand_distance()
+    if args.create_views:
+        create_site_views()
     if args.fill_rd:
         fill_rd_geometry()
 
@@ -432,6 +478,13 @@ if __name__ == "__main__":
 
     inputparser.add_argument(
         "--pand_distance",
+        default=False,
+        action="store_true",
+        help="Create pand distance table",
+    )
+
+    inputparser.add_argument(
+        "--create_views",
         default=False,
         action="store_true",
         help="Create pand distance table",
