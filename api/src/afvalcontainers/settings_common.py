@@ -140,8 +140,14 @@ LOGGING = {
     },
     "root": {"level": "DEBUG", "handlers": ["console"]},
     "loggers": {
-        "django.db": {"handlers": ["console"], "level": "ERROR"},
-        "django": {"handlers": ["console"], "level": "ERROR"},
+        "django.db": {
+            "handlers": ["console"],
+            "level": "DEBUG"
+        },
+        "django": {
+            "handlers": ["console"],
+            "level": "ERROR"
+        },
         # Debug all batch jobs
         "doc": {
             "handlers": ["console"],

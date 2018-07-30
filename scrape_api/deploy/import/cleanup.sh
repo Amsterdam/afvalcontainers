@@ -88,6 +88,8 @@ dc run --rm importer python create_sites.py --qa_wells
 dc run --rm importer python create_sites.py --pand_distance
 dc run --rm importer python create_sites.py --clusters
 
+dc run --rm importer python create_sites.py --validate
+
 echo "Running backups"
 dc exec -T database backup-db.sh afvalcontainers
 

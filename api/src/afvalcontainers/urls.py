@@ -36,9 +36,15 @@ class ContainerRouter(routers.DefaultRouter):
 
 
 containers = ContainerRouter()
-containers.register(r"containers", api_views.ContainerView, base_name="container")
-containers.register(r"wells", api_views.WellView, base_name="well")
-containers.register(r"containertypes", api_views.TypeView, base_name="containertype")
+
+containers.register(
+    r"containers", api_views.ContainerView, base_name="container")
+containers.register(
+    r"wells", api_views.WellView, base_name="well")
+containers.register(
+    r"containertypes", api_views.TypeView, base_name="containertype")
+containers.register(
+    r"sites", api_views.SiteView, base_name="site")
 
 urls = containers.urls
 
@@ -58,9 +64,13 @@ schema_view = get_schema_view(
 
 
 urlpatterns = [
-    url(r'^afval/swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=None), name='schema-json'),
-    url(r'^afval/swagger/$', schema_view.with_ui('swagger', cache_timeout=None), name='schema-swagger-ui'),
-    url(r'^afval/redoc/$', schema_view.with_ui('redoc', cache_timeout=None), name='schema-redoc'),
+    url(r'^afval/swagger(?P<format>\.json|\.yaml)$',
+        schema_view.without_ui(cache_timeout=None), name='schema-json'),
+    url(r'^afval/swagger/$',
+        schema_view.with_ui('swagger', cache_timeout=None),
+        name='schema-swagger-ui'),
+    url(r'^afval/redoc/$',
+        schema_view.with_ui('redoc', cache_timeout=None), name='schema-redoc'),
     url(r"^afval/", include(urls)),
     url(r"^status/", include("afvalcontainers.health.urls")),
 ]

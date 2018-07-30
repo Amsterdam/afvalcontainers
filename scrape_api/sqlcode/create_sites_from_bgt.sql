@@ -3,7 +3,7 @@ create index on bag_verblijfsobject(_openbare_ruimte_naam);
 INSERT INTO afvalcontainers_site
 SELECT DISTINCT
     Concat(x, '-', y, '-', s.code, b.code) as id,
-    b.code as buurtcode,
+    b.code as buurt_code,
     s.code as stadseel,
     s.display as stadsdeel_naam,
     opr.display as straatnaam,
@@ -20,6 +20,7 @@ cross join lateral
 		o.wkb_geometry,
 		o.id
 	from openbareruimte o
+	where o.opr_type = "Weg"
 	order by
 		o.wkb_geometry <-> c.site_geometrie
 	limit 1) as opr

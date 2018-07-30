@@ -3,9 +3,10 @@ from django_filters.rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.serializers import ValidationError
 from django.contrib.gis.geos import Polygon
-from django.contrib.gis.measure import Distance
+# from django.contrib.gis.measure import Distance
 
 from datapunt_api.rest import DatapuntViewSet
+from datapunt_api.pagination import HALPagination
 from datapunt_api import bbox
 
 from afvalcontainers.models import Container
@@ -17,6 +18,8 @@ from afvalcontainers.models import Site
 from afvalcontainers.serializers import ContainerSerializer
 from afvalcontainers.serializers import WellSerializer
 from afvalcontainers.serializers import TypeSerializer
+from afvalcontainers.serializers import SiteSerializer
+from afvalcontainers.serializers import SiteDetailSerializer
 
 
 WASTE_DESCRIPTIONS = (
@@ -208,3 +211,102 @@ class TypeView(DatapuntViewSet):
     serializer_class = TypeSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_fields = ['volume', 'name']
+
+
+class SiteFilter(FilterSet):
+    id = filters.CharFilter()
+    in_bbox = filters.CharFilter(method='in_bbox_filter', label='bbox')
+
+    bgt_based = filters.BooleanFilter(
+        method='bgt_based_filter', label='BGT basis')
+
+    no_container = filters.BooleanFilter(
+        method='no_container_filter', label='No containers')
+
+    location = filters.CharFilter(
+        method="locatie_filter", label='x,y,r')
+
+    stadsdeel = filters.ChoiceFilter(choices=STADSDELEN)
+    buurt_code = filters.ChoiceFilter(choices=buurt_choices)
+
+    fractie = filters.ChoiceFilter(
+        method='fractie_filter', choices=WASTE_CHOICES, label="Fractie")
+
+    class Meta(object):
+        model = Site
+        fields = (
+            "id",
+            # "buurt_code",
+            "stadsdeel",
+            # "containers",
+            "wells",
+            "in_bbox",
+            "location",
+            "bgt_based",
+            "no_container",
+            "fractie",
+        )
+
+    def locatie_filter(self, qs, name, value):
+        point, radius = bbox.parse_xyr(value)
+        return qs.filter(geometrie__dwithin=(point, radius))
+
+    def in_bbox_filter(self, qs, name, value):
+        bbox_values, err = bbox.valid_bbox(value)
+        lat1, lon1, lat2, lon2 = bbox_values
+        poly_bbox = Polygon.from_bbox((lon1, lat1, lon2, lat2))
+
+        if err:
+            raise ValidationError(f"bbox invalid {err}:{bbox_values}")
+        return qs.filter(geometrie__bboverlaps=(poly_bbox))
+
+    def bgt_based_filter(self, qs, name, value):
+        return qs.filter(bgt_based=value)
+
+    def no_container_filter(self, qs, name, value):
+        return qs.filter(wells__containers=None)
+
+    def fractie_filter(self, qs, name, value):
+        """
+        Filter on fractie.
+        """
+        return qs.filter(wells__containers__waste_name=value).distinct()
+
+
+class SitePager(HALPagination):
+    page_size = 10
+    max_page_size = 100
+
+
+class SiteView(DatapuntViewSet):
+    """Site's containing wells.
+
+    This dataset is in BETA and under development expect changes!
+
+    the ID is a RD coordinate with buurt_code x-y-code
+
+    Return all information about site.
+
+    - Wells and containers included
+    - Fractions
+    - Openbare Ruimte Street and Number
+    - Centroid
+
+    BGT based sites are unlikely to change.
+    the non BGT based sites will most likely still change.
+    """
+
+    queryset = (
+        Site.objects.all()
+        .order_by("id")
+        .prefetch_related("wells")
+        .prefetch_related("wells__containers")
+    )
+
+    pagination_class = SitePager
+
+    serializer_class = SiteSerializer
+    serializer_detail_class = SiteDetailSerializer
+
+    filter_class = SiteFilter
+    filter_backends = (DjangoFilterBackend,)

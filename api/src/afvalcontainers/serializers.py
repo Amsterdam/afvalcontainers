@@ -36,10 +36,31 @@ class WellSerializer(HALSerializer):
         ]
 
 
+class ContainerModelSerializer(serializers.ModelSerializer):
+    """Serializer used by well
+    """
+
+    class Meta:
+        model = Container
+        fields = '__all__'
+
+
 class ContainerTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ContainerType
+        fields = '__all__'
+
+
+class WellModelSerializer(serializers.ModelSerializer):
+    """ Serializer to use in site detail
+    """
+    containers = ContainerModelSerializer(many=True)
+    # container_type = ContainerTypeSerializer()
+    # address = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Well
         fields = '__all__'
 
 
@@ -90,3 +111,70 @@ class TypeSerializer(HALSerializer):
             "volume",
             "containers"
         ]
+
+
+def fracties(obj):
+    fracties = {}
+    for w in obj.wells.all():
+        for c in w.containers.all():
+            count = fracties.setdefault(c.waste_name, 0) + 1
+            fracties[c.waste_name] = count
+
+    return fracties
+
+
+class SiteSerializer(HALSerializer):
+
+    _display = DisplayField()
+    wells = RelatedSummaryField()
+    # wells__containers = RelatedSummaryField()
+    fracties = serializers.SerializerMethodField()
+
+    class Meta(object):
+        model = Site
+
+        fields = [
+            "_links",
+            "_display",
+            "id",
+            "stadsdeel",
+            "straatnaam",
+            "huisnummer",
+            "wells",
+            "fracties",
+            "centroid",
+            # "wells__containers",
+        ]
+
+    def get_fracties(self, obj):
+        return fracties(obj)
+
+
+class SiteDetailSerializer(HALSerializer):
+
+    _display = DisplayField()
+    wells = WellModelSerializer(many=True)
+    fracties = serializers.SerializerMethodField()
+
+    class Meta(object):
+        model = Site
+
+        fields = [
+            "_links",
+            "_display",
+            "id",
+            "stadsdeel",
+            "buurt_code",
+            "straatnaam",
+            "huisnummer",
+            "wells",
+            "fracties",
+            "bgt_based",
+            "extra_attributes"
+            "centroid",
+            "geometrie",
+            # "wells__containers",
+        ]
+
+    def get_fracties(self, obj):
+        return fracties(obj)

@@ -10,6 +10,7 @@ class BrowseDatasetsTestCase(APITestCase):
         "afval/containers",
         "afval/wells",
         "afval/containertypes",
+        "afval/sites",
     ]
 
     def setUp(self):
