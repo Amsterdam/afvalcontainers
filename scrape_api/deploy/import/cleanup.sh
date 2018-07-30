@@ -91,5 +91,5 @@ dc run --rm importer python create_sites.py --clusters
 echo "Running backups"
 dc exec -T database backup-db.sh afvalcontainers
 
-echo "Store DB dump in objectstore for cleanup step"
-dc run --rm importer python -m objectstore.databasedumps /backups/database.dump db_cleaned --upload-db
+echo "Store final DB dump in objectstore"
+dc run --rm importer python -m objectstore.databasedumps backups/database.dump db_cleaned --upload-db
