@@ -65,7 +65,7 @@ echo "Running backups"
 dc exec -T database backup-db.sh afvalcontainers
 
 echo "Store DB dump in objectstore for cleanup step"
-dc run --rm importer python -m objectstore.databasedumps /backups/database.dump dbdumps --upload-db
+dc run --rm importer python -m objectstore.databasedumps backups/database.dump dbdumps --upload-db
 
 echo "Remove containers and volumes."
 dc down -v
