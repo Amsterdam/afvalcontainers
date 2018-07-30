@@ -13,9 +13,10 @@ def logger():
 
     TODO: add log file export
     """
-    logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s %(levelname)-8s %(message)s',
-                        datefmt='%a, %d %b %Y %H:%M:%S')
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s %(levelname)-8s %(message)s',
+        datefmt='%a, %d %b %Y %H:%M:%S')
     logger = logging.getLogger(__name__)
     return logger
 
@@ -26,7 +27,10 @@ logger = logger()
 
 def flatten_json(jsonObject):
     """
-        Flatten nested json Object {"key": "subkey": { "subsubkey":"value" }} to ['key.subkey.subsubkey'] values
+        Flatten nested json Object
+            {"key": "subkey": { "subsubkey":"value" }}
+            to ['key.subkey.subsubkey'] values
+
         https://towardsdatascience.com/flattening-json-objects-in-python-f5343c794b10
     """
     out = {}
@@ -47,6 +51,17 @@ def flatten_json(jsonObject):
     return out
 
 
+FIELDS = [
+    'id', 'id_number', 'serial_number',
+    'well',
+    'location.address.summary', 'location.address.district',
+    'location.address.neighbourhood',
+    'owner.name', 'created_at', 'placing_date',
+    'operational_date',
+    'warranty_date',
+    'containers.0']
+
+
 def jsonPoints2geojson(df, latColumn, lonColumn):
     """
        Convert JSON with lat/lon columns to geojson.
@@ -58,25 +73,30 @@ def jsonPoints2geojson(df, latColumn, lonColumn):
         item = flatten_json(item)
         # logger.info(item.keys())
         keep_items = {}
-        for k,v in item.items():
-            if k in ['id', 'id_number', 'serial_number', 'well','location.address.summary', 'location.address.district', 'location.address.neighbourhood', 'owner.name', 'created_at', 'placing_date', 'operational_date', 'warranty_date','containers.0']:
+        for k, v in item.items():
+            if k in FIELDS:
                 keep_items[k] = v
         # logger.info(keep_items)
         if lonColumn:
             feature = {'type': 'Feature',
                        'properties': keep_items}
-            feature['geometry'] = {'type': 'Point',
-                                   'coordinates': [float(item[lonColumn]),
-                                                   float(item[latColumn])
-                                                   ]}
+            feature['geometry'] = {
+                'type': 'Point',
+                'coordinates': [
+                    float(item[lonColumn]),
+                    float(item[latColumn])
+                ]
+            }
             geojson['features'].append(feature)
+
     return geojson
 
 
 def openJsonArrayKeyDict2FlattenedJson(fileName):
     """
         Open json and return array of objects without object value name.
-        For example: [{'container':{...}}, {'container':{...}}] returns now as [{...},{...}])
+        For example: [{'container':{...}}, {'container':{...}}]
+        returns now as [{...},{...}])
     """
     with open(fileName, 'r') as response:
         data = json.loads(response.read())
@@ -89,20 +109,22 @@ def openJsonArrayKeyDict2FlattenedJson(fileName):
 
 
 def joinByKeyNames(geojson, dataset, key1, key2):
-    """Insert data from dataset to a geojson where key1 from dataset matches key2 in the geojson."""
+    """Insert data from dataset to a geojson where key1 from dataset
+    matches key2 in the geojson."""
     n = 1
+
     for feature in geojson['features']:
-        #logger.info(feature["properties"])
+        # logger.info(feature["properties"])
         matches = [item for item in dataset
                    if item[key1] == feature["properties"].get(key2)]
         if matches:
-            if  'owner' in (matches[0].keys()):
+            if 'owner' in (matches[0].keys()):
                 del matches[0]['owner']
             feature['properties'].update(matches[0])
         else:
             feature['properties']['container'] = None
         n += 1
-        #logger.info("{} of {}".format(n, len(geojson['features'])))
+        # logger.info("{} of {}".format(n, len(geojson['features'])))
     return geojson
 
 
@@ -110,8 +132,9 @@ def parser():
     desc = "convert jsons to geojson file."
     parser = argparse.ArgumentParser(desc)
     parser.add_argument('datadir', type=str,
-                        help='Local data directory.')   
+                        help='Local data directory.')
     return parser
+
 
 def main():
     args = parser().parse_args()
@@ -119,7 +142,8 @@ def main():
     fileName = args.datadir + '/wells.json'
     fileName2 = args.datadir + '/containers.json'
     lat = 'location.position.latitude'
-    lon = 'location.position.longitude'  # for use later in flattened json as item['location.position.longitude']
+    # for use later in flattened json as item['location.position.longitude']
+    lon = 'location.position.longitude'
     waste_descriptions = [
                   {"id": 1, "waste_name": "Rest"},
                   {"id": 2, "waste_name": "Glas"},

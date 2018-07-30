@@ -31,3 +31,14 @@ dc exec -T database update-table.sh basiskaart BGT_WGL_woonerf bgt afvalcontaine
 dc exec -T database update-table.sh basiskaart BGT_BTRN_groenvoorziening bgt afvalcontainers spreeker
 dc exec -T database update-table.sh basiskaart BGT_OTRN_onverhard bgt afvalcontainers spreeker
 dc exec -T database update-table.sh basiskaart BGT_OTRN_erf bgt afvalcontainers spreeker
+
+
+# importeer buurt/stadseel
+python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/gebieden buurt_simple,stadsdeel 28992
+
+# importeer buurt/stadseel/pand/verblijfsobject informatie.
+python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/bag openbareruimte 28992
+# dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/bag verblijfsobject 28992
+python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/bag pand 28992
+
+#
