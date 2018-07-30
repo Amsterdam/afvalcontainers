@@ -33,6 +33,7 @@ services:
       OBJECTSTORE_PASSWORD:
     volumes:
       - afvalcontainers_import_cache:/data
+      - ./backups:/backups
     command: >
       bash -c "/deploy/import/import.sh"
 

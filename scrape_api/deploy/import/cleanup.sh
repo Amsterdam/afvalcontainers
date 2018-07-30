@@ -92,4 +92,4 @@ echo "Running backups"
 dc exec -T database backup-db.sh afvalcontainers
 
 echo "Store final DB dump in objectstore"
-dc run --rm importer python -m objectstore.databasedumps backups/database.dump db_cleaned --upload-db
+dc run --rm importer python -m objectstore.databasedumps /backups/database.dump db_cleaned --upload-db
