@@ -12,7 +12,7 @@ set -x
 DIR="$(dirname $0)"
 
 dc() {
-	docker-compose -p scrapebammens${ENVIRONMENT} -f ${DIR}/docker-compose.yml $*
+	docker-compose -p sitescontainers${ENVIRONMENT} -f ${DIR}/docker-compose.yml $*
 }
 
 trap 'dc kill ; dc rm -f' EXIT
@@ -30,7 +30,7 @@ dc build
 
 echo "Bringing up and waiting for database"
 dc up -d database
-dc run importer /app/deploy/docker-wait.sh
+dc run --rm importer /app/deploy/docker-wait.sh
 
 dc exec -T database touch /data/test.txt
 
