@@ -1,7 +1,7 @@
 import factory
-from random import randint
 
 from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Polygon
 
 from factory import fuzzy
 
@@ -9,6 +9,7 @@ from factory import fuzzy
 from afvalcontainers.models import Container
 from afvalcontainers.models import Well
 from afvalcontainers.models import ContainerType
+from afvalcontainers.models import Site
 
 # Amsterdam.
 BBOX = [52.03560, 4.58565, 52.48769, 5.31360]
@@ -56,3 +57,26 @@ class ContainerTypeFactory(factory.DjangoModelFactory):
     id = factory.Sequence(lambda n: n)
     name = fuzzy.FuzzyText(length=40)
     volume = fuzzy.FuzzyInteger(0, 42)
+
+
+class SiteFactory(factory.DjangoModelFactory):
+
+    class Meta:
+        model = Site
+
+    id = factory.Sequence(lambda n: n)
+    bgt_based = fuzzy.FuzzyChoice([True, False])
+    buurt_code = fuzzy.FuzzyText(length=4)
+    stadsdeel = fuzzy.FuzzyText(length=1)
+    straatnaam = fuzzy.FuzzyText(length=10)
+
+    huisnummer = fuzzy.FuzzyInteger(1, 92)
+
+    centroid = get_puntje()
+    geometrie = Polygon([
+        (121700, 491833),
+        (121705, 491833),
+        (121705, 491838),
+        (121700, 491838),
+        (121700, 491833),
+    ])

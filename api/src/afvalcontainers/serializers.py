@@ -143,7 +143,6 @@ class SiteSerializer(HALSerializer):
             "wells",
             "fracties",
             "centroid",
-            # "wells__containers",
         ]
 
     def get_fracties(self, obj):
@@ -173,7 +172,6 @@ class SiteDetailSerializer(HALSerializer):
             "extra_attributes"
             "centroid",
             "geometrie",
-            # "wells__containers",
         ]
 
     def get_fracties(self, obj):

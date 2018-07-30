@@ -20,6 +20,9 @@ class BrowseDatasetsTestCase(APITestCase):
             container_type=self.t,
             well=self.w
         )
+        self.s = factories.SiteFactory()
+        self.w.site_id = self.s.id
+        self.w.save()
 
     def valid_response(self, url, response, content_type):
         """
@@ -53,6 +56,7 @@ class BrowseDatasetsTestCase(APITestCase):
                 response.status_code, 200,
                 "Wrong response code for {}".format(url)
             )
+
             # default should be json
             self.valid_response(url, response, 'application/json')
 

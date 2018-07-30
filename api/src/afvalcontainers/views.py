@@ -274,6 +274,8 @@ class SiteFilter(FilterSet):
 
 
 class SitePager(HALPagination):
+    """Site objects are rather "heavy" so put limits on pagination
+    """
     page_size = 10
     max_page_size = 100
 
