@@ -65,6 +65,8 @@ class ContainerFilter(FilterSet):
     well__stadsdeel = filters.ChoiceFilter(choices=STADSDELEN)
     well__buurt_code = filters.ChoiceFilter(choices=buurt_choices)
 
+    well = filters.CharFilter()
+
     class Meta(object):
         model = Container
         fields = (
@@ -209,7 +211,8 @@ class TypeView(DatapuntViewSet):
     """
     queryset = (
         ContainerType.objects.all()
-        .order_by("id").prefetch_related("containers")
+        .order_by("id")
+        .prefetch_related("containers")
     )
     serializer_detail_class = TypeSerializer
     serializer_class = TypeSerializer
