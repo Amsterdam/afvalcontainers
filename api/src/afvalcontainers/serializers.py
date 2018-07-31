@@ -33,6 +33,7 @@ class WellSerializer(HALSerializer):
             "operational_date",
             "containers",
             "address",
+            "site",
         ]
 
 
