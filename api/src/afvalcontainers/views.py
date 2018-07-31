@@ -142,6 +142,9 @@ class WellFilter(FilterSet):
     in_pand = filters.BooleanFilter(
         method='in_pand_filter', label='in_pand')
 
+    containers = filters.CharFilter()
+    site = filters.CharFilter()
+
     class Meta(object):
         model = Well
         fields = (
@@ -157,6 +160,7 @@ class WellFilter(FilterSet):
             "containers",
             "in_bbox",
             "location",
+            "site",
             "no_container",
         )
 
@@ -231,6 +235,8 @@ class SiteFilter(FilterSet):
 
     fractie = filters.ChoiceFilter(
         method='fractie_filter', choices=WASTE_CHOICES, label="Fractie")
+
+    wells = filters.CharFilter()
 
     class Meta(object):
         model = Site
@@ -312,3 +318,5 @@ class SiteView(DatapuntViewSet):
 
     filter_class = SiteFilter
     filter_backends = (DjangoFilterBackend,)
+
+    lookup_value_regex = '[^/]+'
