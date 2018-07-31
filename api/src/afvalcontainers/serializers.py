@@ -170,7 +170,7 @@ class SiteDetailSerializer(HALSerializer):
             "wells",
             "fracties",
             "bgt_based",
-            "extra_attributes"
+            "extra_attributes",
             "centroid",
             "geometrie",
         ]
