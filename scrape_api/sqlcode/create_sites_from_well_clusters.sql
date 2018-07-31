@@ -20,7 +20,7 @@ cross join lateral
 		o.wkb_geometry,
 		o.id
 	from openbareruimte o
-	where o.opr_type = "Weg"
+	where o.opr_type = 'Weg'
 	order by
 		o.wkb_geometry <-> c.site_geometrie
 	limit 1) as opr
