@@ -24,6 +24,7 @@ factory-boy==2.10.0
 Faker==0.8.13
 flex==6.13.1
 future==0.16.0
+graypy==0.3
 idna==2.6
 idna-ssl==1.0.1
 inflection==0.3.1
