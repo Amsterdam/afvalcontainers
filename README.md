@@ -9,6 +9,8 @@ Swagger documentation can be found here after you login: https://bammensservice.
 
 ### Model Overview ###
 
+```
+
 
                              +--------------------+
 +-----------------+          |                    |
@@ -55,7 +57,7 @@ Feedback            |
 Feedback     +------v--------+
     <--------+  API / Geo    |
              +---------------+
-
+```
 
 ### Install procedure ###
 
