@@ -90,7 +90,6 @@ CROSS JOIN LATERAL
 """
 
 
-
 # CREATE_WELL_BGT = """
 # CREATE TABLE public.well_bgt (
 #         id int4 NULL,

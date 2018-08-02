@@ -29,6 +29,23 @@ class ContainersView(routers.APIRootView):
     """
     Garbadge Containers in the city are show here as list.
     It is possible to filter the list
+
+    Model Overview
+    --------------
+
+    Type ->  Container ->  Well ->  Site
+
+    A site is a collection of wells. Each well can contain
+    a container. The container and type in a well can change.
+
+    Daily Import Overview
+    ---------------
+
+     1. Scrape Bammens API ~12.500 wells/containers
+     2. BGT merge ~8500 wells merged with BGT (8-2018)
+     3. Cleanup ,
+     4. Fills site endpoint for route planning/ dashboards
+     5. Publish API / Geo services
     """
 
 
