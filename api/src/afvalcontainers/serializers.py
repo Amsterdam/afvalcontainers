@@ -116,10 +116,19 @@ class TypeSerializer(HALSerializer):
 
 def fracties(obj):
     fracties = {}
+    containers = {}
+    volumes = {}
+
     for w in obj.wells.all():
         for c in w.containers.all():
-            count = fracties.setdefault(c.waste_name, 0) + 1
-            fracties[c.waste_name] = count
+            count = containers.setdefault(c.waste_name, 0) + 1
+            volume = volumes.setdefault(c.waste_name, 0)
+            volume += c.container_type.volume
+            containers[c.waste_name] = count
+            volumes[c.waste_name] = volume
+
+    fracties['containers'] = containers
+    fracties['volumes_m3'] = volumes
 
     return fracties
 
