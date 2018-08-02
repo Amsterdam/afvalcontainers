@@ -89,20 +89,27 @@ Create a local environment and activate it:
 ```
 virtualenv --python=$(which python3) venv
 source venv/bin/activate
-`
+```
 
 Start development database
-```
-docker-compose up database
-```
-
-load production data
-```
-docker-compose exec database update-db.sh afvalcontainers
-```
 
 
-pip install -r requirements.txt in the api folder and scrape_api folder.
+```
+	docker-compose up database
+```
+
+load production data:
+
+
+```
+	docker-compose exec database update-db.sh afvalcontainers
+```
+
+```
+pip install -r requirements.txt 
+```
+
+The api folder and scrape_api folder both have requierments.
 
 
 scrape api
@@ -122,30 +129,8 @@ Afvalcontainer API
 This is a standard Django Rest Framework API.
 
 ```
-docker-compose up database
-python manage.py runserver
+	docker-compose up database
+	python manage.py runserver
 ```
 
 
-cmsdownloader (old legacy)
-=============
-``
-To run the downloader and uploader to Postgres in a docker you can use this command:
-```
-docker-compose build database
-```
-
-Run the uploader to postgres locally with stating the folder and postgres login and port where to write to.
-```
-python load_json2pg.py data dev
-```
-
-To create the geojson run:
-```
-python json2geojson.py data dev
-```
-
-To upload the geojson to the CKAN store:
-```
-python load_file_to_ckan.py https://api.data.amsterdam.nl/catalogus afvalcontainers data/afvalcontainers.geojson
-```
