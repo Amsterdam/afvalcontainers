@@ -31,7 +31,7 @@ class ContainersView(routers.APIRootView):
     It is possible to filter the list
 
     Model Overview
-    --------------
+    ==================
 
     Type ->  Container ->  Well ->  Site
 
@@ -39,13 +39,17 @@ class ContainersView(routers.APIRootView):
     a container. The container and type in a well can change.
 
     Daily Import Overview
-    ---------------
+    =====================
 
      1. Scrape Bammens API ~12.500 wells/containers
      2. BGT merge ~8500 wells merged with BGT (8-2018)
      3. Cleanup ,
      4. Fills site endpoint for route planning/ dashboards
      5. Publish API / Geo services
+
+    [github/amsterdam/afvalcontainers](https://github.com/Amsterdam/afvalcontainers)
+
+    [Author: s.preeker](https://github.com/spreeker/)
     """
 
 

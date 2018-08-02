@@ -414,10 +414,6 @@ def update_quality_in_extra_attributes():
         session.commit()
 
 
-def create_site_views():
-    pass
-
-
 VALIDATE_SQL = [
     ("""select count(*) from afvalcontainers_well
         where stadsdeel is null""", 0, 5),
@@ -449,8 +445,6 @@ def main(args):
         create_clusters()
     if args.pand_distance:
         create_pand_distance()
-    if args.create_views:
-        create_site_views()
     if args.fill_rd:
         fill_rd_geometry()
 
