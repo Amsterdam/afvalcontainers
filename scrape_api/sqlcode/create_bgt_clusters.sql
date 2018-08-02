@@ -11,7 +11,7 @@ FROM (
     ST_ConvexHull(
         ST_CollectionExtract(
             unnest(ST_ClusterIntersecting(
-                st_buffer(ba.geometrie, 8))), 3)
+                st_buffer(ba.geometrie, 3.5))), 3)
     ) as site_geometrie
     FROM bgt."BGTPLUS_BAK_afval_apart_plaats" ba
     LEFT JOIN stadsdeel s

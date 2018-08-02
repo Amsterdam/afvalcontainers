@@ -240,6 +240,22 @@ def collect_bgt_for_wells():
     create_well_bgt_geometry_table()
 
 
+SITE_ID_NULL = "UPDATE afvalcontainers_well SET site_id = NULL"
+
+DELETE_SITES_IN = """
+DELETE FROM "afvalcontainers_site"
+WHERE "afvalcontainers_site"."id"
+IN (select id from afvalcontainers_site);
+"""
+
+
+def delete_sites():
+    log.info('Clear old sites if they exist')
+    session.execute(SITE_ID_NULL)
+    session.execute(DELETE_SITES_IN)
+    session.commit()
+
+
 def fill_rd_geometry():
     """if well have geometrie and no rd geometry add it.
     """
@@ -366,6 +382,7 @@ def create_clusters():
     # TODO? load existing clusters
     """
     log.info('Create BGT based sites')
+    delete_sites()
     # create new bgt bases clusters
     execute_sqlfile('sqlcode/create_bgt_clusters.sql')
     # match with current containers
