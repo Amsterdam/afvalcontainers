@@ -1,6 +1,7 @@
 datapunt-authorization-django
 datapunt-authorization-levels
 Django
+drf_amsterdam
 django-braces
 django-debug-toolbar
 django-extensions

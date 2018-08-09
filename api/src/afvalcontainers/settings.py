@@ -14,7 +14,14 @@ from afvalcontainers.settings_databases import (
 
 # Application definition
 
-INSTALLED_APPS += ["drf_yasg", "afvalcontainers"]
+INSTALLED_APPS += [
+    "drf_yasg",
+    "afvalcontainers",
+    # "crispy_forms",
+]
+
+
+# CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 ROOT_URLCONF = "afvalcontainers.urls"
 

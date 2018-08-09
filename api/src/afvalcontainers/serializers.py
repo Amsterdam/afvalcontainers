@@ -65,13 +65,34 @@ class WellModelSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class InlineWellModelSerializer(serializers.ModelSerializer):
+    """ Serializer to use in site detail
+    """
+    # containers = ContainerModelSerializer(many=True)
+    # container_type = ContainerTypeSerializer()
+    # address = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Well
+        fields = [
+            'id',
+            'id_number',
+            'serial_number',
+            'geometrie',
+            'geometrie_rd',
+            'buurt_code',
+            'site',
+        ]
+
+
 class ContainerSerializer(HALSerializer):
     _display = DisplayField()
 
     container_type = ContainerTypeSerializer()
 
     address = serializers.SerializerMethodField()
-    # well = WellSerializer()
+    # well = WellModelSerializer()
+    # geometrie = serializers.SerializerMethodField()
 
     class Meta(object):
         model = Container
@@ -95,6 +116,15 @@ class ContainerSerializer(HALSerializer):
     def get_address(self, obj):
         if obj.well:
             return obj.well.address.get('summary')
+
+
+class ContainerDetailSerializer(ContainerSerializer):
+
+    well = InlineWellModelSerializer()
+
+    # def get_geometrie(self, obj):
+    #     if obj.well:
+    #         return obj.well.geometrie
 
 
 class TypeSerializer(HALSerializer):

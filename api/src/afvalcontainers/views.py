@@ -16,6 +16,7 @@ from afvalcontainers.models import Buurten
 from afvalcontainers.models import Site
 
 from afvalcontainers.serializers import ContainerSerializer
+from afvalcontainers.serializers import ContainerDetailSerializer
 from afvalcontainers.serializers import WellSerializer
 from afvalcontainers.serializers import TypeSerializer
 from afvalcontainers.serializers import SiteSerializer
@@ -114,9 +115,10 @@ class ContainerView(DatapuntViewSet):
         Container.objects.all()
         .order_by("id")
         .select_related('well')
-        .select_related('container_type')
+        .prefetch_related('well')
+        .prefetch_related('container_type')
     )
-    serializer_detail_class = ContainerSerializer
+    serializer_detail_class = ContainerDetailSerializer
     serializer_class = ContainerSerializer
     bbox_filter_field = 'well__geometrie'
     filter_backends = (DjangoFilterBackend,)
