@@ -100,15 +100,14 @@
 
     var page = 1;
     //var hasresults = [];
-    var rowcount = 0;
     var feat = [];
-    var results = [];
+    var promises = [];
 
     function getPage(page) {
 
       params.page = page;
 
-      $.getJSON(apiCall, params, function(resp) {
+      promises.push($.getJSON(apiCall, params, function(resp) {
 
         feat = resp.results;
 
@@ -139,25 +138,25 @@
                 row.site = feat[i].well.site;
               }
               tableData.push(row);
-              rowcount += 1;
             }
           }
           table.appendRows(tableData);
-          return;
+          console.log(table);
         }
-      });
+      }));
     }
 
     do {
-      results = getPage(page);
+      getPage(page);
       page += 1;
       // get the next page.
       // as long as we get response continue loading!
-    } while(results.results.length && page < 14);
+      // I do not know how to do this with promises
+    } while(page < 14);
 
-    // update loop runaway failsafe.
-    doneCallback();
-    console.info.log(rowcount);
+    $.when.apply($, promises).then(function(){
+      doneCallback();
+    });
   };
 
   tableau.registerConnector(myConnector);
