@@ -88,8 +88,8 @@
   // var dateObj = JSON.parse(tableau.connectionData),
   // dateString = "starttime=" + dateObj.startDate + "&endtime=" + dateObj.endDate,
 
-  //var apiCall = "https://api.data.amsterdam.nl/afval/containers/";  // + dateString + "";
-    var apiCall = "http://localhost:8889/localhost:8000/afval/containers/";  // + dateString + "";
+    var apiCall = "https://api.data.amsterdam.nl/afval/containers/";  // + dateString + "";
+    // var apiCall = "http://localhost:8889/localhost:8000/afval/containers/";  // + dateString + "";
 
     var params = {
       "format": "json",
@@ -141,7 +141,6 @@
             }
           }
           table.appendRows(tableData);
-          console.log(table);
         }
       }));
     }
