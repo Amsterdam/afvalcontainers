@@ -20,13 +20,11 @@ INSTALLED_APPS += [
     # "crispy_forms",
 ]
 
-
 # CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 ROOT_URLCONF = "afvalcontainers.urls"
 
 WSGI_APPLICATION = "afvalcontainers.wsgi.application"
-
 
 DATABASE_OPTIONS = {
     LocationKey.docker: {
