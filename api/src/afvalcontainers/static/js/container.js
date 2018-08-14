@@ -137,6 +137,9 @@
                 row.buurt_code = feat[i].well.buurt_code;
                 row.site = feat[i].well.site;
               }
+              if(row.placing_date !== null) {
+                row.placing_date = row.placing_date.toString().slice(0, 10);
+              }
               tableData.push(row);
             }
           }
