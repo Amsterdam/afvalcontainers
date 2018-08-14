@@ -12,19 +12,19 @@
       id: "id_number",
       alias: "id number",
       dataType: tableau.dataTypeEnum.string
-    }, {
+    },{
       id: "waste_name",
       alias: "fractie",
       dataType: tableau.dataTypeEnum.string
-    }, {
+    },{
       id: "buurt_code",
       alias: "buurt_code",
       dataType: tableau.dataTypeEnum.string
-    }, {
+    },{
       id: "active",
       alias: "is active",
-      dataType: tableau.dataTypeEnum.boolean
-    }, {
+      dataType: tableau.dataTypeEnum.bool
+    },{
       id: "address",
       alias: "address",
       dataType: tableau.dataTypeEnum.string
@@ -127,7 +127,7 @@
                 "address": feat[i].address,
                 "waste_name": feat[i].waste_name,
                 "active": feat[i].active,
-                "volume": feat[i].container_type.volume,
+                "volume": feat[i].container_type.volume || 0,
                 "placing_date": feat[i].placing_date
               };
 
