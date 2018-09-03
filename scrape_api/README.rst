@@ -14,8 +14,12 @@ About
 Instructions
 ------------
 
-set `BAMMENS_USER` to acceptance of production
-set `BAMMENS_PASSWORD` you can find it in rattic/password management
+set env `BAMMENS_USER` to APIeelke (bammens api user in rattic)
+set env `BAMMENS_PASSWORD` you can find it in rattic/password management
+
+::
+        export BAMMENS_USER=username
+        export BAMMENS_PASSWORD=lookthisupinrattic
 
 ::
         docker-compose up database
@@ -28,6 +32,9 @@ set `BAMMENS_PASSWORD` you can find it in rattic/password management
         python models.py
 
 # now you can run:
+# unfortunately this is rather slow on the bammens side.
+# if we hammer the server too much production problems
+# occur!
 
 ::
         python slurp_api.py containers

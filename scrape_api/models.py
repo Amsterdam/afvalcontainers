@@ -21,16 +21,20 @@ from settings import config_auth
 
 
 logging.basicConfig(level=logging.DEBUG)
-log = logging.getLogger(__name__)
+LOG = logging.getLogger(__name__)
 
 Base = declarative_base()
 
 Session = sessionmaker()
 
-session = []
+
+session: list = []
 
 
 def make_conf(section):
+    """
+    Setup database connection
+    """
 
     host = config_auth.get(section, "host")
     port = config_auth.get(section, "port")
@@ -45,19 +49,23 @@ def make_conf(section):
         database=db,
     )
 
-    log.info(f"Database config {host}:{port}:{db}")
+    LOG.info(f"Database config {host}:{port}:{db}")
     return CONF
 
 
 def create_db(section="test"):
+    """Create the database
+    """
     CONF = make_conf(section)
-    log.info(f"Created database")
+    LOG.info(f"Created database")
     if not database_exists(CONF):
         create_database(CONF)
 
 
 def drop_db(section="test"):
-    log.info(f"Drop database")
+    """Cleanup
+    """
+    LOG.info(f"Drop database")
     CONF = make_conf(section)
     if database_exists(CONF):
         drop_database(CONF)
@@ -135,10 +143,10 @@ async def main(args):
 
     if args.drop:
         # resets everything
-        log.warning("DROPPING ALL DEFINED TABLES")
+        LOG.warning("DROPPING ALL DEFINED TABLES")
         Base.metadata.drop_all(engine)
 
-    log.warning("CREATING DEFINED TABLES")
+    LOG.warning("CREATING DEFINED TABLES")
     # recreate tables
     Base.metadata.create_all(engine)
 
