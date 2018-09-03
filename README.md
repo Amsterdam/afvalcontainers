@@ -82,6 +82,14 @@ docker-compose up
 
 check the deploy import scrips.
 
+this import process dumps the raw bammens data, the cleaned data and the final
+data in the object store for the past 20 days!
+
+```
+db_slurp=raw bammens data
+db_dump=first imported data
+db_cleaned=final cleanup data with sites
+```
 
 #### Local development ####
 
@@ -106,10 +114,10 @@ load production data:
 ```
 
 ```
-pip install -r requirements.txt 
+pip install -r requirements.txt
 ```
 
-The api folder and scrape_api folder both have requierments.
+The api folder and scrape_api folder both have requirements.
 
 
 scrape api
@@ -118,6 +126,8 @@ scrape api
 ```
 	bash load_bgt.sh (replace spreeker with your user name)
 ```
+
+See README in the scrape_api folder.
 
 This will load all needed BGT and WFS data source.
 No you should be able to start developing.

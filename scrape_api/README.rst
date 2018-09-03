@@ -14,8 +14,12 @@ About
 Instructions
 ------------
 
-set `BAMMENS_USER` to acceptance of production
-set `BAMMENS_PASSWORD` you can find it in rattic/password management
+set env `BAMMENS_USER` to APIeelke (bammens api user in rattic)
+set env `BAMMENS_PASSWORD` you can find it in rattic/password management
+
+::
+        export BAMMENS_USER=username
+        export BAMMENS_PASSWORD=lookthisupinrattic
 
 ::
         docker-compose up database
@@ -28,6 +32,9 @@ set `BAMMENS_PASSWORD` you can find it in rattic/password management
         python models.py
 
 # now you can run:
+# unfortunately this is rather slow on the bammens side.
+# if we hammer the server too much production problems
+# occur!
 
 ::
         python slurp_api.py containers
@@ -54,6 +61,8 @@ set `BAMMENS_PASSWORD` you can find it in rattic/password management
 
 # In the scrape_api/ directory, if everything is downloaded
 
+you can run bash `import_local.sh` or:
+
 ::
         python copy_to_django.py wells --cleanup
         python copy_to_django.py containers --cleanup
@@ -65,6 +74,19 @@ set `BAMMENS_PASSWORD` you can find it in rattic/password management
 
 ::
         python copy_to_django.py wells --link_containers
+        python copy_to_django.py wells --link_gebieden
+        python copy_to_django.py containers --geoview
+
+# now create the sites.
+
+::
+        python create_sites.py --fill_rd
+        python create_sites.py --merge_bgt
+        python create_sites.py --qa_wells
+        python create_sites.py --pand_distance
+        python create_sites.py --clusters
+        python create_sites.py --validate
+
 
 Tests
 ======
