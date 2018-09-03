@@ -15,6 +15,7 @@ services:
     links:
       - database
     environment:
+      ENVIRONMENT:
       DATABASE_NAME: afvalcontainers
       DATABASE_USER: afvalcontainers
 
@@ -23,6 +24,7 @@ services:
     links:
       - database
     environment:
+      ENVIRONMENT:
       DATABASE_USER: afvalcontainers
       DATABASE_PASSWORD: insecure
       BAMMENS_API_USERNAME:
