@@ -61,6 +61,8 @@ set env `BAMMENS_PASSWORD` you can find it in rattic/password management
 
 # In the scrape_api/ directory, if everything is downloaded
 
+you can run bash `import_local.sh` or:
+
 ::
         python copy_to_django.py wells --cleanup
         python copy_to_django.py containers --cleanup
@@ -72,6 +74,19 @@ set env `BAMMENS_PASSWORD` you can find it in rattic/password management
 
 ::
         python copy_to_django.py wells --link_containers
+        python copy_to_django.py wells --link_gebieden
+        python copy_to_django.py containers --geoview
+
+# now create the sites.
+
+::
+        python create_sites.py --fill_rd
+        python create_sites.py --merge_bgt
+        python create_sites.py --qa_wells
+        python create_sites.py --pand_distance
+        python create_sites.py --clusters
+        python create_sites.py --validate
+
 
 Tests
 ======

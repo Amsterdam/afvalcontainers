@@ -41,10 +41,16 @@ dc run --rm importer python slurp_api.py container_types
 dc run --rm importer python slurp_api.py containers
 dc run --rm importer python slurp_api.py wells
 
+# backup raw data for debugging
+dc exec -T database backup-db.sh afvalcontainers
+dc run --rm importer python -m objectstore.databasedumps /backups/database.dump db_slurp --upload-db
+dc run --rm importer python -m objectstore.databasedumps /backups/database.dump db_slurp --days 20
+
 # Opschonen
 dc run --rm importer python copy_to_django.py wells --cleanup
 dc run --rm importer python copy_to_django.py containers --wastename
 dc run --rm importer python copy_to_django.py containers --cleanup
+
 
 # Kopieren containers to django tables
 dc run --rm importer python copy_to_django.py container_types
@@ -66,6 +72,7 @@ dc exec -T database backup-db.sh afvalcontainers
 
 echo "Store DB dump in objectstore for cleanup step"
 dc run --rm importer python -m objectstore.databasedumps /backups/database.dump db_dumps --upload-db
+dc run --rm importer python -m objectstore.databasedumps /backups/database.dump db_dumps --days 20
 
 echo "Remove containers and volumes."
 dc down -v

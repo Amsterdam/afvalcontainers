@@ -34,8 +34,8 @@ INSERT INTO afvalcontainers_well (
 )
 SELECT
     id,
-    data->>'serial_number' as serial_number,
-    data->>'id_number' as id_number,
+    LEFT(data->>'serial_number', 45) as serial_number,
+    LEFT(data->>'id_number', 35)  as id_number,
     CAST(data->>'owner' as jsonb) as owner,
     CAST(data->>'containers' as jsonb) as containers_bron,
     CAST(data->>'created_at' as timestamp) as created_at,
@@ -77,8 +77,8 @@ INSERT INTO afvalcontainers_container (
 )
 SELECT
     id,
-    data->>'id_number' as id_number,
-    data->>'serial_number' as serial_number,
+    LEFT(data->>'id_number', 35) as id_number,
+    LEFT(data->>'serial_number', 45) as serial_number,
     CAST(data->>'owner' as jsonb) as owner,
     CAST(data->>'created_at' as timestamp) as created_at,
     CAST(data->>'warranty_date' as timestamp) as warranty_date,

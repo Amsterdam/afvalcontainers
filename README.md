@@ -87,8 +87,8 @@ data in the object store for the past 20 days!
 
 ```
 db_slurp=raw bammens data
-db_cleaned=cleanup data
-db_dump=final api data
+db_dump=first imported data
+db_cleaned=final cleanup data with sites
 ```
 
 #### Local development ####

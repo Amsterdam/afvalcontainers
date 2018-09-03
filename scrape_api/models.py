@@ -3,7 +3,7 @@ import argparse
 import asyncio
 
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import Column, Integer, String, TIMESTAMP
+from sqlalchemy import Column, Integer, TIMESTAMP
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import Sequence

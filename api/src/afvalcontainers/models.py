@@ -26,7 +26,7 @@ class Container(models.Model):
     """
     id = models.IntegerField(primary_key=True)
     id_number = models.CharField(max_length=35, null=False, db_index=True)
-    serial_number = models.CharField(max_length=245, null=False, db_index=True)
+    serial_number = models.CharField(max_length=45, null=False, db_index=True)
     owner = JSONField(null=True)
     well = models.ForeignKey(
         'Well', null=True,
@@ -81,7 +81,7 @@ class Well(models.Model):
     """
     id = models.IntegerField(primary_key=True)
     id_number = models.CharField(max_length=35, db_index=True)
-    serial_number = models.CharField(max_length=245, db_index=True)
+    serial_number = models.CharField(max_length=45, db_index=True)
     active = models.NullBooleanField(null=True)
 
     owner = JSONField()
