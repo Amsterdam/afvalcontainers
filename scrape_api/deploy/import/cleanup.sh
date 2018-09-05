@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # We created an extra cleanup scrips because the import can only run in the
 # night. so we can run this in a seperate task process.
@@ -37,10 +37,12 @@ dc exec -T database touch /data/test.txt
 # Download latest dump from objectstore
 dc run --rm importer python -m objectstore.databasedumps /data db_dumps --download-db
 
-ENV='acceptance'
-if [$ENVIRONMENT = 'production']; then
-   ENV='production'
+
+ENV="acceptance"
+if [ "$ENVIRONMENT" == "production" ]; then
+  ENV="production"
 fi
+
 
 dc exec -T database pg_restore --no-privileges --no-owner --if-exists -j 4 -c -C -d postgres -U postgres /data/database.$ENV
 
