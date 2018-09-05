@@ -37,9 +37,9 @@ dc exec -T database touch /data/test.txt
 # Download latest dump from objectstore
 dc run --rm importer python -m objectstore.databasedumps /data db_dumps --download-db
 
-ENV='ACCEPTANCE'
+ENV='acceptance'
 if [$ENVIRONMENT = 'production']; then
-   ENV='PRODUCTION'
+   ENV='production'
 fi
 
 dc exec -T database pg_restore --no-privileges --no-owner --if-exists -j 4 -c -C -d postgres -U postgres /data/database.$ENV
