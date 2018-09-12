@@ -44,7 +44,7 @@ if [ "$ENVIRONMENT" == "production" ]; then
 fi
 
 
-dc exec -T database pg_restore --no-privileges --no-owner --if-exists -j 4 -c -C -d postgres -U postgres /data/database.$ENV
+dc exec -T database pg_restore --no-privileges --no-owner --if-exists -j 4 -c -C -d postgres -U afvalcontainers /data/database.$ENV
 
 # Sometimes the migrations could be behind.. since we could load older data
 dc run --rm api python manage.py migrate
