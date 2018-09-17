@@ -299,11 +299,11 @@ async def main(endpoint, workers=WORKERS, make_engine=True):
     await run_workers(endpoint, workers=workers)
 
 
-def start_import(args, workers=WORKERS, make_engine=True):
+def start_import(endpoint, workers=WORKERS, make_engine=True):
     start = time.time()
     loop = asyncio.get_event_loop()
     loop.run_until_complete(
-        main(args, workers=workers, make_engine=make_engine))
+        main(endpoint, workers=workers, make_engine=make_engine))
     log.info("Took: %s", time.time() - start)
 
 

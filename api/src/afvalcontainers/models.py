@@ -142,6 +142,7 @@ class ContainerType(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.TextField()
     volume = models.IntegerField()
+    weight = models.IntegerField(null=True)
 
     def __str__(self):
         return f"{self.name} - {self.volume}M3"

@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# We doen deze import los van de cleanup. want
+# bammens.nl is erg traag.
+
 set -e
 set -u
 set -x
@@ -29,50 +32,23 @@ dc run importer /app/deploy/docker-wait.sh
 
 echo "Importing data into database"
 
+# Create all tables / database stuff
 dc run --rm api python manage.py migrate
 dc run --rm importer python models.py
 
 # importeer buurt/stadseel
 dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/gebieden buurt_simple,stadsdeel 28992
 
-
 # Importeer bammens api endpoints
 dc run --rm importer python slurp_api.py container_types
 dc run --rm importer python slurp_api.py containers
 dc run --rm importer python slurp_api.py wells
 
-# backup raw data for debugging
+# backup raw data for debuging
 dc exec -T database backup-db.sh afvalcontainers
+
 dc run --rm importer python -m objectstore.databasedumps /backups/database.dump db_slurp --upload-db
 dc run --rm importer python -m objectstore.databasedumps /backups/database.dump db_slurp --days 20
-
-# Opschonen
-dc run --rm importer python copy_to_django.py wells --cleanup
-dc run --rm importer python copy_to_django.py containers --wastename
-dc run --rm importer python copy_to_django.py containers --cleanup
-
-
-# Kopieren containers to django tables
-dc run --rm importer python copy_to_django.py container_types
-dc run --rm importer python copy_to_django.py wells
-dc run --rm importer python copy_to_django.py containers
-
-# Link containers to wells
-dc run --rm importer python copy_to_django.py containers --link_containers
-
-# Link wells to gebieden
-dc run --rm importer python copy_to_django.py wells --link_gebieden
-dc run --rm importer python copy_to_django.py containers --geoview
-
-# Validate import counts
-dc run --rm importer python copy_to_django.py containers --validate
-
-echo "Running backups"
-dc exec -T database backup-db.sh afvalcontainers
-
-echo "Store DB dump in objectstore for cleanup step"
-dc run --rm importer python -m objectstore.databasedumps /backups/database.dump db_dumps --upload-db
-dc run --rm importer python -m objectstore.databasedumps /backups/database.dump db_dumps --days 20
 
 echo "Remove containers and volumes."
 dc down -v

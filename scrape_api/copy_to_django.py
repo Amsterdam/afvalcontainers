@@ -94,7 +94,10 @@ SELECT
 
 INSERT_TYPES = """
 INSERT INTO afvalcontainers_containertype
-SELECT id, data->>'name', CAST("data"->>'volume' as INT)
+SELECT id,
+       data->>'name',
+       CAST("data"->>'volume' as INT),
+       CAST("data"->>'weight' as INT)
 FROM bammens_containertype_raw
 """
 
