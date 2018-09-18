@@ -140,6 +140,7 @@ class TypeSerializer(HALSerializer):
             "id",
             "name",
             "volume",
+            "weight",
             "containers"
         ]
 
