@@ -57,8 +57,8 @@ class WellModelSerializer(serializers.ModelSerializer):
     """ Serializer to use in site detail
     """
     containers = ContainerModelSerializer(many=True)
-    # container_type = ContainerTypeSerializer()
     # address = serializers.SerializerMethodField()
+
 
     class Meta:
         model = Well
@@ -69,7 +69,6 @@ class InlineWellModelSerializer(serializers.ModelSerializer):
     """ Serializer to use in site detail
     """
     # containers = ContainerModelSerializer(many=True)
-    # container_type = ContainerTypeSerializer()
     # address = serializers.SerializerMethodField()
 
     class Meta:

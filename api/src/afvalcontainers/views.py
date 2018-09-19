@@ -86,6 +86,7 @@ class ContainerFilter(FilterSet):
             "no_well",
             "container_type",
             "container_type__volume",
+            "container_type__weight",
             "in_bbox",
             "location",
         )

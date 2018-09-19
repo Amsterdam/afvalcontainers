@@ -3,63 +3,73 @@
     "container_type": {
       "id": 27,
       "name": "Nieuw-West (SV)  Rest 5m3 TR Opl inst",
-      "volume": 5
+      "volume": 5,
+      "weight": 650
     }
   },
   {
     "container_type": {
       "id": 138,
       "name": "Nieuw-West papier 5m3",
-      "volume": 5
+      "volume": 5,
+      "weight": 600
     }
   },
   {
     "container_type": {
       "id": 109,
       "name": "nieuw-West Glas 1 4m3 KH TR OPL inst",
-      "volume": 4
+      "volume": 4,
+      "weight": 200
     }
   },
   {
     "container_type": {
       "id": 204,
       "name": "Nieuw-West papier 5m3 KH TR OPL inst",
-      "volume": 5
+      "volume": 5,
+      "weight": 300
     }
+
   },
   {
     "container_type": {
       "id": 41,
       "name": "Nieuw west Papier",
-      "volume": 4
+      "volume": 4,
+      "weight": 100
     }
   },
   {
     "container_type": {
       "id": 140,
       "name": "Algemene order",
-      "volume": 0
+      "volume": 0,
+      "weight": 101
     }
   },
   {
     "container_type": {
       "id": 244,
       "name": "Nieuw West rest  belfast 5m3 ",
-      "volume": 5
+      "volume": 5,
+      "weight": 102
     }
   },
   {
     "container_type": {
       "id": 347,
       "name": "Oost stadsdeel DC Rest 3H 5m3",
-      "volume": 5
+      "volume": 5,
+      "weight": 103
     }
   },
   {
     "container_type": {
       "id": 344,
       "name": "Oost stadsdeel KHDC papier 5M3",
-      "volume": 5
+      "volume": 5,
+      "weight": 104
     }
   },
   {

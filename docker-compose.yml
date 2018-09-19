@@ -12,15 +12,6 @@ services:
       - ~/.ssh/datapunt.key:/root/.ssh/datapunt.key
       - ./backups:/tmp/backups
 
-  cmsdownloader:
-    build: ./cmsdownloader
-    links:
-      - database
-    environment:
-      CKAN_API_KEY:
-      BAMMENS_API_USERNAME:
-      BAMMENS_API_PASSWORD:
-
   scrape_api:
     build: ./scrape_api
     links:

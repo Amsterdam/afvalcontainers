@@ -398,6 +398,15 @@ def create_clusters():
     log.info('Update left over wells with site_id')
     execute_sqlfile('sqlcode/update_well_site_id_nobgt.sql')
 
+    log.info('Improve streetnames with lig_plaatsen')
+    execute_sqlfile('sqlcode/update_site_address_with_ligplaats.sql')
+
+    log.info('Improve streetnames with vbo < 20 and 60 meter improvement')
+    execute_sqlfile('sqlcode/update_site_address_with_vbo.sql')
+
+    log.info('Add short codes based on streetcode and number')
+    execute_sqlfile('sqlcode/create_short_ids.sql')
+
 
 def update_quality_in_extra_attributes():
     """Add some quality indicators to well items
@@ -505,6 +514,13 @@ if __name__ == "__main__":
         default=False,
         action="store_true",
         help="validate counts",
+    )
+
+    inputparser.add_argument(
+        "--short_ids",
+        default=False,
+        action="store_true",
+        help="create short ids",
     )
 
     inputparser.add_argument(
