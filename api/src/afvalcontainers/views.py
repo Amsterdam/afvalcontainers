@@ -248,6 +248,7 @@ class SiteFilter(FilterSet):
         model = Site
         fields = (
             "id",
+            "short_id",
             # "buurt_code",
             "stadsdeel",
             # "containers",

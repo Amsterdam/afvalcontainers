@@ -11,7 +11,7 @@ select
     row_number() over (partition by s.straatnaam, s.huisnummer order by s.id) as rown,
     cast(
       concat(
-        right(o.id, 4),
+        right(o.id, 5),
         huisnummer
     ) as int) as short_id,
     s.id as site_id,
