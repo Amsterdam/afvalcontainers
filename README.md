@@ -82,8 +82,9 @@ docker-compose up
 
 check the deploy import scrips.
 
-this import process dumps the raw bammens data, the cleaned data and the final
-data in the object store for the past 20 days!
+this import process dumps 1) the raw bammens data, 2) the cleaned data and the final
+data with sites 3) in the object store for the past 20 days!
+so you can start and debug in any step in the import process.
 
 ```
 db_slurp=raw bammens data
