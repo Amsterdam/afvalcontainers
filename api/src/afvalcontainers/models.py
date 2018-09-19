@@ -101,7 +101,7 @@ class Well(models.Model):
     warranty_date = models.DateTimeField(null=True)
     operational_date = models.DateTimeField(null=True)
 
-    extra_attributes = JSONField(default={})
+    extra_attributes = JSONField(default=dict)
 
     site = models.ForeignKey(
         'Site', null=True,
@@ -111,11 +111,13 @@ class Well(models.Model):
 
 class Site(models.Model):
     id = models.CharField(max_length=30, primary_key=True)
+    short_id = models.IntegerField(unique=True, null=True)
     buurt_code = models.CharField(max_length=20, null=False)
     stadsdeel = models.CharField(max_length=1, null=False)
     stadsdeel_naam = models.CharField(max_length=20, null=False)
     straatnaam = models.CharField(max_length=40, null=False)
     huisnummer = models.IntegerField(null=True)
+    distance = models.IntegerField(null=True)
     bgt_based = models.NullBooleanField()
     centroid = models.PointField(name='centroid', srid=4326)
     geometrie = models.PolygonField(name='geometrie', srid=28992)

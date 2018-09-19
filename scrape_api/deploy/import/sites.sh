@@ -72,6 +72,8 @@ dc exec -T database update-table.sh basiskaart BGT_OTRN_erf bgt afvalcontainers
 # get verblijfsobjecten/nummeraanduidingen.
 # dc exec -T database update-table.sh bag bag_nummeraanduiding public afvalcontainers
 dc exec -T database update-table.sh bag bag_verblijfsobject public afvalcontainers
+dc exec -T database update-table.sh bag bag_pand public afvalcontainers
+dc exec -T database update-table.sh bag bag_ligplaats public afvalcontainers
 
 # importeer buurt/stadseel
 dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/gebieden buurt_simple,stadsdeel 28992
@@ -89,7 +91,6 @@ dc run --rm importer python create_sites.py --merge_bgt
 dc run --rm importer python create_sites.py --qa_wells
 dc run --rm importer python create_sites.py --pand_distance
 dc run --rm importer python create_sites.py --clusters
-
 dc run --rm importer python create_sites.py --validate
 
 echo "Running backups"
