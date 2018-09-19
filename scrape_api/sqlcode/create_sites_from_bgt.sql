@@ -1,6 +1,19 @@
-create index on bag_verblijfsobject(_openbare_ruimte_naam);
+CREATE INDEX if not exists vboopr ON bag_verblijfsobject(_openbare_ruimte_naam);
+CREATE INDEX if not exists vbogeo ON bag_verblijfsobject USING GIST (geometrie);
 
-INSERT INTO afvalcontainers_site
+
+INSERT INTO afvalcontainers_site (
+	id,
+	buurt_code,
+	stadsdeel,
+	stadsdeel_naam,
+	straatnaam,
+	huisnummer,
+	bgt_based,
+	centroid,
+	geometrie,
+	distance
+)
 SELECT DISTINCT
     Concat(x, '-', y, '-', s.code, b.code) as id,
     b.code as buurt_code,
@@ -10,7 +23,8 @@ SELECT DISTINCT
     cast(vbo._huisnummer as integer) as huisnummer,
     true as bgt_based,
     ST_Transform(centroid, 4326) as centroid,
-    site_geometrie as geometrie
+    site_geometrie as geometrie,
+    cast(ST_Distance(centroid, vbo.geometrie) as int) as distance
 FROM bgt_clusters c
 left join stadsdeel s on ST_DWithin(c.centroid, s.wkb_geometry, 0)
 left join buurt_simple b on ST_DWithin(c.centroid, b.wkb_geometry, 0)
@@ -26,7 +40,8 @@ cross join lateral
 	limit 1) as opr
 CROSS JOIN LATERAL
 	(SELECT
-		v._huisnummer, v._huisletter, v._huisnummer_toevoeging
+		v._huisnummer, v._huisletter,
+		v._huisnummer_toevoeging, v.geometrie
      FROM bag_verblijfsobject v
      where opr.display = v."_openbare_ruimte_naam"
      ORDER BY

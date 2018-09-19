@@ -15,4 +15,6 @@ FROM (
     ) as site_geometrie
     FROM afvalcontainers_well w
     WHERE site_id is null
+    AND w.active = true
+    AND EXISTS (select well_id from afvalcontainers_container c where w.id = c.well_id)
 ) AS s
