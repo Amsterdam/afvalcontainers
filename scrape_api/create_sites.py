@@ -440,6 +440,10 @@ VALIDATE_SQL = [
     ("""select count(*) from afvalcontainers_well
         where site_id is null""",
         0, 915),
+
+    ("""select count(*) from afvalcontainers_site
+        where short_id is null""",
+        0, 515),
 ]
 
 
