@@ -84,6 +84,7 @@ CROSS JOIN LATERAL
      FROM afvalcontainers_well w, afvalcontainers_container c
      WHERE w.id = c.well_id
      AND c.waste_name = '{fraction}'
+     AND c.active = true
      ORDER BY
         w.geometrie_rd <-> p.wkb_geometry
      LIMIT 1) AS well
