@@ -3,10 +3,10 @@ Some tests.
 """
 
 import json
-import time
+# import time
 import unittest
 import asynctest
-import slurp_api
+import slurp_bammens
 import models
 import logging
 from settings import BASE_DIR
@@ -58,8 +58,8 @@ class TestDBWriting(unittest.TestCase):
     Test writing to database
     """
 
-    @asynctest.patch("slurp_api.get_the_json")
-    @asynctest.patch("slurp_api.fetch")
+    @asynctest.patch("slurp_bammens.get_the_json")
+    @asynctest.patch("slurp_bammens.fetch")
     def test_containers(self, fetch_mock, get_json_mock):
 
         with open(FIX_DIR + "/fixtures/containers.json") as detail_json:
@@ -74,12 +74,12 @@ class TestDBWriting(unittest.TestCase):
         get_json_mock.side_effect = detail_json[:6]
         fetch_mock.side_effect = [mr]
 
-        slurp_api.start_import("containers", workers=2, make_engine=False)
+        slurp_bammens.start_import("containers", workers=2, make_engine=False)
         count = session.query(models.Container).count()
         self.assertEqual(count, 5)
 
-    @asynctest.patch("slurp_api.get_the_json")
-    @asynctest.patch("slurp_api.fetch")
+    @asynctest.patch("slurp_bammens.get_the_json")
+    @asynctest.patch("slurp_bammens.fetch")
     def test_wells(self, fetch_mock, get_json_mock):
 
         with open(FIX_DIR + "/fixtures/wells.json") as detail_json:
@@ -94,12 +94,12 @@ class TestDBWriting(unittest.TestCase):
         get_json_mock.side_effect = detail_json[:4]
         fetch_mock.side_effect = [mr]
 
-        slurp_api.start_import("wells", workers=2, make_engine=False)
+        slurp_bammens.start_import("wells", workers=2, make_engine=False)
         count = session.query(models.Well).count()
         self.assertEqual(count, 4)
 
-    @asynctest.patch("slurp_api.get_the_json")
-    @asynctest.patch("slurp_api.fetch")
+    @asynctest.patch("slurp_bammens.get_the_json")
+    @asynctest.patch("slurp_bammens.fetch")
     def test_container_types(self, fetch_mock, get_json_mock):
 
         with open(FIX_DIR + "/fixtures/containertypes.json") as detail_json:
@@ -114,6 +114,7 @@ class TestDBWriting(unittest.TestCase):
         get_json_mock.side_effect = detail_json[:3]
         fetch_mock.side_effect = [mr]
 
-        slurp_api.start_import("container_types", workers=2, make_engine=False)
+        slurp_bammens.start_import(
+            "container_types", workers=2, make_engine=False)
         count = session.query(models.ContainerType).count()
         self.assertEqual(count, 3)

@@ -25,7 +25,7 @@ from dateutil import parser
 
 import login
 
-log = logging.getLogger("slurp_api")
+log = logging.getLogger("slurp_bammens")
 log.setLevel(logging.INFO)
 logging.getLogger("urllib3").setLevel(logging.ERROR)
 
