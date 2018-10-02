@@ -1,7 +1,10 @@
 # Packages
+
 from rest_framework.test import APITestCase
 
 from . import factories
+
+# import logging
 
 
 class BrowseDatasetsTestCase(APITestCase):
@@ -23,12 +26,12 @@ class BrowseDatasetsTestCase(APITestCase):
         self.s = factories.SiteFactory()
         self.w.site_id = self.s.id
         self.w.save()
+        self.snull = factories.SiteFactory()
+        self.snull.short_id = None
+        self.snull.save()
 
     def valid_response(self, url, response, content_type):
-        """
-        Helper method to check common status/json
-        """
-
+        """Check common status/json."""
         self.assertEqual(
             200, response.status_code, "Wrong response code for {}".format(url)
         )
@@ -100,3 +103,17 @@ class BrowseDatasetsTestCase(APITestCase):
             self.assertIn(
                 "count", response.data, "No count attribute in {}".format(url)
             )
+
+    def test_site_filters(self):
+        url = "afval/sites"
+        response = self.client.get(f"/{url}/", {'short_id': self.s.short_id})
+        self.valid_response(url, response, 'application/json')
+        self.assertEqual(response.data['count'], 1)
+        self.assertEqual(int(response.data['results'][0]['id']), self.s.id)
+
+    def test_site_null_filter(self):
+        url = "afval/sites"
+        response = self.client.get(f"/{url}/", {'no_short_id': 1})
+        self.valid_response(url, response, 'application/json')
+        self.assertEqual(response.data['count'], 1)
+        self.assertEqual(int(response.data['results'][0]['id']), self.snull.id)

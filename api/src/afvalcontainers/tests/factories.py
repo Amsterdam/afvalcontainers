@@ -69,7 +69,7 @@ class SiteFactory(factory.DjangoModelFactory):
     buurt_code = fuzzy.FuzzyText(length=4)
     stadsdeel = fuzzy.FuzzyText(length=1)
     straatnaam = fuzzy.FuzzyText(length=10)
-
+    short_id = fuzzy.FuzzyInteger(1, 9200)
     huisnummer = fuzzy.FuzzyInteger(1, 92)
 
     centroid = get_puntje()

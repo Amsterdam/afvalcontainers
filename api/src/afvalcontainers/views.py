@@ -59,7 +59,7 @@ class ContainerFilter(FilterSet):
     in_bbox = filters.CharFilter(method='in_bbox_filter', label='bbox')
     no_well = filters.BooleanFilter(method='no_well_filter', label='no_well')
     location = filters.CharFilter(
-            method="locatie_filter", label='x,y,r')
+        method="locatie_filter", label='x,y,r')
 
     waste_name = filters.ChoiceFilter(
         choices=WASTE_CHOICES, label='waste name')
@@ -110,8 +110,8 @@ class ContainerFilter(FilterSet):
 
 
 class ContainerView(DatapuntViewSet):
-    """View of Containers.
-    """
+    """View of Containers."""
+
     queryset = (
         Container.objects.all()
         .order_by("id")
@@ -196,8 +196,8 @@ class WellFilter(FilterSet):
 
 
 class WellView(DatapuntViewSet):
-    """View of Wells.
-    """
+    """View of Wells."""
+
     queryset = (
         Well.objects.all()
         .order_by("id")
@@ -210,8 +210,8 @@ class WellView(DatapuntViewSet):
 
 
 class TypeView(DatapuntViewSet):
-    """View of Types.
-    """
+    """View of Types."""
+
     queryset = (
         ContainerType.objects.all()
         .order_by("id")
@@ -232,6 +232,9 @@ class SiteFilter(FilterSet):
 
     no_container = filters.BooleanFilter(
         method='no_container_filter', label='No containers')
+
+    no_short_id = filters.BooleanFilter(
+        method='no_short_id_filter', label='Missing short_id ')
 
     location = filters.CharFilter(
         method="locatie_filter", label='x,y,r')
@@ -258,6 +261,7 @@ class SiteFilter(FilterSet):
             "bgt_based",
             "no_container",
             "fractie",
+            "no_short_id",
         )
 
     def locatie_filter(self, qs, name, value):
@@ -279,16 +283,17 @@ class SiteFilter(FilterSet):
     def no_container_filter(self, qs, name, value):
         return qs.filter(wells__containers=None)
 
+    def no_short_id_filter(self, qs, name, value):
+        return qs.filter(short_id=None)
+
     def fractie_filter(self, qs, name, value):
-        """
-        Filter on fractie.
-        """
+        """Filter on fractie."""
         return qs.filter(wells__containers__waste_name=value).distinct()
 
 
 class SitePager(HALPagination):
-    """Site objects are rather "heavy" so put limits on pagination
-    """
+    """Site objects are rather "heavy" so put limits on pagination."""
+
     page_size = 10
     max_page_size = 9000
 
