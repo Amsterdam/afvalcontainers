@@ -13,7 +13,7 @@ log.setLevel(logging.INFO)
 async def set_login_cookies(session):
     """Get PHPSESSID cookie to use the API
     """
-    baseUrl = settings.API_URL
+    baseUrl = settings.API_BAMMENS_URL
     log.debug("start login")
     loginPage = await session.get(baseUrl + "/login", ssl=True)
     text = await loginPage.text()

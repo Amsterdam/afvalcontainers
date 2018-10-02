@@ -12,4 +12,5 @@ TESTING = {"running": False}
 # BAMMENS_API_PASSWORD = os.getenv('BAMMENS_API_PASSWORD')
 
 
-API_URL = "https://bammensservice.nl"
+API_BAMMENS_URL = "https://bammensservice.nl"
+API_KILOGRAM_URL = "https://bammensservice.nl"

@@ -37,9 +37,9 @@ set env `BAMMENS_PASSWORD` you can find it in rattic/password management
 # occur!
 
 ::
-        python slurp_api.py containers
-        python slurp_api.py wells
-        python slurp_api.py containertypes
+        python slurp_bammens.py containers
+        python slurp_bammens.py wells
+        python slurp_bammens.py containertypes
 
 # takes about 30 mins.
 
