@@ -21,9 +21,8 @@ from django.contrib.postgres.fields import JSONField
 
 
 class Container(models.Model):
-    """
-    Container object
-    """
+    """Container object."""
+
     id = models.IntegerField(primary_key=True)
     id_number = models.CharField(max_length=35, null=False, db_index=True)
     serial_number = models.CharField(max_length=45, null=False, db_index=True)
@@ -76,9 +75,8 @@ class Container(models.Model):
 
 
 class Well(models.Model):
-    """
-    Wells contain containers
-    """
+    """Wells contain containers."""
+
     id = models.IntegerField(primary_key=True)
     id_number = models.CharField(max_length=35, db_index=True)
     serial_number = models.CharField(max_length=45, db_index=True)
@@ -121,8 +119,7 @@ class Site(models.Model):
     bgt_based = models.NullBooleanField()
     centroid = models.PointField(name='centroid', srid=4326)
     geometrie = models.PolygonField(name='geometrie', srid=28992)
-
-    extra_attributes = JSONField(null=True)
+    extra_attributes = JSONField(null=True, default=dict)
 
     def __str__(self):
         return f"{self.id}-{self.straatnaam} {self.huisnummer}"
@@ -138,9 +135,8 @@ class Site(models.Model):
 
 
 class ContainerType(models.Model):
-    """
-    Contains volumne information aboud containers
-    """
+    """Contains volumne information aboud containers."""
+
     id = models.IntegerField(primary_key=True)
     name = models.TextField()
     volume = models.IntegerField()
