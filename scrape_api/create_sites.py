@@ -522,13 +522,6 @@ if __name__ == "__main__":
     )
 
     inputparser.add_argument(
-        "--short_ids",
-        default=False,
-        action="store_true",
-        help="create short ids",
-    )
-
-    inputparser.add_argument(
         "--debug", action="store_true", default=False, help="Enable debugging"
     )
 
