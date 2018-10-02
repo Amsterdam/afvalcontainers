@@ -5,7 +5,6 @@ Save external bammens API container sources
 import aiohttp
 import random
 import time
-import dateparser
 
 # import aiopg
 from aiohttp import ClientSession
@@ -17,10 +16,8 @@ import models
 
 import logging
 import argparse
-import settings
-from settings import API_URL
+from settings import API_BAMMENS_URL as API_URL
 import os.path
-from dateutil import parser
 
 
 import login
@@ -175,7 +172,7 @@ async def do_request(work_id, endpoint, params={}):
             await session.close()
             break
 
-        url = ENDPOINT_URL[endpoint]
+        # url = ENDPOINT_URL[endpoint]
         _id = item["id"]
         json_response = await get_the_json(session, endpoint, _id)
 
@@ -309,7 +306,7 @@ def start_import(endpoint, workers=WORKERS, make_engine=True):
 
 if __name__ == "__main__":
 
-    desc = "Scrape API."
+    desc = "Scrape Bammens API."
     inputparser = argparse.ArgumentParser(desc)
 
     inputparser.add_argument(
