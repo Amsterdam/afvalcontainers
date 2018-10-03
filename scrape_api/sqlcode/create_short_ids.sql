@@ -2,12 +2,14 @@
 
    If there are multiple sites for street and housenumber add a rownumber
    this is true in ~200 cases. parks, long weird streets with no houses.
+
+   Also copy adress summary information / chauffeur instrictions to the site.
 */
 
 
 update afvalcontainers_site s set
         short_id = short.short_id,
-        extra_attributes = jsonb_set(extra_attributes, '{chauffeur}', to_jsonb(short.chauffeur))
+        extra_attributes = jsonb_build_object('chauffeur', short.chauffeur)
 from (
 select
     row_number() over (partition by s.straatnaam, s.huisnummer order by s.id) as rown,
@@ -36,7 +38,7 @@ where short.rown = 1 and short.site_id = s.id;
 
 update afvalcontainers_site s set
         short_id = cast(concat(rown, short.short_id) as int),
-        extra_attributes = jsonb_set(extra_attributes, '{chauffeur}', to_jsonb(short.chauffeur))
+        extra_attributes = jsonb_build_object('chauffeur', short.chauffeur)
 from (
 select
     row_number() over (partition by s.straatnaam, s.huisnummer order by s.id) as rown,
