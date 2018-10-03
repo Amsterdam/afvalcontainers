@@ -301,9 +301,10 @@ class SitePager(HALPagination):
 class SiteView(DatapuntViewSet):
     """Site's containing wells.
 
-    This dataset is in BETA and under development expect changes!
-
     the ID is a RD coordinate with buurt_code x-y-code
+
+    the short id is streetcode (last 5 digits) + housnumber
+    + a row number if street + housenumber is not unique enough.
 
     Return all information about site.
 
@@ -314,6 +315,9 @@ class SiteView(DatapuntViewSet):
 
     BGT based sites are unlikely to change.
     the non BGT based sites will most likely still change.
+
+    extra_attributes:
+        chauffeur: instruction from and for a chauffeur.
     """
 
     queryset = (
