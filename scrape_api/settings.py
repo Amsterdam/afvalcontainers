@@ -3,7 +3,7 @@ import configparser
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-config_auth = configparser.RawConfigParser()
+config_auth = configparser.ConfigParser()
 config_auth.read(os.path.join(BASE_DIR, "config.ini"))
 
 TESTING = {"running": False}
@@ -13,4 +13,4 @@ TESTING = {"running": False}
 
 
 API_BAMMENS_URL = "https://bammensservice.nl"
-API_KILOGRAM_URL = "https://bammensservice.nl"
+API_KILOGRAM_URL = "https://webservice.kilogram.nl"

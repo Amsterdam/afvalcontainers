@@ -110,7 +110,12 @@ class ContainerFilter(FilterSet):
 
 
 class ContainerView(DatapuntViewSet):
-    """View of Containers."""
+    """View of Containers.
+
+    Containers are linked to a Well and Well to a Site.
+
+    *NOTE* id_number is a legacy number
+    """
 
     queryset = (
         Container.objects.all()
