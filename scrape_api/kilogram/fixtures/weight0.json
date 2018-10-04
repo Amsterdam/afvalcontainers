@@ -1,0 +1,24 @@
+{
+    "Fields": [
+        "SystemId",
+        "Seq",
+        "Date",
+        "Time",
+        "CustId",
+        "LocationId",
+        "CustName",
+        "ContNr",
+        "Wijk",
+        "FallbackNr",
+        "AfvalNr",
+        "AfvalNaam",
+        "FirstWeight",
+        "SecondWeight",
+        "NettWeight",
+        "Latitude",
+        "Longitude"
+    ],
+    "Records": [],
+    "Status": "SUCCESSFUL",
+    "Message": ""
+}
