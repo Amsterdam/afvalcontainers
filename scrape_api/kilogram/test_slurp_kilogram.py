@@ -1,6 +1,4 @@
-"""
-Some webservice.kilogram.nl tests.
-"""
+"""Some webservice.kilogram.nl tests."""
 
 import json
 # import time
@@ -8,6 +6,8 @@ import unittest
 import asynctest
 from kilogram import slurp
 from kilogram import models
+from kilogram import copy_to_model
+
 import db_helper
 import logging
 from settings import BASE_DIR
@@ -81,5 +81,10 @@ class TestDBWriting(unittest.TestCase):
         slurp.start_import(workers=2, make_engine=False)
         count = session.query(models.KilogramRaw).count()
         self.assertEqual(count, 2)
-
         self.assertEqual(slurp.get_start_time(4), ('2017-01-01', '10:32:54'))
+        copy_to_model.extract_measurements()
+        count = session.query(models.KilogramMeasurement).count()
+        self.assertEqual(count, 6)
+        # check if code is idempotent
+        copy_to_model.extract_measurements()
+        self.assertEqual(count, 6)
