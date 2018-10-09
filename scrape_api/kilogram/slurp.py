@@ -8,7 +8,6 @@ import aiohttp
 import time
 import json
 import datetime
-import q
 
 from settings import API_KILOGRAM_URL as API_URL
 
@@ -28,7 +27,7 @@ api_config = {
 
 WORKERS = 4
 STATUS = {"done": False}
-ENDPOINT = "v3/api.php"
+ENDPOINT = "amsterdam/api.php"
 API_ENDPOINT = f'{API_URL}/{ENDPOINT}'
 URL_QUEUE = asyncio.Queue()
 RESULT_QUEUE = asyncio.Queue()
