@@ -19,6 +19,7 @@ services:
     environment:
       BAMMENS_API_USERNAME:
       BAMMENS_API_PASSWORD:
+      KILOGRAM_API_PASSWORD:
 
   api:
     build: ./api

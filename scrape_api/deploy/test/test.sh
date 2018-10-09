@@ -10,7 +10,6 @@ dc() {
    docker-compose -p container_scrape_test -f ${DIR}/docker-compose.yml $*
 }
 
-
 dc stop
 dc rm --force
 dc down
