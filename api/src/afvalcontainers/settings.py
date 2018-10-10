@@ -1,4 +1,5 @@
 import os
+import sys
 
 from afvalcontainers.settings_common import *  # noqa F403
 from afvalcontainers.settings_common import INSTALLED_APPS
@@ -54,8 +55,9 @@ DATABASE_OPTIONS = {
     },
     LocationKey.kilogram: {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "NAME": os.getenv("DATABASE_KILOGRAM_NAME", "kilogram"),
-        "USER": os.getenv("DATABASE_KILOGRAM_USER", "kilogram"),
+        # NOTE in production database is called KILOGRAM
+        "NAME": os.getenv("DATABASE_KILOGRAM_NAME", "afvalcontainers"),
+        "USER": os.getenv("DATABASE_KILOGRAM_USER", "afvalcontainers"),
         "PASSWORD": os.getenv("DATABASE_KILOGRAM_PASSWORD", "insecure"),
         "HOST": os.getenv('DATABASE_KILOGRAM_HOST', "database"),
         "PORT": os.getenv('DATABASE_KILOGRAM_PORT', "5432"),
@@ -68,6 +70,11 @@ DATABASES = {
     "default": DATABASE_OPTIONS[get_database_key()],
     "kilogram": DATABASE_OPTIONS['kilogram']
 }
+
+if 'test' in sys.argv:
+    # during test we do not need kilogram database
+    DATABASES.pop('kilogram')
+
 
 STATIC_URL = '/afval/static/'
 STATIC_ROOT = '/static/'
