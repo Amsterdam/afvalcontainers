@@ -1,6 +1,5 @@
-"""
-Create cluster ID's
-"""
+"""Create cluster ID's."""
+
 import logging
 import models
 import argparse
@@ -130,9 +129,7 @@ BGT_GEOMETRY_MAP = {}
 
 
 def map_results(results):
-    """
-    map results. map wells to bgt objects
-    """
+    """Map results. Map wells to bgt objects."""
     for row in results:
         # 'bgt': row[1], 'geom': row[2]}
         well_id = row[0]
@@ -184,8 +181,8 @@ def create_well_bgt_geometry_table():
         for bgt_id, geom in bgts:
             bgt_geo = geom
             new = {
-                    'well_id': key,
-                    'geometrie': point,
+                'well_id': key,
+                'geometrie': point,
             }
 
             if geom.startswith('MULTIPOINT'):
@@ -221,9 +218,7 @@ def create_well_bgt_geometry_table():
 
 
 def collect_bgt_for_wells():
-    """
-    For every well collect BGT items
-    """
+    """For every well collect BGT items."""
     log.info('Matching wells with BGT.')
 
     # make sure we have an rd coordinate (migration issues)
@@ -257,8 +252,7 @@ def delete_sites():
 
 
 def fill_rd_geometry():
-    """if well have geometrie and no rd geometry add it.
-    """
+    """If well have geometrie and no rd geometry add it."""
     session.execute(TRANSFORM_28992)
     session.commit()
 
@@ -410,8 +404,7 @@ def create_clusters():
 
 
 def update_quality_in_extra_attributes():
-    """Add some quality indicators to well items
-    """
+    """Add some quality indicators to well items."""
     qa_sql = [
         ('in_pand', UPDATE_WELL_IN_PAND),
         ('in_weg', UPDATE_WELL_IN_WEG),

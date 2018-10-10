@@ -68,7 +68,7 @@ async def fetch(url, session, params=None, auth=None):
 
 async def get_the_json(session, endpoint, _id=None) -> list:
     """
-    Get some json of endpoint!
+    Get some json of endpoint.
 
     retry x times on failure
     return json
@@ -117,10 +117,7 @@ async def get_the_json(session, endpoint, _id=None) -> list:
 
 
 def add_items_to_db(endpoint, json: list):
-    """
-    Given json api response, store data in database
-    """
-
+    """Given json api response, store data in database."""
     log.debug(f"Storeing {len(json)} items")
 
     if not json:
@@ -146,9 +143,7 @@ def add_items_to_db(endpoint, json: list):
 
 
 async def do_request(work_id, endpoint, params={}):
-    """
-    Do request in our own private session
-    """
+    """Do request in our own private session."""
     count = 0
     session = None
 
@@ -195,9 +190,7 @@ async def do_request(work_id, endpoint, params={}):
 
 
 def clear_current_table(endpoint):
-    """
-    Current data only contains latest and greatest
-    """
+    """Clean start."""
     # make new session
     session = models.Session()
     db_model = models.ENDPOINT_MODEL[endpoint]
@@ -236,8 +229,7 @@ async def log_progress(total):
 
 
 async def fill_url_queue(session, endpoint):
-    """Fill queue with urls to fetch
-    """
+    """Fill queue with urls to fetch."""
     url = ENDPOINT_URL[endpoint]
     url = url.format(API_URL)
     response = await fetch(url, session)
@@ -255,8 +247,7 @@ async def fill_url_queue(session, endpoint):
 
 
 async def run_workers(endpoint, workers=WORKERS):
-    """Run X workers processing fetching tasks
-    """
+    """Run X workers processing fetching tasks."""
     # start job of puting data into database
     store_data = asyncio.ensure_future(store_results(endpoint))
     # for endpoint get a list of items to pick up

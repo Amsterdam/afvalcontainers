@@ -45,6 +45,7 @@ class LocationKey:
     local = "local"
     docker = "docker"
     override = "override"
+    kilogram = "kilogram"
 
 
 def get_database_key():

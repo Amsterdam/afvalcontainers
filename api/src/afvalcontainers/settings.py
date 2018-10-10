@@ -1,4 +1,5 @@
 import os
+import sys
 
 from afvalcontainers.settings_common import *  # noqa F403
 from afvalcontainers.settings_common import INSTALLED_APPS
@@ -17,6 +18,7 @@ from afvalcontainers.settings_databases import (
 INSTALLED_APPS += [
     "drf_yasg",
     "afvalcontainers",
+    "kilogram",
     # "crispy_forms",
 ]
 
@@ -51,14 +53,30 @@ DATABASE_OPTIONS = {
         "HOST": os.getenv(OVERRIDE_HOST_ENV_VAR),
         "PORT": os.getenv(OVERRIDE_PORT_ENV_VAR, "5432"),
     },
+    LocationKey.kilogram: {
+        "ENGINE": "django.contrib.gis.db.backends.postgis",
+        # NOTE in production database is called KILOGRAM
+        "NAME": os.getenv("DATABASE_KILOGRAM_NAME", "afvalcontainers"),
+        "USER": os.getenv("DATABASE_KILOGRAM_USER", "afvalcontainers"),
+        "PASSWORD": os.getenv("DATABASE_KILOGRAM_PASSWORD", "insecure"),
+        "HOST": os.getenv('DATABASE_KILOGRAM_HOST', "database"),
+        "PORT": os.getenv('DATABASE_KILOGRAM_PORT', "5432"),
+    },
 }
 
 # Database
 
-DATABASES = {"default": DATABASE_OPTIONS[get_database_key()]}
+DATABASES = {
+    "default": DATABASE_OPTIONS[get_database_key()],
+    "kilogram": DATABASE_OPTIONS['kilogram']
+}
+
+if 'test' in sys.argv:
+    # during test we do not need kilogram database
+    DATABASES.pop('kilogram')
+
 
 STATIC_URL = '/afval/static/'
-
 STATIC_ROOT = '/static/'
 
 
@@ -86,3 +104,29 @@ JWKS_TEST_KEY = """
 """
 
 DATAPUNT_AUTHZ = {"JWKS": os.getenv("PUB_JWKS", JWKS_TEST_KEY)}
+
+
+WASTE_DESCRIPTIONS = (
+    ("Rest"),
+    ("Glas"),
+    ("Glas"),
+    ("Papier"),
+    ("Textiel"),
+    ("Wormen"),
+    ("Glas"),
+    ("Plastic"),
+    ("Blipvert"),
+)
+
+STADSDELEN = (
+    ("B", "Westpoort (B)"),
+    ("M", "Oost (M)"),
+    ("N", "Noord (N)"),
+    ("A", "Centrum (A)"),
+    ("E", "West (E)"),
+    ("F", "Nieuw-West (F)"),
+    ("K", "Zuid (K)"),
+    ("T", "Zuidoost (T)"),
+)
+
+WASTE_CHOICES = [(w, w) for w in WASTE_DESCRIPTIONS]

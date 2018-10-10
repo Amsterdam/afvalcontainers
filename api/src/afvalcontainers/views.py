@@ -3,6 +3,7 @@ from django_filters.rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.serializers import ValidationError
 from django.contrib.gis.geos import Polygon
+from django.conf import settings
 # from django.contrib.gis.measure import Distance
 
 from datapunt_api.rest import DatapuntViewSet
@@ -23,32 +24,6 @@ from afvalcontainers.serializers import SiteSerializer
 from afvalcontainers.serializers import SiteDetailSerializer
 
 
-WASTE_DESCRIPTIONS = (
-    ("Rest"),
-    ("Glas"),
-    ("Glas"),
-    ("Papier"),
-    ("Textiel"),
-    ("Wormen"),
-    ("Glas"),
-    ("Plastic"),
-    ("Blipvert"),
-)
-
-STADSDELEN = (
-    ("B", "Westpoort (B)"),
-    ("M", "Oost (M)"),
-    ("N", "Noord (N)"),
-    ("A", "Centrum (A)"),
-    ("E", "West (E)"),
-    ("F", "Nieuw-West (F)"),
-    ("K", "Zuid (K)"),
-    ("T", "Zuidoost (T)"),
-)
-
-WASTE_CHOICES = [(w, w) for w in WASTE_DESCRIPTIONS]
-
-
 def buurt_choices():
     options = Buurten.objects.values_list('vollcode', 'naam')
     return [(c, '%s (%s)' % (n, c)) for c, n in options]
@@ -62,8 +37,8 @@ class ContainerFilter(FilterSet):
         method="locatie_filter", label='x,y,r')
 
     waste_name = filters.ChoiceFilter(
-        choices=WASTE_CHOICES, label='waste name')
-    well__stadsdeel = filters.ChoiceFilter(choices=STADSDELEN)
+        choices=settings.WASTE_CHOICES, label='waste name')
+    well__stadsdeel = filters.ChoiceFilter(choices=settings.STADSDELEN)
     well__buurt_code = filters.ChoiceFilter(choices=buurt_choices)
 
     well = filters.CharFilter()
@@ -110,7 +85,12 @@ class ContainerFilter(FilterSet):
 
 
 class ContainerView(DatapuntViewSet):
-    """View of Containers."""
+    """View of Containers.
+
+    Containers are linked to a Well and Well to a Site.
+
+    *NOTE* id_number is a legacy number
+    """
 
     queryset = (
         Container.objects.all()
@@ -135,7 +115,7 @@ class WellFilter(FilterSet):
     location = filters.CharFilter(
         method="locatie_filter", label='x,y,r')
 
-    stadsdeel = filters.ChoiceFilter(choices=STADSDELEN)
+    stadsdeel = filters.ChoiceFilter(choices=settings.STADSDELEN)
     buurt_code = filters.ChoiceFilter(choices=buurt_choices)
 
     no_bgt = filters.BooleanFilter(
@@ -239,11 +219,12 @@ class SiteFilter(FilterSet):
     location = filters.CharFilter(
         method="locatie_filter", label='x,y,r')
 
-    stadsdeel = filters.ChoiceFilter(choices=STADSDELEN)
+    stadsdeel = filters.ChoiceFilter(choices=settings.STADSDELEN)
     buurt_code = filters.ChoiceFilter(choices=buurt_choices)
 
     fractie = filters.ChoiceFilter(
-        method='fractie_filter', choices=WASTE_CHOICES, label="Fractie")
+        method='fractie_filter',
+        choices=settings.WASTE_CHOICES, label="Fractie")
 
     wells = filters.CharFilter()
 
@@ -301,9 +282,10 @@ class SitePager(HALPagination):
 class SiteView(DatapuntViewSet):
     """Site's containing wells.
 
-    This dataset is in BETA and under development expect changes!
-
     the ID is a RD coordinate with buurt_code x-y-code
+
+    the short id is streetcode (last 5 digits) + housnumber
+    + a row number if street + housenumber is not unique enough.
 
     Return all information about site.
 
@@ -314,6 +296,9 @@ class SiteView(DatapuntViewSet):
 
     BGT based sites are unlikely to change.
     the non BGT based sites will most likely still change.
+
+    extra_attributes:
+        chauffeur: instruction from and for a chauffeur.
     """
 
     queryset = (
