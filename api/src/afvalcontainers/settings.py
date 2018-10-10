@@ -57,7 +57,7 @@ DATABASE_OPTIONS = {
         "NAME": os.getenv("DATABASE_KILOGRAM_NAME", "kilogram"),
         "USER": os.getenv("DATABASE_KILOGRAM_USER", "kilogram"),
         "PASSWORD": os.getenv("DATABASE_KILOGRAM_PASSWORD", "insecure"),
-        "HOST": os.getenv('DATABASE_KILOGRAM_HOST', get_docker_host()),
+        "HOST": os.getenv('DATABASE_KILOGRAM_HOST', "database"),
         "PORT": os.getenv('DATABASE_KILOGRAM_PORT', "5432"),
     },
 }
