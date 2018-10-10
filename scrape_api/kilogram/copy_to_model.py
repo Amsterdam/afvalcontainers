@@ -74,7 +74,8 @@ def validate_weight(measurement, idx):
 
 def validate_extra(measurement, idx):
     """Validate some extra fields."""
-    fractie = None
+    fractie = 'Rest'
+
     if idx.afval_naam:
         fractie = measurement[idx.afval_naam]
 

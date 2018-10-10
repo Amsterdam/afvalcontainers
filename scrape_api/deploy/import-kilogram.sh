@@ -7,6 +7,8 @@ set -x   # print what we are doing
 
 cd /app/
 
+export PYTHONPATH=/app/
+
 # create database tables if not exists.
 python kilogram/models.py
 
