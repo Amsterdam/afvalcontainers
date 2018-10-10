@@ -1,4 +1,4 @@
-"""Parkeervakken URL Configuration
+"""Afvalcontainers URL Configuration.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.9/topics/http/urls/
@@ -12,6 +12,7 @@ Class-based views
 Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
+
 """
 from django.conf import settings
 from django.conf.urls import url, include
@@ -23,11 +24,13 @@ from rest_framework import routers
 from rest_framework import permissions
 
 from . import views as api_views
+from kilogram import views as kilo_views
 
 
 class ContainersView(routers.APIRootView):
     """
     Garbadge Containers in the city are show here as list.
+
     It is possible to filter the list
 
     Model Overview
@@ -67,21 +70,24 @@ containers.register(
     r"containertypes", api_views.TypeView, base_name="containertype")
 containers.register(
     r"sites", api_views.SiteView, base_name="site")
+containers.register(
+    r"kilogram", kilo_views.KilogramView, base_name="kilogram")
+
 
 urls = containers.urls
 
 schema_view = get_schema_view(
-   openapi.Info(
-      title="Afval Container API",
-      default_version='v1',
-      description="Afvalcontainers en Wells in Amsterdam",
-      terms_of_service="https://data.amsterdam.nl/",
-      contact=openapi.Contact(email="datapunt@amsterdam.nl"),
-      license=openapi.License(name="CC0 1.0 Universal"),
-   ),
-   validators=['flex', 'ssv'],
-   public=True,
-   permission_classes=(permissions.AllowAny,),
+    openapi.Info(
+        title="Afval Container API",
+        default_version='v1',
+        description="Afvalcontainers en Wells in Amsterdam",
+        terms_of_service="https://data.amsterdam.nl/",
+        contact=openapi.Contact(email="datapunt@amsterdam.nl"),
+        license=openapi.License(name="CC0 1.0 Universal"),
+    ),
+    validators=['flex', 'ssv'],
+    public=True,
+    permission_classes=(permissions.AllowAny,),
 )
 
 
