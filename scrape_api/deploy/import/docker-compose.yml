@@ -25,7 +25,7 @@ services:
       - database
     environment:
       ENVIRONMENT:
-      DATABASE_USER: kilogram
+      DATABASE_USER: afvalcontainers
       DATABASE_PASSWORD: insecure
       BAMMENS_API_USERNAME:
       BAMMENS_API_PASSWORD:
