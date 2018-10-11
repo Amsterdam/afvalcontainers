@@ -17,11 +17,11 @@ LOG = logging.getLogger(__name__)
 Base = declarative_base()
 
 EENVIRONMENT_OVERRIDES = [
-    ('host', 'KILOGRAM_DB'),
-    ('port', 'KILOGRAM_DB_PORT'),
-    ('database', 'KILOGRAM_DB_NAME'),
-    ('username', 'KILOGRAM_DB_USER'),
-    ('password', 'KILOGRAM_DB_PASSWORD'),
+    ('host', 'DATABASE_KILOGRAM_HOST'),
+    ('port', 'DATABASE_KILOGRAM_PORT'),
+    ('database', 'DATABASE_KILOGRAM_NAME'),
+    ('username', 'DATABASE_KILOGRAM_USER'),
+    ('password', 'DATABASE_KILOGRAM_PASSWORD'),
 ]
 
 

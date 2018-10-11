@@ -28,6 +28,7 @@ def make_conf(section, environment_overrides=[]):
         'password': config_auth.get(section, "password"),
     }
 
+    # override defaults with environment settings
     for var, env in environment_overrides:
         if os.getenv(env):
             db[var] = os.getenv(env)
