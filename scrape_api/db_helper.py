@@ -64,7 +64,7 @@ def drop_db(section="test", environment=[]):
 
 
 def make_engine(section="docker", environment=[]):
-    CONF = make_conf(section)
+    CONF = make_conf(section, environment_overrides=environment)
     engine = create_engine(CONF)
     return engine
 

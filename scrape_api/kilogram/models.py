@@ -10,24 +10,17 @@ from geoalchemy2 import Geometry
 
 # from aiopg.sa import create_engine as aiopg_engine
 import db_helper
+from settings import KILO_ENVIRONMENT_OVERRIDES
 
 # logging.basicConfig(level=logging.DEBUG)
 LOG = logging.getLogger(__name__)
 
 Base = declarative_base()
 
-EENVIRONMENT_OVERRIDES = [
-    ('host', 'DATABASE_KILOGRAM_HOST'),
-    ('port', 'DATABASE_KILOGRAM_PORT'),
-    ('database', 'DATABASE_KILOGRAM_NAME'),
-    ('username', 'DATABASE_KILOGRAM_USER'),
-    ('password', 'DATABASE_KILOGRAM_PASSWORD'),
-]
-
 
 async def main(args):
     """Main."""
-    engine = db_helper.make_engine(environment=EENVIRONMENT_OVERRIDES)
+    engine = db_helper.make_engine(environment=KILO_ENVIRONMENT_OVERRIDES)
 
     if args.drop:
         # resets everything

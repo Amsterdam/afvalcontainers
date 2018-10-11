@@ -14,3 +14,12 @@ TESTING = {"running": False}
 
 API_BAMMENS_URL = "https://bammensservice.nl"
 API_KILOGRAM_URL = "https://webservice.kilogram.nl"
+
+
+KILO_ENVIRONMENT_OVERRIDES = [
+    ('host', 'DATABASE_KILOGRAM_HOST'),
+    ('port', 'DATABASE_KILOGRAM_PORT'),
+    ('database', 'DATABASE_KILOGRAM_NAME'),
+    ('username', 'DATABASE_KILOGRAM_USER'),
+    ('password', 'DATABASE_KILOGRAM_PASSWORD'),
+]

@@ -10,6 +10,7 @@ import json
 import datetime
 
 from settings import API_KILOGRAM_URL as API_URL
+from settings import KILO_ENVIRONMENT_OVERRIDES
 
 import db_helper
 from kilogram import models
@@ -310,7 +311,9 @@ async def run_workers(workers=WORKERS):
 async def main(workers=WORKERS, make_engine=True):
     # when testing we do not want an engine.
     if make_engine:
-        engine = db_helper.make_engine(section="docker")
+        engine = db_helper.make_engine(
+            section="docker",
+            environment=KILO_ENVIRONMENT_OVERRIDES)
         db_helper.set_session(engine)
     await run_workers(workers=workers)
 
