@@ -9,8 +9,13 @@ cd /app/
 
 export PYTHONPATH=/app/
 
+if [ "$DROP" = "yes" ]
+then
+   python kilogram/models.py --drop
+else
+   python kilogram/models.py
+fi
 # create database tables if not exists.
-python kilogram/models.py
 
 # slurp latest and greatest of kilogram.nl
 python kilogram/slurp.py
