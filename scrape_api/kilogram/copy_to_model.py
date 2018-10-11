@@ -1,10 +1,12 @@
 
-from kilogram import models
-import datetime
-import db_helper
 import argparse
 import logging
 from sqlalchemy.sql import select
+
+from settings import KILO_ENVIRONMENT_OVERRIDES
+from kilogram import models
+import datetime
+import db_helper
 
 from types import SimpleNamespace
 # from sqlalchemy import bindparam
@@ -229,7 +231,7 @@ def main():
 
 
 def get_session():
-    engine = db_helper.make_engine()
+    engine = db_helper.make_engine(environment=KILO_ENVIRONMENT_OVERRIDES)
     session = db_helper.set_session(engine)
     return engine, session
 
