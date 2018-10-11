@@ -81,10 +81,10 @@ class TestDBWriting(unittest.TestCase):
         slurp.start_import(workers=2, make_engine=False)
         count = session.query(models.KilogramRaw).count()
         self.assertEqual(count, 2)
-        self.assertEqual(slurp.get_start_time(4), ('2017-01-01', '10:32:54'))
+        self.assertEqual(slurp.get_start_time(4), ('2017-01-01', '10:44:34'))
         copy_to_model.extract_measurements()
         count = session.query(models.KilogramMeasurement).count()
-        self.assertEqual(count, 6)
+        self.assertEqual(count, 10)
         # check if code is idempotent
         copy_to_model.extract_measurements()
-        self.assertEqual(count, 6)
+        self.assertEqual(count, 10)
