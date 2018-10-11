@@ -17,4 +17,3 @@ python kilogram/slurp.py
 
 # copy data into final table for serving to django
 python kilogram/copy_to_model.py
-

@@ -2,7 +2,7 @@ import logging
 import argparse
 import asyncio
 
-from sqlalchemy import Column, Integer, String, TIMESTAMP
+from sqlalchemy import Column, Integer, Float, String, TIMESTAMP
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import Sequence
@@ -54,17 +54,17 @@ class KilogramMeasurement(Base):
     seq_id = Column(Integer, index=True)
     system_id = Column(Integer, index=True)
     weigh_at = Column(TIMESTAMP, index=True)
-    # "CustId",
-    location_id = Column(Integer, index=True)
-    # "CustName",
-    # "ContNr",
-    container_id = Column(String, index=True)
-    # "Wijk",
-    # "FallbackNr"
+    container_ids = Column(String, index=True)
+    container_count = Column(String, index=True)
+    fill_chance = Column(Float)
+    fill_level = Column(Float)
     fractie = Column(String, index=True)  # Afvalnaam
     first_weight = Column(Integer, index=True)
     second_weight = Column(Integer, index=True)
     net_weight = Column(Integer, index=True)
+    district = Column(String, index=True)
+    neighborhood = Column(String, index=True)
+    location = Column(String, index=True)
     site_id = Column(Integer, index=True)
     geometrie = Column(Geometry('POINT', srid=4326))
 

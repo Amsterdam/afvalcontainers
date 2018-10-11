@@ -23,7 +23,8 @@ api_config = {
     "password": os.getenv("KILOGRAM_API_PASSWORD", ""),
     "hosts": {"production": "https://bammens.nl/api/"},
     # 'port': 3001,
-    "username": os.getenv("KILOGRAM_API_USERNAME", "amsterdam"),
+    # "username": os.getenv("KILOGRAM_API_USERNAME", "amsterdam"),
+    "username": os.getenv("KILOGRAM_API_USERNAME", "adam"),
 }
 
 WORKERS = 4
@@ -212,10 +213,27 @@ async def load_system_weigh_data(session, system_id):
     start_date, start_time = get_start_time(system_id)
 
     while True:
-
         body = {
             'request': 'getWeighData',
             'Systems': [int(system_id)],
+            'Fields': [
+                "SystemId",
+                "Seq",
+                "Date",
+                "Time",
+                "CustId",
+                "NoOfCont",
+                "ContIds",
+                "TotalVolume",
+                "District",
+                "Neighborhood",
+                "FractionId",
+                "FirstWeight",
+                "SecondWeight",
+                "NettWeight",
+                "Latitude",
+                "Longitude"
+            ],
             'Limit': 1000
         }
 

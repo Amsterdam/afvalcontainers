@@ -74,44 +74,109 @@ def validate_weight(measurement, idx):
     return first_weight, second_weight, net_weight
 
 
+def validate_float(measurement, idx):
+    """Validate the expected float values."""
+    fill_level = None
+    fill_chance = None
+
+    if idx.fill_level:
+        try:
+            fill_level = float(measurement[idx.fill_level])
+        except ValueError:
+            pass
+
+    if idx.fill_chance:
+        try:
+            fill_chance = float(measurement[idx.fill_chance])
+        except ValueError:
+            fill_chance = None
+
+    return fill_chance, fill_level
+
+
 def validate_extra(measurement, idx):
     """Validate some extra fields."""
     fractie = 'Rest'
+    location = None,
+    site_id = None
 
-    if idx.afval_naam:
-        fractie = measurement[idx.afval_naam]
+    if idx.site_id:
+        try:
+            site_id = int(measurement[idx.site_id])
+        except ValueError:
+            pass
 
-    try:
-        location_id = int(measurement[idx.location])
-    except ValueError:
-        location_id = None,
+    if idx.fractie:
+        fractie = measurement[idx.fractie]
 
-    return fractie, location_id
+    if idx.location:
+        try:
+            location = int(measurement[idx.location])
+        except ValueError:
+            pass
+
+    return fractie, location, site_id
+
+
+"""
+Expected fields with example data
+
+"Fields": [
+    "SystemId",       "5",
+    "Seq",            "9290",
+    "Date",           "2018-10-01",
+    "Time",           "09:17:54",
+    "NoOfCont",       "1",
+    "ContIds",        "74006",
+    "TotalVolume",    "4",
+    "Location",       "Opijnenhof 106",  # skipped!
+    "District",       "Zuid Oost",
+    "Neighborhood",   "Reigersbos Noord",
+    "FractionId",    "Rest",
+    "FirstWeight",   "1070",
+    "SecondWeight",  "835",
+    "NettWeight",    "235",
+    "Latitude",      "52.29538",
+    "Longitude"      "4.96802",
+]
+
+"""
+
+
+possible_missing = (
+    # Source, target, default
+    ('FillLevel', 'fill_level', None),
+    ('FillChance', 'fill_chance', None),
+    ('FractionId', 'fractie', 'Rest'),
+    ('Location', 'location', None),
+)
 
 
 def make_field_mapping(fields, system_id):
     """Map fields to index map."""
     idx = dict(
+        system_id=fields.index("SystemId"),
         _id=fields.index('Seq'),
         date=fields.index('Date'),
         time=fields.index('Time'),
-        container=fields.index('ContNr'),
+        site_id=fields.index('CustId'),
+        district=fields.index('District'),
+        container_ids=fields.index('ContIds'),
+        container_count=fields.index('NoOfCont'),
+        volume=fields.index('TotalVolume'),
+        neighborhood=fields.index('Neighborhood'),
         first_weight=fields.index("FirstWeight"),
         second_weight=fields.index("SecondWeight"),
         net_weight=fields.index("NettWeight"),
-        system_id=fields.index("SystemId"),
-        location=fields.index("LocationId"),
         lat=fields.index("Latitude"),
         lon=fields.index("Longitude")
     )
 
-    if 'AfvalNaam' in fields:
-        idx['afval_naam'] = fields.index('AfvalNaam')
-    else:
-        idx['afval_naam'] = None
-        LOG.warning('FIELD MAPPING %s', fields)
-        LOG.warning('Systemid %s', system_id)
-        return
+    for source, target, default in possible_missing:
+        if source in fields:
+            idx[target] = fields.index(source)
+        else:
+            idx[target] = default
 
     return SimpleNamespace(**idx)
 
@@ -140,7 +205,8 @@ def extract_one_resultset(fields, records, system_id=None):
         geometrie = validate_geo(measurement, idx)
         first_weight, second_weight, net_weight = \
             validate_weight(measurement, idx)
-        fractie, location_id = validate_extra(measurement, idx)
+        fill_chance, fill_level = validate_float(measurement, idx)
+        fractie, location, site_id = validate_extra(measurement, idx)
 
         if not second_weight or first_weight or net_weight:
             # we store it to be able to keep track
@@ -151,12 +217,18 @@ def extract_one_resultset(fields, records, system_id=None):
             'seq_id': measurement[idx._id],
             'weigh_at': weigh_at,
             'system_id': measurement[idx.system_id],
-            'location_id': location_id,
-            'container_id': measurement[idx.container],
+            'container_ids': measurement[idx.container_ids],
+            'container_count': measurement[idx.container_count],
             'fractie': fractie,
             'first_weight': first_weight,
+            'fill_level': fill_level,
+            'fill_chance': fill_chance,
             'second_weight': second_weight,
             'net_weight': net_weight,
+            'district': measurement[idx.district],
+            'neighborhood': measurement[idx.neighborhood],
+            'location': location,
+            'site_id': site_id,
             'geometrie': geometrie
         }
 
@@ -168,6 +240,7 @@ def extract_one_resultset(fields, records, system_id=None):
     if extracted:
         insert_stmt = models.KilogramMeasurement.__table__.insert()
         session.execute(insert_stmt, extracted)
+        session.commit()
 
     return rows, errors
 
@@ -209,9 +282,11 @@ def extract_measurements():
         row_new, error_new = extract_one_resultset(
             fields, records, system_id=system_id)
         rows += row_new
-        errors += error_new
 
     LOG.info('RECORDS %s ERRORS %s', rows, errors)
+
+    if errors > 50000:
+        raise ValueError("Something went wrong. API fields changed?")
 
 
 def main():
