@@ -3,7 +3,10 @@
 import subprocess
 import argparse
 import logging
-import models
+import settings
+# import models
+import db_helper
+
 from urllib.parse import urlencode
 
 
@@ -13,6 +16,7 @@ log = logging.getLogger(__name__)
 
 class NonZeroReturnCode(Exception):
     """Used for subprocess error messages."""
+
     pass
 
 
@@ -28,8 +32,8 @@ def scrub(line):
 
 
 def run_command_sync(cmd, allow_fail=False):
-    """
-    Run a string in the command line.
+    """Run a string in the command line.
+
     Args:
         1. cmd: command line code formatted as a list::
             ['ogr2ogr', '-overwrite', '-t_srs', 'EPSG:28992','-nln',layer_name,'-F' ,'PostgreSQL' ,pg_str ,url]
@@ -47,9 +51,9 @@ def run_command_sync(cmd, allow_fail=False):
     return p.returncode
 
 
-def load_wfs_layer_into_postgres(url_wfs, layer_name, srs, retry_count=3):
-    """
-    Get layer from a wfs service.
+def load_wfs_layer_into_postgres(url_wfs, layer_name, srs, db, retry_count=3):
+    """Get layer from a wfs service.
+
     Args:
         1. url_wfs: full url of the WFS including https, excluding /?::
             https://map.data.amsterdam.nl/maps/gebieden
@@ -59,8 +63,7 @@ def load_wfs_layer_into_postgres(url_wfs, layer_name, srs, retry_count=3):
             28992
     Returns:
         The layer loaded into postgres
-    """  # noqa
-
+    """
     parameters = {
         "REQUEST": "GetFeature",
         "TYPENAME": layer_name,
@@ -73,7 +76,13 @@ def load_wfs_layer_into_postgres(url_wfs, layer_name, srs, retry_count=3):
     url = url_wfs + '?' + urlencode(parameters)
     srs = "EPSG:{}".format(srs)
 
-    pg_url = str(models.make_conf("docker"))
+    override = []
+    if db == 'kilogram':
+        override = settings.KILO_ENVIRONMENT_OVERRIDES
+
+    pg_url = str(
+        db_helper.make_conf(
+            "docker", environment_overrides=override))
 
     cmd = ['ogr2ogr', '-overwrite', '-t_srs', srs, '-nln', layer_name, '-F',
            'PostgreSQL', 'PG:' + pg_url, url]
@@ -81,28 +90,27 @@ def load_wfs_layer_into_postgres(url_wfs, layer_name, srs, retry_count=3):
     run_command_sync(cmd)
 
 
-def load_wfs_layers_into_postgres(url_wfs, layer_names, srs_name):
-    """
-    Load layers into Postgres using a list of titles of each
+def load_wfs_layers_into_postgres(url_wfs, layer_names, srs_name, db):
+    """Load WFS layers into Postgres.
+
+    using a list of titles of each
     layer within the WFS service.
     Args:
         pg_str: psycopg2 connection string::
         'PG:host= port= user= dbname= password='
     Returns:
         Loaded layers into postgres using ogr2ogr.
-    """  # noqa
-
+    """
     layers = layer_names.split(',')
     log.info('Layers: %s', layers)
 
     for layer_name in layers:
-        load_wfs_layer_into_postgres(url_wfs, layer_name, srs_name)
+        load_wfs_layer_into_postgres(url_wfs, layer_name, srs_name, db)
         log.info(layer_name + ' loaded into Postgres.')
 
 
 def parser():
-    """Parser function to run arguments from commandline
-    and to add description to sphinx."""
+    """Parse arguments."""
     desc = """
     Upload gebieden into PostgreSQL from the WFS service with use of ogr2ogr.
     Add ogr2ogr path ENV if running locally in a virtual environment:
@@ -132,12 +140,20 @@ def parser():
         default="4326",
         choices=["28992", "4326"],
         help="choose srs (default: %(default)s)")
+    parser.add_argument(
+        "db",
+        type=str,
+        default="afvalcontainers",
+        choices=["kilogram", "afvalcontainers"],
+        help="choose database (default: %(default)s)"
+    )
+
     return parser
 
 
 def main():
     args = parser().parse_args()
-    load_wfs_layers_into_postgres(args.url, args.layers, args.srs)
+    load_wfs_layers_into_postgres(args.url, args.layers, args.srs, args.db)
 
 
 if __name__ == '__main__':

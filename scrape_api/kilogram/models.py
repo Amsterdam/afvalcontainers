@@ -64,9 +64,11 @@ class KilogramMeasurement(Base):
     net_weight = Column(Integer, index=True)
     district = Column(String, index=True)
     neighborhood = Column(String, index=True)
+    stadsdeel = Column(String(1), index=True)
+    buurt_code = Column(String(4), index=True)
     location = Column(String, index=True)
     site_id = Column(Integer, index=True)
-    geometrie = Column(Geometry('POINT', srid=4326))
+    geometrie = Column(Geometry('POINT', srid=4326), index=True)
 
 
 if __name__ == "__main__":

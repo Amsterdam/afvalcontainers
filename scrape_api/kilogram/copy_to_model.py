@@ -49,7 +49,7 @@ def validate_geo(measurement, idx):
     if lon and lat:
         geometrie = f"SRID=4326;POINT({lon} {lat})"
     else:
-        geometrie = f"SRID=4326;POINT(0 0)"
+        geometrie = None  # f"SRID=4326;POINT(0 0)"
 
     return geometrie
 
@@ -203,6 +203,7 @@ def extract_one_resultset(fields, records, system_id=None):
             continue
 
         geometrie = validate_geo(measurement, idx)
+
         first_weight, second_weight, net_weight = \
             validate_weight(measurement, idx)
         fill_chance, fill_level = validate_float(measurement, idx)
@@ -231,9 +232,6 @@ def extract_one_resultset(fields, records, system_id=None):
             'site_id': site_id,
             'geometrie': geometrie
         }
-
-        if geometrie is None:
-            new.pop('geometrie')
 
         extracted.append(new)
 
@@ -282,6 +280,7 @@ def extract_measurements():
         row_new, error_new = extract_one_resultset(
             fields, records, system_id=system_id)
         rows += row_new
+        errors += error_new
 
     LOG.info('RECORDS %s ERRORS %s', rows, errors)
 
@@ -289,9 +288,40 @@ def extract_measurements():
         raise ValueError("Something went wrong. API fields changed?")
 
 
+UPDATE_BUURT = """
+UPDATE {target_table} tt
+SET buurt_code = b.vollcode
+FROM (SELECT * from buurt_simple) as b
+WHERE ST_DWithin(b.wkb_geometry, tt.geometrie, 0)
+AND buurt_code is null
+AND tt.geometrie IS NOT NULL
+"""
+
+UPDATE_STADSDEEL = """
+UPDATE {target_table} tt
+SET stadsdeel = s.code
+FROM (SELECT * from stadsdeel) as s
+WHERE ST_DWithin(s.wkb_geometry, tt.geometrie, 0)
+AND stadsdeel IS NULL
+AND tt.geometrie IS NOT NULL
+"""
+
+
+def link_gebieden():
+    target_table = 'kilogram_weigh_measurement'
+    u_sql = UPDATE_STADSDEEL.format(target_table=target_table)
+    session.execute(u_sql)
+    session.commit()
+
+    target_table = 'kilogram_weigh_measurement'
+    u_sql = UPDATE_BUURT.format(target_table=target_table)
+    session.execute(u_sql)
+    session.commit()
+
+
 def main():
     if args.link_gebieden:
-        # link_gebieden()
+        link_gebieden()
         return
     if args.cleanup:
         clean()
