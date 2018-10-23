@@ -3,6 +3,7 @@
 from rest_framework.test import APITestCase
 
 from . import factories
+from kilogram.tests.factories import KiloFactory
 
 # import logging
 
@@ -14,6 +15,7 @@ class BrowseDatasetsTestCase(APITestCase):
         "afval/wells",
         "afval/containertypes",
         "afval/sites",
+        "afval/kilogram",
     ]
 
     def setUp(self):
@@ -29,6 +31,11 @@ class BrowseDatasetsTestCase(APITestCase):
         self.snull = factories.SiteFactory()
         self.snull.short_id = None
         self.snull.save()
+
+        self.k = KiloFactory()
+        self.k.site_id = self.s.id
+        self.k.container_id = self.c.id
+        self.k.save()
 
     def valid_response(self, url, response, content_type):
         """Check common status/json."""

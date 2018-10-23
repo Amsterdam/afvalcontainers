@@ -71,8 +71,10 @@ DATABASES = {
     "kilogram": DATABASE_OPTIONS['kilogram']
 }
 
+TESTING = False
 if 'test' in sys.argv:
     # during test we do not need kilogram database
+    TESTING = True
     DATABASES.pop('kilogram')
 
 

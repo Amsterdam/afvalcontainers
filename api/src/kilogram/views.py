@@ -3,6 +3,7 @@
 This data and models are in their own Kilogram database!!
 """
 
+
 from django_filters.rest_framework import FilterSet
 from django_filters.rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
@@ -19,7 +20,7 @@ from kilogram.models import KilogramWeighMeasurement
 from kilogram.serializers import KilogramSerializer
 from kilogram.serializers import KilogramDetailSerializer
 
-# from djang.conf.settings import STADSDELEN
+from django.conf import settings
 
 #
 
@@ -72,18 +73,27 @@ class KilogramFilter(FilterSet):
 class KilogramView(DatapuntViewSet):
     """View of container weigh measurements.
 
+    source: kilogram.nl
+
     extract all examples measurements:
 
     https://api.data.amsterdam.nl/afval/kilogram/?page_size=100
     """
 
-    queryset = (
-        KilogramWeighMeasurement.objects.all()
-        .order_by("-weigh_at")
-        .using('kilogram')
-    )
     serializer_class = KilogramSerializer
     serializer_detail_class = KilogramDetailSerializer
     bbox_filter_field = 'geometrie'
     filter_backends = (DjangoFilterBackend,)
     filter_class = KilogramFilter
+
+    def get_queryset(self):
+        """
+        """
+        queryset = (
+            KilogramWeighMeasurement.objects.all()
+            .order_by("-weigh_at")
+        )
+        if not settings.TESTING:
+            queryset = queryset.using('kilogram')
+
+        return queryset
