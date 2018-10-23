@@ -141,7 +141,7 @@ def parser():
         choices=["28992", "4326"],
         help="choose srs (default: %(default)s)")
     parser.add_argument(
-        "db",
+        "--db",
         type=str,
         default="afvalcontainers",
         choices=["kilogram", "afvalcontainers"],
