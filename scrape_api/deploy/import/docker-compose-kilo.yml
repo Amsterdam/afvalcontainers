@@ -2,6 +2,7 @@ version: '3.0'
 services:
   importer:
     image: build.datapunt.amsterdam.nl:5000/afvalcontainers_importer:${ENVIRONMENT}
+    # build: ../../
     environment:
       ENVIRONMENT:
       DATABASE_NAME: kilogram
