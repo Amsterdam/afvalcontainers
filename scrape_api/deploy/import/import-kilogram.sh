@@ -6,10 +6,10 @@ set -x   # print what we are doing
 
 export PYTHONPATH=/app/
 
-DIR="$(dirname $0)"
+DIR=`dirname "$0"`
 
 dc() {
-	docker-compose -p kilogram${ENVIRONMENT} -f $(DIR)/docker-compose-kilo.yml $*
+	docker-compose -p kilogram${ENVIRONMENT} -f $DIR/docker-compose-kilo.yml $*
 }
 
 trap 'dc kill ; dc rm -f' EXIT
