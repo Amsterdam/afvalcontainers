@@ -7,8 +7,11 @@ class KilogramWeighMeasurement(models.Model):
     seq_id = models.IntegerField(blank=True, null=True)
     system_id = models.IntegerField(blank=True, null=True)
     weigh_at = models.DateTimeField(blank=True, null=True)
-    location_id = models.IntegerField(blank=True, null=True)
-    container_id = models.CharField(max_length=200, blank=True, null=True)
+    location = models.IntegerField(blank=True, null=True)
+    container_ids = models.CharField(max_length=200, blank=True, null=True)
+    container_count = models.IntegerField(blank=True, null=True),
+    fill_chance = models.FloatField(blank=True, null=True),
+    fill_level = models.FloatField(blank=True, null=True),
     fractie = models.CharField(max_length=200, blank=True, null=True)
     stadsdeel = models.CharField(max_length=1, blank=True, null=True)
     buurt_code = models.CharField(max_length=4, blank=True, null=True)
