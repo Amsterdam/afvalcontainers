@@ -80,6 +80,7 @@ class KilogramView(DatapuntViewSet):
     queryset = (
         KilogramWeighMeasurement.objects.all()
         .order_by("-weigh_at")
+        .using('kilogram')
     )
     serializer_class = KilogramSerializer
     serializer_detail_class = KilogramDetailSerializer

@@ -28,8 +28,10 @@ services:
     links:
       - database
     environment:
-      - DB_NAME=afvalcontainers
-      - DB_PASSWORD=insecure
+      - DATABASE_NAME=afvalcontainers
+      - DATABASE_PASSWORD=insecure
+      - DATABASE_KILOGRAM_PASSWORD=insecure
+      - DATABASE_KILOGRAM_NAME=afvalcontainers
       - UWSGI_HTTP=0.0.0.0:8001
       - UWSGI_MASTER=1
       - UWSGI_STATIC_INDEX=index.html
