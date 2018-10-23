@@ -20,8 +20,6 @@ from kilogram.models import KilogramWeighMeasurement
 from kilogram.serializers import KilogramSerializer
 from kilogram.serializers import KilogramDetailSerializer
 
-from django.conf import settings
-
 #
 
 # def buurt_choices():
@@ -32,6 +30,7 @@ from django.conf import settings
 class KilogramFilter(FilterSet):
     id = filters.CharFilter()
     in_bbox = filters.CharFilter(method='in_bbox_filter', label='bbox')
+    detailed = filters.BooleanFilter(method='detailed_filter', label='detailed view')
 
     location = filters.CharFilter(
         method="locatie_filter", label='x,y,r')
@@ -53,6 +52,7 @@ class KilogramFilter(FilterSet):
             "net_weight",
             "in_bbox",
             "location",
+            "detailed",
         )
 
     def in_bbox_filter(self, qs, name, value):
@@ -69,6 +69,9 @@ class KilogramFilter(FilterSet):
         return qs.filter(
             well__geometrie__dwithin=(point, radius))
 
+    def detailed_filter(self, qs, name, valie):
+        return qs
+
 
 class KilogramView(DatapuntViewSet):
     """View of container weigh measurements.
@@ -78,6 +81,9 @@ class KilogramView(DatapuntViewSet):
     extract all examples measurements:
 
     https://api.data.amsterdam.nl/afval/kilogram/?page_size=100
+
+    parameter ?detailed=1  Will give you geometry and extra information
+
     """
 
     serializer_class = KilogramSerializer
