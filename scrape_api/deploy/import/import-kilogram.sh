@@ -37,3 +37,5 @@ dc run --rm importer python kilogram/copy_to_model.py
 
 # add gebieden data to endpoint
 dc run --rm importer python kilogram/copy_to_model.py --link_gebieden
+
+dc run --rm importer python kilogram/copy_to_model.py --fix_perscontainers
