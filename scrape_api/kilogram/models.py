@@ -2,7 +2,7 @@ import logging
 import argparse
 import asyncio
 
-from sqlalchemy import Column, Integer, Float, String, TIMESTAMP
+from sqlalchemy import Column, Integer, Float, String, TIMESTAMP, Boolean
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import Sequence
@@ -69,6 +69,7 @@ class KilogramMeasurement(Base):
     location = Column(String, index=True)
     site_id = Column(Integer, index=True)
     geometrie = Column(Geometry('POINT', srid=4326), index=True)
+    valid = Column(Boolean, index=True)
 
 
 if __name__ == "__main__":

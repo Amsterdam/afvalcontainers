@@ -77,6 +77,7 @@ def load_wfs_layer_into_postgres(url_wfs, layer_name, srs, db, retry_count=3):
     srs = "EPSG:{}".format(srs)
 
     override = []
+
     if db == 'kilogram':
         override = settings.KILO_ENVIRONMENT_OVERRIDES
 
@@ -84,8 +85,16 @@ def load_wfs_layer_into_postgres(url_wfs, layer_name, srs, db, retry_count=3):
         db_helper.make_conf(
             "docker", environment_overrides=override))
 
-    cmd = ['ogr2ogr', '-overwrite', '-t_srs', srs, '-nln', layer_name, '-F',
-           'PostgreSQL', 'PG:' + pg_url, url]
+    cmd = [
+        'ogr2ogr',
+        '-overwrite',
+        '-t_srs', srs,
+        '-nln', layer_name,
+        # geometry target column name
+        '-lco', 'GEOMETRY_NAME=wkb_geometry',
+        '-F', 'PostgreSQL', 'PG:' + pg_url,
+        url
+    ]
 
     run_command_sync(cmd)
 
@@ -134,12 +143,14 @@ def parser():
         Name of the layers, for example
         stadsdeel,buurtcombinatie
         """)
+
     parser.add_argument(
         "srs",
         type=str,
         default="4326",
         choices=["28992", "4326"],
         help="choose srs (default: %(default)s)")
+
     parser.add_argument(
         "--db",
         type=str,

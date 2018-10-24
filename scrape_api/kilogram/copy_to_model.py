@@ -55,6 +55,8 @@ def validate_geo(measurement, idx):
 
 def validate_weight(measurement, idx):
     """Validate the weights."""
+    valid = True
+
     try:
         net_weight = int(measurement[idx.net_weight])
     except ValueError:
@@ -70,7 +72,15 @@ def validate_weight(measurement, idx):
     except ValueError:
         second_weight = None
 
-    return first_weight, second_weight, net_weight
+    # validte weigth values.
+
+    if first_weight and first_weight < 250:
+        valid = False
+
+    if second_weight and second_weight < 250:
+        valid = False
+
+    return first_weight, second_weight, net_weight, valid
 
 
 def validate_float(measurement, idx):
@@ -188,9 +198,6 @@ def extract_one_resultset(fields, records, system_id=None):
     extracted = []
 
     idx = make_field_mapping(fields, system_id)
-    if not idx:
-        errors += len(records)
-        return errors, errors
 
     for measurement in records:
         rows += 1
@@ -203,12 +210,14 @@ def extract_one_resultset(fields, records, system_id=None):
 
         geometrie = validate_geo(measurement, idx)
 
-        first_weight, second_weight, net_weight = \
-            validate_weight(measurement, idx)
-        fill_chance, fill_level = validate_float(measurement, idx)
         fractie, location, site_id = validate_extra(measurement, idx)
 
-        if not second_weight or first_weight or net_weight:
+        first_weight, second_weight, net_weight, valid = \
+            validate_weight(measurement, idx)
+
+        fill_chance, fill_level = validate_float(measurement, idx)
+
+        if not net_weight:
             # we store it to be able to keep track
             # of progress
             errors += 1
@@ -229,6 +238,7 @@ def extract_one_resultset(fields, records, system_id=None):
             'neighborhood': measurement[idx.neighborhood],
             'location': location,
             'site_id': site_id,
+            'valid': valid,
             'geometrie': geometrie
         }
 
@@ -273,18 +283,59 @@ def extract_measurements():
             LOG.debug('skipping %s %s', m.system_id, m.weigh_at)
             continue
 
-        LOG.info(row.id)
         LOG.info(row.weigh_at)
         # new measurements found!
         row_new, error_new = extract_one_resultset(
             fields, records, system_id=system_id)
         rows += row_new
+
+        LOG.info("%s - %s", row_new, error_new)
+
         errors += error_new
 
     LOG.info('RECORDS %s ERRORS %s', rows, errors)
 
     if errors > 50000:
         raise ValueError("Something went wrong. API fields changed?")
+
+
+FIX_WEGINGEN_NOORD = """
+UPDATE kilogram_weigh_measurement t
+SET second_weight = s.second_weight - {container_weigth},
+    net_weight = s.net_weight - {container_weigth},
+    valid = true
+FROM kilogram_weigh_measurement s
+WHERE s.first_weight = 0
+AND s.second_weight > 840
+AND s.second_weight = s.net_weight
+AND s.fractie = '{fractie}'
+AND s.stadsdeel = 'N'
+AND s.id = t.id
+"""
+
+
+def fix_wegingen_noord():
+    """Correct weigh perscontainers in Noord.
+
+    Noort has percontainers with only a second weigh.
+    update the weigh values by subtracting the faction container
+    weight.
+    """
+    fix_fracties = [
+        ('Rest', 1520),
+        ('Papier', 850),
+        ('Glas', 850),
+    ]
+
+    for fractie, container_weigth in fix_fracties:
+        LOG.info('Fix perswegingen %s NOORD', fractie)
+        u_sql = FIX_WEGINGEN_NOORD.format(
+            container_weigth=container_weigth,
+            fractie=fractie,
+        )
+        LOG.debug(u_sql)
+        session.execute(u_sql)
+        session.commit()
 
 
 UPDATE_BUURT = """
@@ -330,6 +381,9 @@ def main():
     if args.link_containers:
         # link_containers_to_wells()
         return
+    if args.fix_perscontainers:
+        fix_wegingen_noord()
+        return
 
     extract_measurements()
 
@@ -367,6 +421,11 @@ if __name__ == "__main__":
     inputparser.add_argument(
         "--link_containers", action="store_true",
         default=False, help="Cleanup"
+    )
+
+    inputparser.add_argument(
+        "--fix_perscontainers", action="store_true",
+        default=False, help="fix weights"
     )
 
     args = inputparser.parse_args()

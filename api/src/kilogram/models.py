@@ -20,7 +20,7 @@ class KilogramWeighMeasurement(models.Model):
     net_weight = models.IntegerField(blank=True, null=True)
     site_id = models.IntegerField(blank=True, null=True)
     geometrie = models.PointField(blank=True, null=True)
-    # valid = models.NullBooleanField()
+    valid = models.NullBooleanField()
 
     class Meta:
         managed = settings.TESTING
