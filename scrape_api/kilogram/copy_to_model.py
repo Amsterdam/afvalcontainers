@@ -301,8 +301,8 @@ def extract_measurements():
 
 FIX_WEGINGEN_NOORD = """
 UPDATE kilogram_weigh_measurement t
-SET second_weight = s.second_weight - {container_weigth},
-    net_weight = s.net_weight - {container_weigth},
+SET
+    net_weight = s.second_weight - {container_weigth},
     valid = true
 FROM kilogram_weigh_measurement s
 WHERE s.first_weight = 0

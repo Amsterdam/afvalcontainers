@@ -123,19 +123,16 @@ WHERE c.well_id = w.id
 """
 
 WASTE_DESCRIPTIONS = {
-    1:  "Rest",
-    2:  "Glas",
-    3:  "Glas",
-    6:  "Papier",
-    5:  "Wat is dit?",
-    7:  "Textiel",
-    9:  "Wormen",
-    14: "We weten het niet",
-    17: "geen idee",
-    20: "Glas",
+    1: "Rest",
+    2: "Glas",
+    # 3: "Glas",
+    6: "Papier",
+    5: "GFT",
+    7: "Textiel",
+    # 9: "Wormen",
+    # 20: "Glas",
     25: "Plastic",
-    26: "Iets nieuws",
-    31: "Blipvert",
+    31: "KCA",
     -1: "Unkown",
     None: "Unknown",
 }
