@@ -30,6 +30,7 @@ class Migration(migrations.Migration):
                 ('net_weight', models.IntegerField(blank=True, null=True)),
                 ('site_id', models.IntegerField(blank=True, null=True)),
                 ('geometrie', django.contrib.gis.db.models.fields.PointField(blank=True, null=True, srid=4326)),
+                ('valid', models.NullBooleanField(blank=True, null=True)),
             ],
             options={
                 'db_table': 'kilogram_weigh_measurement',
