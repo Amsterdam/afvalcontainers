@@ -3,6 +3,7 @@
 import logging
 import models
 import argparse
+import os
 
 from sqlalchemy import func
 # from sqlalchemy.sql import select
@@ -256,6 +257,8 @@ def fill_rd_geometry():
     session.execute(TRANSFORM_28992)
     session.commit()
 
+
+
 # bgt has plus information which is not complete
 # but should match with afvalcontainers/wells. if it does not
 # we should report this back adding these attributes allow the api to
@@ -363,10 +366,15 @@ def create_pand_distance():
 
 
 def execute_sqlfile(filename):
-    with open(filename) as sqltxt:
+    with open(os.path.join('bammens', filename)) as sqltxt:
         statements = sqltxt.read()
         session.execute(statements)
         session.commit()
+
+
+def fill_kilo_stats_table():
+    log.info('create weekly site stats')
+    execute_sqlfile('sqlcode/kilogram_site_stats.sql')
 
 
 def create_clusters():
@@ -454,6 +462,8 @@ def main(args):
         create_pand_distance()
     if args.fill_rd:
         fill_rd_geometry()
+    if args.kilostats:
+        fill_kilo_stats_table()
 
 
 if __name__ == "__main__":
@@ -512,6 +522,13 @@ if __name__ == "__main__":
         default=False,
         action="store_true",
         help="validate counts",
+    )
+
+    inputparser.add_argument(
+        "--kilostats",
+        default=False,
+        action="store_true",
+        help="create weekly kilogram.nl stats for site",
     )
 
     inputparser.add_argument(

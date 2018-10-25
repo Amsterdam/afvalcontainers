@@ -134,6 +134,22 @@ class Site(models.Model):
 """
 
 
+class SiteFractieStat(models.Model):
+    site = models.ForeignKey(
+        Site, to_field='short_id', on_delete=models.CASCADE,
+        related_name='stats'
+    )
+    fractie = models.CharField(max_length=20, null=False)
+    week = models.IntegerField(null=True, blank=True)
+    year = models.IntegerField(null=True, blank=True)
+    wegingen = models.IntegerField(null=True, blank=True)
+    sum = models.IntegerField(null=True, blank=True)
+    min = models.IntegerField(null=True, blank=True)
+    max = models.IntegerField(null=True, blank=True)
+    avg = models.IntegerField(null=True, blank=True)
+    stddev = models.IntegerField(null=True, blank=True)
+
+
 class ContainerType(models.Model):
     """Contains volumne information aboud containers."""
 

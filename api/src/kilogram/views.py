@@ -32,6 +32,9 @@ class KilogramFilter(FilterSet):
     in_bbox = filters.CharFilter(method='in_bbox_filter', label='bbox')
     detailed = filters.BooleanFilter(method='detailed_filter', label='detailed view')
 
+    weigh_at_gt = filters.DateTimeFilter('weigh_at', lookup_expr='gt')
+    weigh_at_lt = filters.DateTimeFilter('weigh_at', lookup_expr='lt')
+
     location = filters.CharFilter(
         method="locatie_filter", label='x,y,r')
 
@@ -47,12 +50,19 @@ class KilogramFilter(FilterSet):
             "id",
             "seq_id",
             "fractie",
+            "weigh_at",
+            "weigh_at_gt",
+            "weigh_at_lt",
+            "stadsdeel",
+            "buurt_code",
+            "site_id",
             "first_weight",
             "second_weight",
             "net_weight",
             "in_bbox",
             "location",
             "detailed",
+            "valid",
         )
 
     def in_bbox_filter(self, qs, name, value):
