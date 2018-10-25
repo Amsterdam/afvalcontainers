@@ -373,7 +373,11 @@ def execute_sqlfile(filename):
 
 
 def fill_kilo_stats_table():
-    log.info('create weekly site stats')
+
+    log.info('create weekly / monthly buurt stats')
+    execute_sqlfile('sqlcode/kilogram_buurt_stats.sql')
+
+    log.info('create weekly / monthly site stats')
     execute_sqlfile('sqlcode/kilogram_site_stats.sql')
 
 

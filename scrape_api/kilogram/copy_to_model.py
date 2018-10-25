@@ -80,6 +80,9 @@ def validate_weight(measurement, idx):
     if second_weight and second_weight < 250:
         valid = False
 
+    if net_weight < 0:
+        valid = False
+
     return first_weight, second_weight, net_weight, valid
 
 

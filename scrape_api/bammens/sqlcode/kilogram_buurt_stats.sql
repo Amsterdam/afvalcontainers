@@ -1,7 +1,7 @@
-truncate table afvalcontainers_sitefractiestatweek;
+truncate table afvalcontainers_buurtfractiestatweek;
 
-insert into afvalcontainers_sitefractiestatweek (
-	site_id,
+insert into afvalcontainers_buurtfractiestatweek (
+	buurt_id,
 	fractie,
 	"week",
 	"year",
@@ -12,7 +12,7 @@ insert into afvalcontainers_sitefractiestatweek (
 	"avg",
 	"stddev"
 ) select
-	site_id,
+	CONCAT(s.stadsdeel, s.buurt_code),
 	fractie,
 	EXTRACT(WEEK from weigh_at)::int as "week",
 	EXTRACT(YEAR from weigh_at)::int as "year",
@@ -25,13 +25,13 @@ insert into afvalcontainers_sitefractiestatweek (
 from kilogram_weigh_measurement m, afvalcontainers_site s
 where m.site_id = s.short_id
 and m.valid
-group by (fractie, site_id, "year", "week");
+group by (fractie, s.stadsdeel, s.buurt_code, "year", "week");
 
 
-truncate table afvalcontainers_sitefractiestatmonth;
+truncate table afvalcontainers_buurtfractiestatmonth;
 
-insert into afvalcontainers_sitefractiestatmonth (
-	site_id,
+insert into afvalcontainers_buurtfractiestatmonth (
+	buurt_id,
 	fractie,
 	"month",
 	"year",
@@ -42,7 +42,7 @@ insert into afvalcontainers_sitefractiestatmonth (
 	"avg",
 	"stddev"
 ) select
-	site_id,
+	CONCAT(s.stadsdeel, s.buurt_code),
 	fractie,
 	EXTRACT(WEEK from weigh_at)::int as "month",
 	EXTRACT(YEAR from weigh_at)::int as "year",
@@ -55,4 +55,4 @@ insert into afvalcontainers_sitefractiestatmonth (
 from kilogram_weigh_measurement m, afvalcontainers_site s
 where m.site_id = s.short_id
 and m.valid
-group by (fractie, site_id, "year", "month");
+group by (fractie, s.stadsdeel, s.buurt_code, "year", "month");

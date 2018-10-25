@@ -68,10 +68,33 @@ containers.register(
     r"wells", api_views.WellView, base_name="well")
 containers.register(
     r"containertypes", api_views.TypeView, base_name="containertype")
+
+# LIVE KILOGRAM DATABASE UPDATES
 containers.register(
     r"sites", api_views.SiteView, base_name="site")
 containers.register(
     r"kilogram", kilo_views.KilogramView, base_name="kilogram")
+
+
+# stats views
+containers.register(
+    r'kilos/sites/weekly',
+    api_views.WeighDataSiteWeekView, base_name='stats-site-week')
+
+containers.register(
+    r'kilos/sites/monthly',
+    api_views.WeighDataSiteMonthView, base_name='stats-site-month')
+
+containers.register(
+    r'kilos/buurt/weekly',
+    api_views.WeighDataBuurtWeekView, base_name='stats-site-week')
+
+containers.register(
+    r'kilos/buurt/monthly',
+    api_views.WeighDataBuurtMonthView, base_name='stats-site-month')
+
+
+# containers.register(r"stats", stats, base_name='stats')
 
 
 urls = containers.urls
@@ -92,6 +115,8 @@ schema_view = get_schema_view(
 
 
 urlpatterns = [
+    # url(r"^afval/stats/", include(stats.urls)),
+
     url(r'^afval/swagger(?P<format>\.json|\.yaml)$',
         schema_view.without_ui(cache_timeout=None), name='schema-json'),
     url(r'^afval/swagger/$',
@@ -101,6 +126,7 @@ urlpatterns = [
         schema_view.with_ui('redoc', cache_timeout=None), name='schema-redoc'),
     url(r"^afval/", include(urls)),
     url(r"^status/", include("afvalcontainers.health.urls")),
+
 ]
 
 

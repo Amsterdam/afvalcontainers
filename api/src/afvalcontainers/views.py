@@ -16,12 +16,24 @@ from afvalcontainers.models import ContainerType
 from afvalcontainers.models import Buurten
 from afvalcontainers.models import Site
 
+# Move into new app?
+from afvalcontainers.models import BuurtFractieStatMonth
+from afvalcontainers.models import BuurtFractieStatWeek
+from afvalcontainers.models import SiteFractieStatWeek
+from afvalcontainers.models import SiteFractieStatMonth
+
+
 from afvalcontainers.serializers import ContainerSerializer
 from afvalcontainers.serializers import ContainerDetailSerializer
 from afvalcontainers.serializers import WellSerializer
 from afvalcontainers.serializers import TypeSerializer
 from afvalcontainers.serializers import SiteSerializer
 from afvalcontainers.serializers import SiteDetailSerializer
+
+from afvalcontainers.serializers import SiteFractieStatWeekSerializer
+from afvalcontainers.serializers import SiteFractieStatMonthSerializer
+from afvalcontainers.serializers import BuurtFractieStatWeekSerializer
+from afvalcontainers.serializers import BuurtFractieStatMonthSerializer
 
 
 def buurt_choices():
@@ -318,3 +330,73 @@ class SiteView(DatapuntViewSet):
     filter_backends = (DjangoFilterBackend,)
 
     lookup_value_regex = '[^/]+'
+
+
+class WeighDataSiteWeekView(DatapuntViewSet):
+    """Weekly Site Faction statistics."""
+
+    queryset = (
+        SiteFractieStatWeek.objects.all()
+        .order_by('year')
+        .order_by('week')
+        .prefetch_related("site")
+    )
+
+    pagination_class = SitePager
+
+    serializer_class = SiteFractieStatWeekSerializer
+    serializer_detail_class = SiteFractieStatWeekSerializer
+    filter_backends = (DjangoFilterBackend,)
+
+
+class WeighDataSiteMonthView(DatapuntViewSet):
+    """
+    """
+    queryset = (
+        SiteFractieStatMonth.objects.all()
+        .order_by('year')
+        .order_by('month')
+        .prefetch_related("site")
+    )
+
+    pagination_class = SitePager
+
+    serializer_class = SiteFractieStatMonthSerializer
+    serializer_detail_class = SiteFractieStatMonthSerializer
+    filter_backends = (DjangoFilterBackend,)
+
+
+class WeighDataBuurtWeekView(DatapuntViewSet):
+    """
+    """
+    queryset = (
+        BuurtFractieStatWeek.objects.all()
+        .order_by('year')
+        .order_by('week')
+        .prefetch_related("buurt")
+    )
+
+    pagination_class = SitePager
+    serializer_class = BuurtFractieStatWeekSerializer
+    serializer_detail_class = BuurtFractieStatWeekSerializer
+    filter_backends = (DjangoFilterBackend,)
+
+
+class WeighDataBuurtMonthView(DatapuntViewSet):
+    """
+    """
+    queryset = (
+        BuurtFractieStatMonth.objects.all()
+        .order_by('year')
+        .order_by('month')
+        .prefetch_related("buurt")
+    )
+
+    pagination_class = SitePager
+
+    filter_fields = (
+        'buurt',
+        'month', 'year')
+    serializer_class = BuurtFractieStatMonthSerializer
+    serializer_detail_class = BuurtFractieStatMonthSerializer
+    filter_backends = (DjangoFilterBackend,)
