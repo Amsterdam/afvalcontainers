@@ -34,15 +34,15 @@ echo "Importing data into database"
 
 # Create all tables / database stuff
 dc run --rm api python manage.py migrate
-dc run --rm importer python models.py
+dc run --rm importer python bammens/models.py
 
 # importeer buurt/stadseel
 dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/gebieden buurt_simple,stadsdeel 28992
 
 # Importeer bammens api endpoints
-dc run --rm importer python slurp_bammens.py container_types
-dc run --rm importer python slurp_bammens.py containers
-dc run --rm importer python slurp_bammens.py wells
+dc run --rm importer python bammens/slurp_bammens.py container_types
+dc run --rm importer python bammens/slurp_bammens.py containers
+dc run --rm importer python bammens/slurp_bammens.py wells
 
 # backup raw data for debuging
 dc exec -T database backup-db.sh afvalcontainers

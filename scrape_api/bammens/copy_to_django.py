@@ -3,7 +3,7 @@ Copy raw data into django api models
 """
 
 import argparse
-import models
+from bammens import models
 import logging
 from sqlalchemy.sql import select
 from sqlalchemy import bindparam

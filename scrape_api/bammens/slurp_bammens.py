@@ -12,7 +12,8 @@ import asyncio
 
 import datetime
 import os
-import models
+
+from bammens import models
 
 import logging
 import argparse
@@ -20,7 +21,7 @@ from settings import API_BAMMENS_URL as API_URL
 import os.path
 
 
-import login
+from bammens import login
 
 log = logging.getLogger("slurp_bammens")
 log.setLevel(logging.INFO)

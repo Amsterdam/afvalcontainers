@@ -6,15 +6,17 @@ import json
 # import time
 import unittest
 import asynctest
-import slurp_bammens
-import models
+
+from bammens import slurp_bammens
+from bammens import models
+
 import logging
 from settings import BASE_DIR
 from settings import TESTING
 
 log = logging.getLogger(__name__)
 
-FIX_DIR = BASE_DIR
+FIX_DIR = BASE_DIR + '/bammens/'
 
 transaction = []
 connection = []
@@ -58,8 +60,8 @@ class TestDBWriting(unittest.TestCase):
     Test writing to database
     """
 
-    @asynctest.patch("slurp_bammens.get_the_json")
-    @asynctest.patch("slurp_bammens.fetch")
+    @asynctest.patch("bammens.slurp_bammens.get_the_json")
+    @asynctest.patch("bammens.slurp_bammens.fetch")
     def test_containers(self, fetch_mock, get_json_mock):
 
         with open(FIX_DIR + "/fixtures/containers.json") as detail_json:
@@ -78,14 +80,14 @@ class TestDBWriting(unittest.TestCase):
         count = session.query(models.Container).count()
         self.assertEqual(count, 5)
 
-    @asynctest.patch("slurp_bammens.get_the_json")
-    @asynctest.patch("slurp_bammens.fetch")
+    @asynctest.patch("bammens.slurp_bammens.get_the_json")
+    @asynctest.patch("bammens.slurp_bammens.fetch")
     def test_wells(self, fetch_mock, get_json_mock):
 
-        with open(FIX_DIR + "/fixtures/wells.json") as detail_json:
+        with open(FIX_DIR + "fixtures/wells.json") as detail_json:
             detail_json = json.loads(detail_json.read())
 
-        with open(FIX_DIR + "/fixtures/wells.list.json") as list_json:
+        with open(FIX_DIR + "fixtures/wells.list.json") as list_json:
             list_json = json.loads(list_json.read())
 
         mr = MockResponse()
@@ -98,14 +100,14 @@ class TestDBWriting(unittest.TestCase):
         count = session.query(models.Well).count()
         self.assertEqual(count, 4)
 
-    @asynctest.patch("slurp_bammens.get_the_json")
-    @asynctest.patch("slurp_bammens.fetch")
+    @asynctest.patch("bammens.slurp_bammens.get_the_json")
+    @asynctest.patch("bammens.slurp_bammens.fetch")
     def test_container_types(self, fetch_mock, get_json_mock):
 
-        with open(FIX_DIR + "/fixtures/containertypes.json") as detail_json:
+        with open(FIX_DIR + "fixtures/containertypes.json") as detail_json:
             detail_json = json.loads(detail_json.read())
 
-        with open(FIX_DIR + "/fixtures/containertypes.list.json") as list_json:
+        with open(FIX_DIR + "fixtures/containertypes.list.json") as list_json:
             list_json = json.loads(list_json.read())
 
         mr = MockResponse()

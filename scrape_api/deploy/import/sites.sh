@@ -84,14 +84,14 @@ dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/m
 dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/bag pand 28992
 
 # create all tables if missing
-dc run --rm importer python models.py
+dc run --rm importer python bamens/models.py
 
-dc run --rm importer python create_sites.py --fill_rd
-dc run --rm importer python create_sites.py --merge_bgt
-dc run --rm importer python create_sites.py --qa_wells
-dc run --rm importer python create_sites.py --pand_distance
-dc run --rm importer python create_sites.py --clusters
-dc run --rm importer python create_sites.py --validate
+dc run --rm importer python bammens/create_sites.py --fill_rd
+dc run --rm importer python bammens/create_sites.py --merge_bgt
+dc run --rm importer python bammens/create_sites.py --qa_wells
+dc run --rm importer python bammens/create_sites.py --pand_distance
+dc run --rm importer python bammens/create_sites.py --clusters
+dc run --rm importer python bammens/create_sites.py --validate
 
 echo "Running backups"
 dc exec -T database backup-db.sh afvalcontainers
