@@ -79,19 +79,19 @@ containers.register(
 # stats views
 containers.register(
     r'kilos/sites/weekly',
-    api_views.WeighDataSiteWeekView, base_name='stats-site-week')
+    kilo_views.WeighDataSiteWeekView, base_name='stats-site-week')
 
 containers.register(
     r'kilos/sites/monthly',
-    api_views.WeighDataSiteMonthView, base_name='stats-site-month')
+    kilo_views.WeighDataSiteMonthView, base_name='stats-site-month')
 
 containers.register(
     r'kilos/buurt/weekly',
-    api_views.WeighDataBuurtWeekView, base_name='stats-site-week')
+    kilo_views.WeighDataBuurtWeekView, base_name='stats-site-week')
 
 containers.register(
     r'kilos/buurt/monthly',
-    api_views.WeighDataBuurtMonthView, base_name='stats-site-month')
+    kilo_views.WeighDataBuurtMonthView, base_name='stats-site-month')
 
 
 # containers.register(r"stats", stats, base_name='stats')

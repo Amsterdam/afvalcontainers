@@ -1,6 +1,6 @@
-truncate table afvalcontainers_sitefractiestatweek;
+truncate table kilogram_sitefractiestatweek;
 
-insert into afvalcontainers_sitefractiestatweek (
+insert into kilogram_sitefractiestatweek (
 	site_id,
 	fractie,
 	"week",
@@ -28,9 +28,9 @@ and m.valid
 group by (fractie, site_id, "year", "week");
 
 
-truncate table afvalcontainers_sitefractiestatmonth;
+truncate table kilogram_sitefractiestatmonth;
 
-insert into afvalcontainers_sitefractiestatmonth (
+insert into kilogram_sitefractiestatmonth (
 	site_id,
 	fractie,
 	"month",

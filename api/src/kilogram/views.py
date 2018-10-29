@@ -15,10 +15,28 @@ from django.conf import settings
 
 from datapunt_api.rest import DatapuntViewSet
 from datapunt_api import bbox
+from datapunt_api.pagination import HALPagination
 
 from kilogram.models import KilogramWeighMeasurement
 from kilogram.serializers import KilogramSerializer
 from kilogram.serializers import KilogramDetailSerializer
+
+from kilogram.models import SiteFractieStatWeek
+from kilogram.models import SiteFractieStatMonth
+from kilogram.models import BuurtFractieStatMonth
+from kilogram.models import BuurtFractieStatWeek
+
+from kilogram.serializers import SiteFractieStatWeekSerializer
+from kilogram.serializers import SiteFractieStatMonthSerializer
+from kilogram.serializers import BuurtFractieStatWeekSerializer
+from kilogram.serializers import BuurtFractieStatMonthSerializer
+
+
+class KiloPager(HALPagination):
+    """Site objects are rather "heavy" so put limits on pagination."""
+
+    page_size = 100
+    max_page_size = 9000
 
 #
 
@@ -113,3 +131,73 @@ class KilogramView(DatapuntViewSet):
             queryset = queryset.using('kilogram')
 
         return queryset
+
+
+class WeighDataSiteWeekView(DatapuntViewSet):
+    """Weekly Site Faction statistics."""
+
+    queryset = (
+        SiteFractieStatWeek.objects.all()
+        .order_by('-year')
+        .order_by('-week')
+        .prefetch_related("site")
+    )
+
+    pagination_class = KiloPager
+
+    serializer_class = SiteFractieStatWeekSerializer
+    serializer_detail_class = SiteFractieStatWeekSerializer
+    filter_backends = (DjangoFilterBackend,)
+
+
+class WeighDataSiteMonthView(DatapuntViewSet):
+    """
+    """
+    queryset = (
+        SiteFractieStatMonth.objects.all()
+        .order_by('-year')
+        .order_by('-month')
+        .prefetch_related("site")
+    )
+
+    pagination_class = KiloPager
+
+    serializer_class = SiteFractieStatMonthSerializer
+    serializer_detail_class = SiteFractieStatMonthSerializer
+    filter_backends = (DjangoFilterBackend,)
+
+
+class WeighDataBuurtWeekView(DatapuntViewSet):
+    """
+    """
+    queryset = (
+        BuurtFractieStatWeek.objects.all()
+        .order_by('-year')
+        .order_by('-week')
+        .prefetch_related("buurt")
+    )
+
+    pagination_class = KiloPager
+    serializer_class = BuurtFractieStatWeekSerializer
+    serializer_detail_class = BuurtFractieStatWeekSerializer
+    filter_backends = (DjangoFilterBackend,)
+
+
+class WeighDataBuurtMonthView(DatapuntViewSet):
+    """
+    """
+    queryset = (
+        BuurtFractieStatMonth.objects.all()
+        .order_by('year')
+        .order_by('month')
+        .prefetch_related("buurt")
+    )
+
+    pagination_class = KiloPager
+
+    filter_fields = (
+        'buurt',
+        'month', 'year')
+    serializer_class = BuurtFractieStatMonthSerializer
+    serializer_detail_class = BuurtFractieStatMonthSerializer
+    filter_backends = (DjangoFilterBackend,)

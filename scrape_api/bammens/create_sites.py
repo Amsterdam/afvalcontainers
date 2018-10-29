@@ -258,7 +258,6 @@ def fill_rd_geometry():
     session.commit()
 
 
-
 # bgt has plus information which is not complete
 # but should match with afvalcontainers/wells. if it does not
 # we should report this back adding these attributes allow the api to
@@ -373,12 +372,14 @@ def execute_sqlfile(filename):
 
 
 def fill_kilo_stats_table():
-
-    log.info('create weekly / monthly buurt stats')
+    log.info('create weekly / monthly buurt statistics')
     execute_sqlfile('sqlcode/kilogram_buurt_stats.sql')
 
-    log.info('create weekly / monthly site stats')
+    log.info('create weekly / monthly site statisics')
     execute_sqlfile('sqlcode/kilogram_site_stats.sql')
+
+    log.info('add buurt bewoners counts to measurements')
+    execute_sqlfile('sqlcode/bbga_buurt.sql')
 
 
 def create_clusters():
@@ -532,7 +533,7 @@ if __name__ == "__main__":
         "--kilostats",
         default=False,
         action="store_true",
-        help="create weekly kilogram.nl stats for site",
+        help="create weekly/monthly kilogram.nl stats for site",
     )
 
     inputparser.add_argument(

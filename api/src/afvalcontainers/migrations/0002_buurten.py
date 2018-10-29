@@ -14,7 +14,6 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Buurten',
             fields=[
-                ('data', django.contrib.postgres.fields.jsonb.JSONField(null=True)),
                 ('ogc_fid', models.IntegerField(primary_key=True, serialize=False)),
                 ('id', models.CharField(max_length=14)),
                 ('vollcode', models.CharField(max_length=4)),

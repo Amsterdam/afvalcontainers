@@ -72,6 +72,7 @@ class KilogramMeasurement(Base):
     valid = Column(Boolean, index=True)
 
 
+
 if __name__ == "__main__":
     desc = "Create/Drop defined model tables."
     inputparser = argparse.ArgumentParser(desc)

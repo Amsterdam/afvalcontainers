@@ -11,10 +11,6 @@ from afvalcontainers.models import Well
 from afvalcontainers.models import ContainerType
 from afvalcontainers.models import Site
 
-from afvalcontainers.models import SiteFractieStatWeek
-from afvalcontainers.models import SiteFractieStatMonth
-from afvalcontainers.models import BuurtFractieStatMonth
-from afvalcontainers.models import BuurtFractieStatWeek
 
 class WellSerializer(HALSerializer):
     _display = DisplayField()
@@ -42,8 +38,7 @@ class WellSerializer(HALSerializer):
 
 
 class ContainerModelSerializer(serializers.ModelSerializer):
-    """Serializer used by well
-    """
+    """Serializer used by well."""
 
     class Meta:
         model = Container
@@ -58,11 +53,10 @@ class ContainerTypeSerializer(serializers.ModelSerializer):
 
 
 class WellModelSerializer(serializers.ModelSerializer):
-    """ Serializer to use in site detail
-    """
+    """Serializer to use in site detail."""
+
     containers = ContainerModelSerializer(many=True)
     # address = serializers.SerializerMethodField()
-
 
     class Meta:
         model = Well
@@ -70,8 +64,8 @@ class WellModelSerializer(serializers.ModelSerializer):
 
 
 class InlineWellModelSerializer(serializers.ModelSerializer):
-    """ Serializer to use in site detail
-    """
+    """Serializer to use in site detail."""
+
     # containers = ContainerModelSerializer(many=True)
     # address = serializers.SerializerMethodField()
 
@@ -222,31 +216,3 @@ class SiteDetailSerializer(HALSerializer):
 
     def get_fracties(self, obj):
         return fracties(obj)
-
-
-class SiteFractieStatWeekSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = SiteFractieStatWeek
-        fields = '__all__'
-
-
-class SiteFractieStatMonthSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = SiteFractieStatMonth
-        fields = '__all__'
-
-
-class BuurtFractieStatWeekSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = BuurtFractieStatWeek
-        fields = '__all__'
-
-
-class BuurtFractieStatMonthSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = BuurtFractieStatMonth
-        fields = '__all__'

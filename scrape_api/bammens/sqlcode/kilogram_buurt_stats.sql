@@ -1,7 +1,7 @@
-truncate table afvalcontainers_buurtfractiestatweek;
+truncate table kilogram_buurtfractiestatweek;
 
-insert into afvalcontainers_buurtfractiestatweek (
-	buurt_id,
+insert into kilogram_buurtfractiestatweek (
+	buurt_code,
 	fractie,
 	"week",
 	"year",
@@ -28,10 +28,10 @@ and m.valid
 group by (fractie, s.stadsdeel, s.buurt_code, "year", "week");
 
 
-truncate table afvalcontainers_buurtfractiestatmonth;
+truncate table kilogram_buurtfractiestatmonth;
 
-insert into afvalcontainers_buurtfractiestatmonth (
-	buurt_id,
+insert into kilogram_buurtfractiestatmonth (
+	buurt_code,
 	fractie,
 	"month",
 	"year",

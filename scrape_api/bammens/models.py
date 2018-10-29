@@ -3,7 +3,7 @@ import argparse
 import asyncio
 
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import Column, Integer, TIMESTAMP
+from sqlalchemy import Column, Integer, TIMESTAMP, String
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import Sequence
@@ -120,13 +120,22 @@ class WellBGT(Base):
 
 
 class ContainerType(Base):
-    """
-    Raw json proxy for api.
-    """
+    """Raw json proxy for api."""
+
     __tablename__ = f"bammens_containertype_raw"
     id = Column(Integer, Sequence("grl_seq"), primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
     data = Column(JSONB)
+
+
+class BuurtBewonerCounts(Base):
+    """BBGA BEVOLKINGTOTAAL API data."""
+
+    __tablename__ = f"buurt_counts"
+    id = Column(Integer, Sequence("grl_seq"), primary_key=True)
+    year = Column(Integer, index=True)
+    buurt_code = Column(String(4), index=True)
+    inhabitants = Column(Integer, index=True)
 
 
 ENDPOINT_MODEL = {
@@ -137,8 +146,7 @@ ENDPOINT_MODEL = {
 
 
 async def main(args):
-    """Main
-    """
+    """Main."""
     engine = make_engine()
 
     if args.drop:
