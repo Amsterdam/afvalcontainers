@@ -174,7 +174,6 @@ class WeighDataBuurtWeekView(DatapuntViewSet):
         BuurtFractieStatWeek.objects.all()
         .order_by('-year')
         .order_by('-week')
-        .prefetch_related("buurt")
     )
 
     pagination_class = KiloPager
@@ -190,7 +189,6 @@ class WeighDataBuurtMonthView(DatapuntViewSet):
         BuurtFractieStatMonth.objects.all()
         .order_by('year')
         .order_by('month')
-        .prefetch_related("buurt")
     )
 
     pagination_class = KiloPager
