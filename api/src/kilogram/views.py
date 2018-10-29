@@ -194,7 +194,7 @@ class WeighDataBuurtMonthView(DatapuntViewSet):
     pagination_class = KiloPager
 
     filter_fields = (
-        'buurt',
+        'buurt_code',
         'month', 'year')
     serializer_class = BuurtFractieStatMonthSerializer
     serializer_detail_class = BuurtFractieStatMonthSerializer

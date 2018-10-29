@@ -86,11 +86,11 @@ containers.register(
     kilo_views.WeighDataSiteMonthView, base_name='stats-site-month')
 
 containers.register(
-    r'kilos/buurt/weekly',
+    r'kilos/neighborhood/weekly',
     kilo_views.WeighDataBuurtWeekView, base_name='stats-site-week')
 
 containers.register(
-    r'kilos/buurt/monthly',
+    r'kilos/neighborhood/monthly',
     kilo_views.WeighDataBuurtMonthView, base_name='stats-site-month')
 
 
