@@ -38,6 +38,7 @@ class Container(models.Model):
     container_type = models.ForeignKey(
         "ContainerType", related_name="containers", on_delete=models.DO_NOTHING
     )
+
     created_at = models.DateTimeField(null=True)
     placing_date = models.DateTimeField(null=True)
     operational_date = models.DateTimeField(null=True)
@@ -123,6 +124,19 @@ class Site(models.Model):
 
     def __str__(self):
         return f"{self.id}-{self.straatnaam} {self.huisnummer}"
+
+
+class SiteFractie(models.Model):
+    """Fractie capaciteit."""
+
+    site = models.ForeignKey(
+        'Site', null=True,
+        related_name="fracties", on_delete=models.SET_NULL
+    )
+    # AKA waste name
+    fractie = models.CharField(max_length=20, db_index=True)
+    containers = models.IntegerField(null=True, default=0)
+    volume_m3 = models.IntegerField(null=True, default=0)
 
 
 class ContainerType(models.Model):

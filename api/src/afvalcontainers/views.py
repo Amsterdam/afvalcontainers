@@ -323,8 +323,9 @@ class SiteView(DatapuntViewSet):
         Site.objects.all()
         .order_by("id")
         .prefetch_related("wells")
+        .prefetch_related("fracties")
         .prefetch_related("wells__containers")
-        .prefetch_related("wells__containers__container_type")
+        # .prefetch_related("wells__containers__container_type")
     )
 
     pagination_class = SitePager

@@ -10,6 +10,7 @@ from afvalcontainers.models import Container
 from afvalcontainers.models import Well
 from afvalcontainers.models import ContainerType
 from afvalcontainers.models import Site
+from afvalcontainers.models import SiteFractie
 
 
 class WellSerializer(HALSerializer):
@@ -147,13 +148,9 @@ def fracties(obj):
     containers = {}
     volumes = {}
 
-    for w in obj.wells.all():
-        for c in w.containers.all():
-            count = containers.setdefault(c.waste_name, 0) + 1
-            volume = volumes.setdefault(c.waste_name, 0)
-            volume += c.container_type.volume
-            containers[c.waste_name] = count
-            volumes[c.waste_name] = volume
+    for f in obj.fracties.all():
+        containers[f.fractie] = f.containers
+        volumes[f.fractie] = f.volume_m3
 
     fracties['containers'] = containers
     fracties['volumes_m3'] = volumes
@@ -161,11 +158,23 @@ def fracties(obj):
     return fracties
 
 
+class SiteFractie(serializers.ModelSerializer):
+
+    class Meta:
+        model = SiteFractie
+        fields = [
+            'fractie',
+            'volume_m3',
+            'containers',
+        ]
+
+
 class SiteSerializer(HALSerializer):
 
     _display = DisplayField()
     wells = RelatedSummaryField()
     # wells__containers = RelatedSummaryField()
+    # fracties = SiteFractie(many=True)
     fracties = serializers.SerializerMethodField()
 
     class Meta(object):

@@ -43,6 +43,9 @@ class SiteFractieStatWeek(models.Model):
     avg = models.IntegerField(null=True, blank=True)
     stddev = models.IntegerField(null=True, blank=True)
 
+    containers = models.IntegerField(null=True, blank=True)
+    volume = models.IntegerField(null=True, blank=True)
+
 
 class SiteFractieStatMonth(models.Model):
     site = models.ForeignKey(
@@ -59,6 +62,9 @@ class SiteFractieStatMonth(models.Model):
     avg = models.IntegerField(null=True, blank=True)
     stddev = models.IntegerField(null=True, blank=True)
 
+    containers = models.IntegerField(null=True, blank=True)
+    volume = models.IntegerField(null=True, blank=True)
+
 
 class BuurtFractieStatMonth(models.Model):
     buurt_code = models.CharField(max_length=4, null=False, db_index=True)
@@ -72,6 +78,7 @@ class BuurtFractieStatMonth(models.Model):
     avg = models.IntegerField(null=True, blank=True)
     stddev = models.IntegerField(null=True, blank=True)
     inhabitants = models.IntegerField(null=True, blank=True)
+    containers = models.IntegerField(null=True, blank=True)
 
 
 class BuurtFractieStatWeek(models.Model):
@@ -86,3 +93,4 @@ class BuurtFractieStatWeek(models.Model):
     avg = models.IntegerField(null=True, blank=True)
     stddev = models.IntegerField(null=True, blank=True)
     inhabitants = models.IntegerField(null=True, blank=True)
+    containers = models.IntegerField(null=True, blank=True)

@@ -95,12 +95,14 @@ dc run --rm importer python bammens/create_sites.py --merge_bgt
 dc run --rm importer python bammens/create_sites.py --qa_wells
 dc run --rm importer python bammens/create_sites.py --pand_distance
 dc run --rm importer python bammens/create_sites.py --clusters
+dc run --rm importer python bammens/create_sites.py --site_fracties
 
 # get bbga data
 dc run --rm importer python bammens/buurt_count.py
 
 # Kilogram statisiek.
 dc run --rm importer python bammens/create_sites.py --kilostats
+dc run --rm importer python bammens/create_sites.py --buurtcontainercounts
 dc run --rm importer python bammens/create_sites.py --validate
 
 echo "Running backups"

@@ -381,6 +381,9 @@ def fill_kilo_stats_table():
     log.info('add buurt bewoners counts to measurements')
     execute_sqlfile('sqlcode/bbga_buurt.sql')
 
+    log.info('add volume capacity to site measurements')
+    execute_sqlfile('sqlcode/capacity_to_sitestats.sql')
+
 
 def create_clusters():
     """
@@ -414,6 +417,16 @@ def create_clusters():
 
     log.info('Add short codes based on streetcode and number')
     execute_sqlfile('sqlcode/create_short_ids.sql')
+
+
+def site_fracties():
+    log.info('Fill site container fracties')
+    execute_sqlfile('sqlcode/site_fracties.sql')
+
+
+def buurt_container_counts():
+    log.info('Fill kilo buurt container counts')
+    execute_sqlfile('sqlcode/container_counts_to_buurtstats.sql')
 
 
 def update_quality_in_extra_attributes():
@@ -469,6 +482,10 @@ def main(args):
         fill_rd_geometry()
     if args.kilostats:
         fill_kilo_stats_table()
+    if args.sitefracties:
+        site_fracties()
+    if args.buurtcontainercounts:
+        buurt_container_counts()
 
 
 if __name__ == "__main__":
@@ -527,6 +544,20 @@ if __name__ == "__main__":
         default=False,
         action="store_true",
         help="validate counts",
+    )
+
+    inputparser.add_argument(
+        "--sitefracties",
+        default=False,
+        action="store_true",
+        help="store site fracties",
+    )
+
+    inputparser.add_argument(
+        "--buurtcontainercounts",
+        default=False,
+        action="store_true",
+        help="add counts to buurten",
     )
 
     inputparser.add_argument(
