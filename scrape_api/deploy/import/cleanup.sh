@@ -9,6 +9,9 @@ set -e
 set -u
 set -x
 
+
+export PYTHONPATH=/app/
+
 DIR="$(dirname $0)"
 
 dc() {
