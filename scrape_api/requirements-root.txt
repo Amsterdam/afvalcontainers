@@ -1,0 +1,25 @@
+aiohttp
+async-timeout
+asynctest
+beautifulsoup4
+bs4
+certifi
+datapunt-config-loader
+datapunt-objectstore
+debtcollector
+GeoAlchemy2
+idna
+pluggy
+psycopg2-binary
+pyparsing
+pytest python-dateutil
+python-keystoneclient
+python-swiftclient
+pytz
+PyYAML
+requests
+rfc3986
+six
+SQLAlchemy
+SQLAlchemy-Utils
+urllib3
