@@ -45,9 +45,17 @@ class ContainerFilter(FilterSet):
 
     well = filters.CharFilter()
 
+    detailed = filters.BooleanFilter(
+        method='detailed_filter', label='detailed')
+
+    def detailed_filter(self, qs, name, value):
+        """Do nothing trigger detailed serializer."""
+        return qs
+
     class Meta(object):
         model = Container
         fields = (
+            "detailed",
             "id",
             "id_number",
             "serial_number",
@@ -230,9 +238,17 @@ class SiteFilter(FilterSet):
 
     wells = filters.CharFilter()
 
+    detailed = filters.BooleanFilter(
+        method='detailed_filter', label='detailed')
+
+    def detailed_filter(self, qs, name, value):
+        """Do nothing trigger detailed serializer."""
+        return qs
+
     class Meta(object):
         model = Site
         fields = (
+            "detailed",
             "id",
             "short_id",
             # "buurt_code",
