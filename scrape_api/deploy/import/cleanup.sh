@@ -26,6 +26,7 @@ mkdir -p ${DIR}/backups
 
 dc down	-v
 dc rm -f
+
 dc pull
 
 echo "Building images"
