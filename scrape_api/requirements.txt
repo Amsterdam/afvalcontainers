@@ -33,6 +33,7 @@ psycopg2-binary==2.7.5
 py==1.7.0
 pyparsing==2.2.2
 pytest==3.9.3
+python-dateutil==2.7.5
 python-keystoneclient==3.18.0
 python-swiftclient==3.6.0
 pytz==2018.7
