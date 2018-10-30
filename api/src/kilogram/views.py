@@ -138,8 +138,8 @@ class WeighDataSiteWeekView(DatapuntViewSet):
 
     queryset = (
         SiteFractieStatWeek.objects.all()
-        .order_by('-year')
         .order_by('-week')
+        .order_by('-year')
         .prefetch_related("site")
     )
 
@@ -155,8 +155,8 @@ class WeighDataSiteMonthView(DatapuntViewSet):
     """
     queryset = (
         SiteFractieStatMonth.objects.all()
-        .order_by('-year')
         .order_by('-month')
+        .order_by('-year')
         .prefetch_related("site")
     )
 
@@ -172,8 +172,8 @@ class WeighDataBuurtWeekView(DatapuntViewSet):
     """
     queryset = (
         BuurtFractieStatWeek.objects.all()
-        .order_by('-year')
         .order_by('-week')
+        .order_by('-year')
     )
 
     pagination_class = KiloPager
@@ -187,8 +187,8 @@ class WeighDataBuurtMonthView(DatapuntViewSet):
     """
     queryset = (
         BuurtFractieStatMonth.objects.all()
-        .order_by('year')
-        .order_by('month')
+        .order_by('-month')
+        .order_by('-year')
     )
 
     pagination_class = KiloPager

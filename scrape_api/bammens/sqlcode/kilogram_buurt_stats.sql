@@ -44,7 +44,7 @@ insert into kilogram_buurtfractiestatmonth (
 ) select
 	CONCAT(s.stadsdeel, s.buurt_code),
 	fractie,
-	EXTRACT(WEEK from weigh_at)::int as "month",
+	EXTRACT(MONTH from weigh_at)::int as "month",
 	EXTRACT(YEAR from weigh_at)::int as "year",
 	count(*) wegingen,
 	sum(net_weight),

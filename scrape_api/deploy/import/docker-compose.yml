@@ -21,6 +21,7 @@ services:
 
   importer:
     image: build.datapunt.amsterdam.nl:5000/afvalcontainers_importer:${ENVIRONMENT}
+    # build: ../..
     links:
       - database
     environment:
