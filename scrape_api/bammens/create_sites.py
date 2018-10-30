@@ -349,7 +349,7 @@ WASTE_DESCRIPTIONS = (
     ("Textiel"),
     ("Wormen"),
     ("Plastic"),
-    ("Blipvert"),
+    ("KCA"),
 )
 
 

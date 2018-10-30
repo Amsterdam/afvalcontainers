@@ -4,6 +4,8 @@ This data and models are in their own Kilogram database!!
 """
 
 
+from django.db import connections
+from django.db.migrations.executor import MigrationExecutor
 from django_filters.rest_framework import FilterSet
 from django_filters.rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
@@ -48,7 +50,8 @@ class KiloPager(HALPagination):
 class KilogramFilter(FilterSet):
     id = filters.CharFilter()
     in_bbox = filters.CharFilter(method='in_bbox_filter', label='bbox')
-    detailed = filters.BooleanFilter(method='detailed_filter', label='detailed view')
+    detailed = filters.BooleanFilter(
+        method='detailed_filter', label='detailed view')
 
     weigh_at_gt = filters.DateTimeFilter('weigh_at', lookup_expr='gt')
     weigh_at_lt = filters.DateTimeFilter('weigh_at', lookup_expr='lt')
@@ -133,6 +136,58 @@ class KilogramView(DatapuntViewSet):
         return queryset
 
 
+FILTERS = ['exact', 'lt', 'gt']
+
+
+def is_database_synchronized(database):
+    connection = connections[database]
+    connection.prepare_database()
+    executor = MigrationExecutor(connection)
+    targets = executor.loader.graph.leaf_nodes()
+    return False if executor.migration_plan(targets) else True
+
+
+FRACTIES = (
+    BuurtFractieStatMonth.objects
+    .values_list('fractie')
+    .distinct()
+    .extra(order_by=['fractie'])
+)
+
+
+if not is_database_synchronized('default'):
+    """Set default values on empty if we are migrating.
+    """
+    FRACTIES = [(0, 0)]
+
+
+class WeighDataSiteWeekFilter(FilterSet):
+
+    fractie = filters.ChoiceFilter(
+        label='fractie', method='filter_fractie',
+        choices=[(f[0], f[0]) for f in FRACTIES])
+
+    def filter_fractie(self, qs, _name, value):
+        return qs.filter(fractie=value)
+
+    class Meta(object):
+
+        model = SiteFractieStatWeek
+
+        fields = {
+            'fractie': ['exact'],
+            'week': FILTERS,
+            'year': FILTERS,
+            'wegingen': FILTERS,
+            'sum': FILTERS,
+            'min': FILTERS,
+            'max': FILTERS,
+            'avg': FILTERS,
+            'stddev': FILTERS,
+            'site': ['exact'],
+        }
+
+
 class WeighDataSiteWeekView(DatapuntViewSet):
     """Weekly Site Faction statistics."""
 
@@ -148,6 +203,34 @@ class WeighDataSiteWeekView(DatapuntViewSet):
     serializer_class = SiteFractieStatWeekSerializer
     serializer_detail_class = SiteFractieStatWeekSerializer
     filter_backends = (DjangoFilterBackend,)
+    filter_class = WeighDataSiteWeekFilter
+
+
+class WeighDataSiteMonthFilter(FilterSet):
+
+    fractie = filters.ChoiceFilter(
+        label='fractie', method='filter_fractie',
+        choices=[(f[0], f[0]) for f in FRACTIES])
+
+    def filter_fractie(self, qs, _name, value):
+        return qs.filter(fractie=value)
+
+    class Meta(object):
+
+        model = SiteFractieStatMonth
+
+        fields = {
+            'fractie': ['exact'],
+            'month': FILTERS,
+            'year': FILTERS,
+            'wegingen': FILTERS,
+            'sum': FILTERS,
+            'min': FILTERS,
+            'max': FILTERS,
+            'avg': FILTERS,
+            'stddev': FILTERS,
+            'site': ['exact'],
+        }
 
 
 class WeighDataSiteMonthView(DatapuntViewSet):
@@ -165,6 +248,34 @@ class WeighDataSiteMonthView(DatapuntViewSet):
     serializer_class = SiteFractieStatMonthSerializer
     serializer_detail_class = SiteFractieStatMonthSerializer
     filter_backends = (DjangoFilterBackend,)
+    filter_class = WeighDataSiteMonthFilter
+
+
+class WeigDataBuurtWeekFiltler(FilterSet):
+
+    fractie = filters.ChoiceFilter(
+        label='fractie', method='filter_fractie',
+        choices=[(f[0], f[0]) for f in FRACTIES])
+
+    def filter_fractie(self, qs, _name, value):
+        return qs.filter(fractie=value)
+
+    class Meta(object):
+
+        model = BuurtFractieStatWeek
+
+        fields = {
+            'fractie': ['exact'],
+            'week': FILTERS,
+            'year': FILTERS,
+            'wegingen': FILTERS,
+            'sum': FILTERS,
+            'min': FILTERS,
+            'max': FILTERS,
+            'avg': FILTERS,
+            'stddev': FILTERS,
+            'buurt_code': ['exact'],
+        }
 
 
 class WeighDataBuurtWeekView(DatapuntViewSet):
@@ -180,6 +291,34 @@ class WeighDataBuurtWeekView(DatapuntViewSet):
     serializer_class = BuurtFractieStatWeekSerializer
     serializer_detail_class = BuurtFractieStatWeekSerializer
     filter_backends = (DjangoFilterBackend,)
+    filter_class = WeigDataBuurtWeekFiltler
+
+
+class WeigDataBuurtMonthFiltler(FilterSet):
+
+    fractie = filters.ChoiceFilter(
+        label='fractie', method='filter_fractie',
+        choices=[(f[0], f[0]) for f in FRACTIES])
+
+    def filter_fractie(self, qs, _name, value):
+        return qs.filter(fractie=value)
+
+    class Meta(object):
+
+        model = BuurtFractieStatMonth
+
+        fields = {
+            'fractie': ['exact'],
+            'month': FILTERS,
+            'year': FILTERS,
+            'wegingen': FILTERS,
+            'sum': FILTERS,
+            'min': FILTERS,
+            'max': FILTERS,
+            'avg': FILTERS,
+            'stddev': FILTERS,
+            'buurt_code': ['exact'],
+        }
 
 
 class WeighDataBuurtMonthView(DatapuntViewSet):
@@ -196,6 +335,9 @@ class WeighDataBuurtMonthView(DatapuntViewSet):
     filter_fields = (
         'buurt_code',
         'month', 'year')
+
     serializer_class = BuurtFractieStatMonthSerializer
     serializer_detail_class = BuurtFractieStatMonthSerializer
+
     filter_backends = (DjangoFilterBackend,)
+    filter_class = WeigDataBuurtMonthFiltler

@@ -111,13 +111,14 @@ DATAPUNT_AUTHZ = {"JWKS": os.getenv("PUB_JWKS", JWKS_TEST_KEY)}
 WASTE_DESCRIPTIONS = (
     ("Rest"),
     ("Glas"),
-    ("Glas"),
     ("Papier"),
     ("Textiel"),
-    ("Wormen"),
+    ("GFT"),
     ("Glas"),
+    ("KCA"),
     ("Plastic"),
-    ("Blipvert"),
+    ("Kunstof"),
+    ("Grof"),
 )
 
 STADSDELEN = (
