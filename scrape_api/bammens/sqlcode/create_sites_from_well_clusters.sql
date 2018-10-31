@@ -31,8 +31,9 @@ cross join lateral
 		o.display,
 		o.wkb_geometry,
 		o.id
-	from openbareruimte o
+	from openbareruimte o, bag_verblijfsobject v
 	where o.opr_type = 'Weg'
+	and v."_openbare_ruimte_naam" = o.display
 	order by
 		o.wkb_geometry <-> c.site_geometrie
 	limit 1) as opr

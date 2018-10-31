@@ -237,6 +237,12 @@ def collect_bgt_for_wells():
 
 
 SITE_ID_NULL = "UPDATE afvalcontainers_well SET site_id = NULL"
+TRUNCATE_SITE_TABLE_FRACTIES = """
+TRUNCATE TABLE afvalcontainers_sitefractie;
+TRUNCATE TABLE kilogram_sitefractiestatweek;
+TRUNCATE TABLE kilogram_sitefractiestatmonth;
+"""
+
 
 DELETE_SITES_IN = """
 DELETE FROM "afvalcontainers_site"
@@ -249,6 +255,7 @@ def delete_sites():
     log.info('Clear old sites if they exist')
     session.execute(SITE_ID_NULL)
     session.execute(DELETE_SITES_IN)
+    session.execute(TRUNCATE_SITE_TABLE_FRACTIES)
     session.commit()
 
 
@@ -385,11 +392,12 @@ def fill_kilo_stats_table():
     execute_sqlfile('sqlcode/capacity_to_sitestats.sql')
 
 
-def create_clusters():
+def create_site_clusters():
     """
     Cluster wells that should be together.
 
-    # TODO? load existing clusters
+    # TIP when developing comment out the sql that was ok.
+    all instructions should be idempotent.
     """
     log.info('Create BGT based sites')
     delete_sites()
@@ -459,11 +467,11 @@ VALIDATE_SQL = [
 
     ("""select count(*) from afvalcontainers_well
         where site_id is null""",
-        0, 915),
+        0, 315),
 
     ("""select count(*) from afvalcontainers_site
         where short_id is null""",
-        0, 515),
+        0, 35),
 ]
 
 
@@ -475,7 +483,7 @@ def main(args):
     if args.qa_wells:
         update_quality_in_extra_attributes()
     if args.clusters:
-        create_clusters()
+        create_site_clusters()
     if args.pand_distance:
         create_pand_distance()
     if args.fill_rd:
