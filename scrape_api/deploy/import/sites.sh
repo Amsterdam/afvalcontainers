@@ -95,7 +95,7 @@ dc run --rm importer python bammens/create_sites.py --merge_bgt
 dc run --rm importer python bammens/create_sites.py --qa_wells
 dc run --rm importer python bammens/create_sites.py --pand_distance
 dc run --rm importer python bammens/create_sites.py --clusters
-dc run --rm importer python bammens/create_sites.py --site_fracties
+dc run --rm importer python bammens/create_sites.py --sitefracties
 
 # get bbga data
 dc run --rm importer python bammens/buurt_count.py
