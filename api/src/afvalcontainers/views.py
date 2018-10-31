@@ -35,6 +35,8 @@ class ContainerFilter(FilterSet):
     id = filters.CharFilter()
     in_bbox = filters.CharFilter(method='in_bbox_filter', label='bbox')
     no_well = filters.BooleanFilter(method='no_well_filter', label='no_well')
+    no_site = filters.BooleanFilter(method='no_site_filter', label='no_site')
+
     location = filters.CharFilter(
         method="locatie_filter", label='x,y,r')
 
@@ -87,6 +89,9 @@ class ContainerFilter(FilterSet):
 
     def no_well_filter(self, qs, name, value):
         return qs.filter(well=None)
+
+    def no_site_filter(self, qs, name, value):
+        return qs.filter(well__site=None)
 
     def locatie_filter(self, qs, name, value):
         point, radius = bbox.parse_xyr(value)
