@@ -141,7 +141,7 @@ FILTERS = ['exact', 'lt', 'gt']
 
 def is_database_synchronized(database):
     connection = connections[database]
-    connection.prepare_database()
+    connection.connect()
     executor = MigrationExecutor(connection)
     targets = executor.loader.graph.leaf_nodes()
     return False if executor.migration_plan(targets) else True
