@@ -12,7 +12,7 @@ dc() {
 	docker-compose -p kilogram${ENVIRONMENT} -f $DIR/docker-compose-kilo.yml $*
 }
 
-trap 'dc kill ; dc rm -f' EXIT
+trap 'dc kill ; dc down ; dc rm -f' EXIT
 
 dc rm -f
 dc pull
@@ -39,3 +39,4 @@ dc run --rm importer python kilogram/copy_to_model.py
 dc run --rm importer python kilogram/copy_to_model.py --link_gebieden
 
 dc run --rm importer python kilogram/copy_to_model.py --fix_perscontainers
+dc down -v
