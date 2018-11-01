@@ -15,7 +15,7 @@ dc() {
 	docker-compose -p scrapebammens${ENVIRONMENT} -f ${DIR}/docker-compose.yml $*
 }
 
-trap 'dc kill ; dc rm -f' EXIT
+trap 'dc kill ; dc down ; dc rm -f' EXIT
 
 # For database backups:
 rm -rf ${DIR}/backups
