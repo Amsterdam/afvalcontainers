@@ -101,7 +101,6 @@ class BrowseDatasetsTestCase(APITestCase):
     def test_lists_csv(self):
         for url in self.datasets:
             response = self.client.get("/{}/?format=csv".format(url))
-
             self.valid_response(url, response, 'text/csv; charset=utf-8')
 
             self.assertIn(

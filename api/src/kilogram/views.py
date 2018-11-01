@@ -176,6 +176,8 @@ class WeighDataSiteWeekFilter(FilterSet):
 
         fields = {
             'fractie': ['exact'],
+            'volume': FILTERS,
+            'capacity': FILTERS,
             'week': FILTERS,
             'year': FILTERS,
             'measurements': FILTERS,

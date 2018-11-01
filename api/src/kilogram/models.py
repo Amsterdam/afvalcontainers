@@ -45,6 +45,7 @@ class SiteFractieStatWeek(models.Model):
 
     containers = models.IntegerField(null=True, blank=True)
     volume = models.IntegerField(null=True, blank=True)
+    capacity = models.FloatField(null=True, blank=True)
 
 
 class SiteFractieStatMonth(models.Model):
@@ -64,6 +65,7 @@ class SiteFractieStatMonth(models.Model):
 
     containers = models.IntegerField(null=True, blank=True)
     volume = models.IntegerField(null=True, blank=True)
+    capacity = models.FloatField(null=True, blank=True)
 
 
 class BuurtFractieStatMonth(models.Model):
