@@ -386,13 +386,10 @@ def execute_sqlfile(filename):
 
 CAPACITY_SQL = """
 UPDATE {table} t set
-    capacity=t.volume::float / t."sum"::float / {kgm3}::float
-from kilogram_sitefractiestatmonth s
-WHERE
-    t.id = s.id
-AND s.sum > 0
-AND s.volume > 0
-AND s.fractie = '{fractie}';
+    capacity=t."sum"::float / {kgm3}::float / t.volume::float
+WHERE t.sum > 0
+AND t.volume > 0
+AND t.fractie = '{fractie}';
 """
 
 
@@ -408,17 +405,17 @@ KG_VOLUME_CONVERSION = {
 
 
 def fill_kilo_stats_table():
-    # log.info('create weekly / monthly buurt statistics')
-    # execute_sqlfile('sqlcode/kilogram_buurt_stats.sql')
+    log.info('create weekly / monthly buurt statistics')
+    execute_sqlfile('sqlcode/kilogram_buurt_stats.sql')
 
-    # log.info('create weekly / monthly site statisics')
-    # execute_sqlfile('sqlcode/kilogram_site_stats.sql')
+    log.info('create weekly / monthly site statisics')
+    execute_sqlfile('sqlcode/kilogram_site_stats.sql')
 
-    # log.info('add buurt bewoners counts to measurements')
-    # execute_sqlfile('sqlcode/bbga_buurt.sql')
+    log.info('add buurt bewoners counts to measurements')
+    execute_sqlfile('sqlcode/bbga_buurt.sql')
 
-    # log.info('add volume capacity to site measurements')
-    # execute_sqlfile('sqlcode/capacity_to_sitestats.sql')
+    log.info('add volume capacity to site measurements')
+    execute_sqlfile('sqlcode/capacity_to_sitestats.sql')
 
     tables = [
         'kilogram_sitefractiestatweek',
