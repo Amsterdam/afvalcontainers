@@ -338,6 +338,12 @@ AND s.stadsdeel = 'N'
 AND s.id = t.id
 """
 
+FIX_FRACTIES = [
+    ('Rest', 1520),
+    ('Papier', 850),
+    ('Glas', 850),
+]
+
 
 def fix_wegingen_noord():
     """Correct weigh perscontainers in Noord.
@@ -346,13 +352,8 @@ def fix_wegingen_noord():
     update the weigh values by subtracting the faction container
     weight.
     """
-    fix_fracties = [
-        ('Rest', 1520),
-        ('Papier', 850),
-        ('Glas', 850),
-    ]
 
-    for fractie, container_weigth in fix_fracties:
+    for fractie, container_weigth in FIX_FRACTIES:
         LOG.info('Fix perswegingen %s NOORD', fractie)
         u_sql = FIX_WEGINGEN_NOORD.format(
             container_weigth=container_weigth,
