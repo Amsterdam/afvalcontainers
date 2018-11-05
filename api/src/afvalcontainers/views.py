@@ -1,5 +1,6 @@
 from django_filters.rest_framework import FilterSet
 from django_filters.rest_framework import filters
+from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.serializers import ValidationError
 from django.contrib.gis.geos import Polygon
@@ -117,8 +118,12 @@ class ContainerView(DatapuntViewSet):
     serializer_detail_class = ContainerDetailSerializer
     serializer_class = ContainerSerializer
     bbox_filter_field = 'well__geometrie'
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (
+        DjangoFilterBackend,
+        OrderingFilter
+    )
     filter_class = ContainerFilter
+    ordering_fields = '__all__'
 
 
 class WellFilter(FilterSet):
@@ -200,8 +205,10 @@ class WellView(DatapuntViewSet):
     )
     serializer_detail_class = WellSerializer
     serializer_class = WellSerializer
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_class = WellFilter
+
+    ordering_fields = '__all__'
 
 
 class TypeView(DatapuntViewSet):
@@ -214,8 +221,10 @@ class TypeView(DatapuntViewSet):
     )
     serializer_detail_class = TypeSerializer
     serializer_class = TypeSerializer
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_fields = ['volume', 'name']
+
+    ordering_fields = '__all__'
 
 
 class SiteFilter(FilterSet):
@@ -339,6 +348,8 @@ class SiteView(DatapuntViewSet):
     serializer_detail_class = SiteDetailSerializer
 
     filter_class = SiteFilter
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
 
     lookup_value_regex = '[^/]+'
+
+    ordering_fields = '__all__'

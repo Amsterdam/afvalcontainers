@@ -9,6 +9,7 @@ from django.db.migrations.executor import MigrationExecutor
 from django_filters.rest_framework import FilterSet
 from django_filters.rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter
 from django.contrib.gis.geos import Polygon
 from rest_framework.serializers import ValidationError
 from django.conf import settings
@@ -120,8 +121,9 @@ class KilogramView(DatapuntViewSet):
     serializer_class = KilogramSerializer
     serializer_detail_class = KilogramDetailSerializer
     bbox_filter_field = 'geometrie'
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_class = KilogramFilter
+    ordering_fields = '__all__'
 
     def get_queryset(self):
         """
@@ -204,8 +206,10 @@ class WeighDataSiteWeekView(DatapuntViewSet):
 
     serializer_class = SiteFractieStatWeekSerializer
     serializer_detail_class = SiteFractieStatWeekSerializer
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_class = WeighDataSiteWeekFilter
+
+    ordering_fields = '__all__'
 
 
 class WeighDataSiteMonthFilter(FilterSet):
@@ -249,8 +253,10 @@ class WeighDataSiteMonthView(DatapuntViewSet):
 
     serializer_class = SiteFractieStatMonthSerializer
     serializer_detail_class = SiteFractieStatMonthSerializer
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_class = WeighDataSiteMonthFilter
+
+    ordering_fields = '__all__'
 
 
 class WeigDataBuurtWeekFiltler(FilterSet):
@@ -292,8 +298,10 @@ class WeighDataBuurtWeekView(DatapuntViewSet):
     pagination_class = KiloPager
     serializer_class = BuurtFractieStatWeekSerializer
     serializer_detail_class = BuurtFractieStatWeekSerializer
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_class = WeigDataBuurtWeekFiltler
+
+    ordering_fields = '__all__'
 
 
 class WeigDataBuurtMonthFiltler(FilterSet):
@@ -338,8 +346,10 @@ class WeighDataBuurtMonthView(DatapuntViewSet):
         'buurt_code',
         'month', 'year')
 
+    ordering_fields = '__all__'
+
     serializer_class = BuurtFractieStatMonthSerializer
     serializer_detail_class = BuurtFractieStatMonthSerializer
 
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_class = WeigDataBuurtMonthFiltler

@@ -137,7 +137,7 @@ REST_FRAMEWORK = dict(
     ),
     DEFAULT_FILTER_BACKENDS=(
         # 'rest_framework.filters.SearchFilter',
-        # 'rest_framework.filters.OrderingFilter',
+        'rest_framework.filters.OrderingFilter',
         "django_filters.rest_framework.DjangoFilterBackend"
     ),
     COERCE_DECIMAL_TO_STRING=True,
