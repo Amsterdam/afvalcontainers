@@ -13,6 +13,14 @@ log.setLevel(logging.INFO)
 async def set_login_cookies(session):
     """Get PHPSESSID cookie to use the API
     """
+
+    if not settings.TESTING["running"]:
+        assert os.getenv("BAMMENS_API_PASSWORD")
+        assert os.getenv("BAMMENS_API_USERNAME")
+    else:
+        return
+        # no auth needed during tests
+
     baseUrl = settings.API_BAMMENS_URL
     log.debug("start login")
     loginPage = await session.get(baseUrl + "/login", ssl=True)
@@ -22,11 +30,6 @@ async def set_login_cookies(session):
 
     password = os.getenv("BAMMENS_API_PASSWORD", "")
     user = os.getenv("BAMMENS_API_USERNAME", "")
-
-    if not settings.TESTING["running"]:
-        assert os.getenv("BAMMENS_API_PASSWORD")
-        assert os.getenv("BAMMENS_API_USERNAME")
-
     payload = {"_username": user, "_password": password, "_csrf_token": csrf["value"]}
 
     # Fake browser header
