@@ -34,6 +34,7 @@ API_ENDPOINT = f'{API_URL}/{ENDPOINT}'
 URL_QUEUE = asyncio.Queue()
 RESULT_QUEUE = asyncio.Queue()
 
+
 assert api_config['password'], "KILOGRAM_API_PASSWORD not set"
 AUTH = (api_config["username"], api_config["password"])
 

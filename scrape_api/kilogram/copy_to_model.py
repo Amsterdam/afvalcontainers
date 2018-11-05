@@ -61,6 +61,7 @@ def validate_weight(measurement, idx):
         net_weight = int(measurement[idx.net_weight])
     except ValueError:
         net_weight = None
+        valid = False
 
     try:
         first_weight = int(measurement[idx.first_weight])
@@ -71,6 +72,7 @@ def validate_weight(measurement, idx):
         second_weight = int(measurement[idx.second_weight])
     except ValueError:
         second_weight = None
+        valid = False
 
     # validte weigth values.
 
@@ -80,7 +82,7 @@ def validate_weight(measurement, idx):
     if second_weight and second_weight < 250:
         valid = False
 
-    if net_weight < 0:
+    if net_weight and net_weight < 0:
         valid = False
 
     return first_weight, second_weight, net_weight, valid
@@ -106,9 +108,31 @@ def validate_float(measurement, idx):
     return fill_chance, fill_level
 
 
-def validate_extra(measurement, idx):
-    """Validate some extra fields."""
+FRACTIE_MAPPING = {
+    '': 'Rest',
+    1: 'Rest',
+    '1': 'Rest',
+    'Kunststof': 'Plastic',
+    'Gft': 'GFT',
+    'Pmd': 'PMD',
+}
+
+
+def validate_fractie(measurement, idx):
+    """validate fractie"""
+
     fractie = 'Rest'
+
+    if idx.fractie:
+        fractie = measurement[idx.fractie]
+
+    fractie = FRACTIE_MAPPING.get(fractie, fractie)
+
+    return fractie
+
+
+def validate_location(measurement, idx):
+    """Validate some extra fields."""
     location = None,
     site_id = None
 
@@ -118,16 +142,13 @@ def validate_extra(measurement, idx):
         except ValueError:
             pass
 
-    if idx.fractie:
-        fractie = measurement[idx.fractie]
-
     if idx.location:
         try:
             location = int(measurement[idx.location])
         except ValueError:
             pass
 
-    return fractie, location, site_id
+    return location, site_id
 
 
 """
@@ -213,7 +234,8 @@ def extract_one_resultset(fields, records, system_id=None):
 
         geometrie = validate_geo(measurement, idx)
 
-        fractie, location, site_id = validate_extra(measurement, idx)
+        location, site_id = validate_location(measurement, idx)
+        fractie = validate_fractie(measurement, idx)
 
         first_weight, second_weight, net_weight, valid = \
             validate_weight(measurement, idx)
@@ -320,7 +342,7 @@ AND s.id = t.id
 def fix_wegingen_noord():
     """Correct weigh perscontainers in Noord.
 
-    Noort has percontainers with only a second weigh.
+    Noord has 'perscontainers' with only a second weigh.
     update the weigh values by subtracting the faction container
     weight.
     """
