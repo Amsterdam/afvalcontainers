@@ -31,7 +31,7 @@ class Container(models.Model):
         'Well', null=True,
         related_name="containers", on_delete=models.DO_NOTHING
     )
-    active = models.NullBooleanField(null=True)
+    active = models.IntegerField(null=True)
     waste_type = models.IntegerField(null=True, db_index=True)
     waste_name = models.CharField(max_length=20, db_index=True)
 
@@ -81,7 +81,7 @@ class Well(models.Model):
     id = models.IntegerField(primary_key=True)
     id_number = models.CharField(max_length=35, db_index=True)
     serial_number = models.CharField(max_length=45, db_index=True)
-    active = models.NullBooleanField(null=True)
+    active = models.IntegerField(null=True)
 
     owner = JSONField()
 
@@ -121,6 +121,7 @@ class Site(models.Model):
     centroid = models.PointField(name='centroid', srid=4326)
     geometrie = models.PolygonField(name='geometrie', srid=28992)
     extra_attributes = JSONField(null=True, default=dict)
+    active = models.IntegerField(null=True)
 
     def __str__(self):
         return f"{self.id}-{self.straatnaam} {self.huisnummer}"

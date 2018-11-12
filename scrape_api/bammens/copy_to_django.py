@@ -1,6 +1,4 @@
-"""
-Copy raw data into django api models
-"""
+"""Copy raw data into django api models."""
 
 import argparse
 from bammens import models
@@ -42,7 +40,7 @@ SELECT
     CAST(data->>'warranty_date' as timestamp) as warranty_date,
     CAST(data->>'operational_date' as timestamp) as operational_date,
     CAST(data->>'placing_date' as timestamp) as placing_date,
-    CAST(data->>'active' as bool) as active,
+    CAST(data->>'active' as integer) as active,
     ST_SetSRID(
         ST_POINT(
             CAST(data->'location'->'position'->>'longitude' as float),
@@ -84,7 +82,7 @@ SELECT
     CAST(data->>'warranty_date' as timestamp) as warranty_date,
     CAST(data->>'operational_date' as timestamp) as operational_date,
     CAST(data->>'placing_date' as timestamp) as placing_date,
-    CAST(data->>'active' as bool) as active,
+    CAST(data->>'active' as integer) as active,
     CAST(data->>'waste_type' as int) as waste_type,
     data->>'waste_name' as waste_name,
     CAST(data->>'container_type' as int) as waste_type
@@ -140,21 +138,21 @@ WASTE_DESCRIPTIONS = {
 
 def update_types():
     sql = INSERT_TYPES
-    # session.execute("TRUNCATE TABLE afvalcontainers_containertype")
+    session.execute("TRUNCATE TABLE afvalcontainers_containertype CASCADE;")
     session.execute(sql)
     session.commit()
 
 
 def update_containers():
     sql = INSERT_CONTAINERS
-    # session.execute("TRUNCATE TABLE afvalcontainers_container;")
+    session.execute("TRUNCATE TABLE afvalcontainers_container CASCADE;")
     session.execute(sql)
     session.commit()
 
 
 def update_wells():
     insert = INSERT_WELLS
-    # session.execute("TRUNCATE TABLE afvalcontainers_well")
+    session.execute("TRUNCATE TABLE afvalcontainers_well CASCADE;")
     session.execute(insert)
     session.commit()
 
@@ -166,9 +164,7 @@ def create_container_view():
 
 
 def validate_timestamps(item):
-    """We recieve invalid timestamps
-    so we clean them up here.
-    """
+    """Clean up invalid timestamps."""
     timestamp_keys = (
         "created_at",
         "placing_date",
@@ -197,10 +193,7 @@ def validate_timestamps(item):
 
 
 def cleanup_dates(endpoint):
-    """
-    If some bad dates slipped into the
-    json. We can clean it up.
-    """
+    """Bad dates needs to be cleaned up."""
     conn = engine.connect()
     dbitem = models.ENDPOINT_MODEL[endpoint]
 
@@ -221,8 +214,7 @@ def cleanup_dates(endpoint):
 
 
 def add_waste_name_to_data(data):
-    """Try to determine what kind of waste goes into container
-    """
+    """Try to determine what kind of waste goes into container."""
     waste_name = WASTE_DESCRIPTIONS[data.get('waste_type', -1)]
     data['waste_name'] = waste_name
     return data
@@ -316,7 +308,7 @@ VALIDATE_SQL = [
 ]
 
 
-def main():
+def main():  # noqa
     if args.link_gebieden:
         link_gebieden()
         return

@@ -31,7 +31,7 @@ class ContainerFactory(factory.DjangoModelFactory):
     owner = {}
     serial_number = fuzzy.FuzzyText(length=4)
     id_number = fuzzy.FuzzyText(length=10)
-    active = fuzzy.FuzzyChoice([True, False])
+    active = fuzzy.FuzzyChoice([0, 1, 2])
     waste_type = fuzzy.FuzzyInteger(0, 42)
 
 

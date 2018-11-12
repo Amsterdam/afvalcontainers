@@ -11,10 +11,10 @@ FROM (
     ST_ConvexHull(
         ST_CollectionExtract(
             unnest(ST_ClusterIntersecting(
-                st_buffer(w.geometrie_rd, 8))), 3)
+                st_buffer(w.geometrie_rd, 6))), 3)
     ) as site_geometrie
     FROM afvalcontainers_well w
     WHERE site_id is null
-    AND w.active = true
+    AND w.active = 1
     AND EXISTS (select well_id from afvalcontainers_container c where w.id = c.well_id)
 ) AS s

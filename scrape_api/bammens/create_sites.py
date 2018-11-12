@@ -84,7 +84,7 @@ CROSS JOIN LATERAL
      FROM afvalcontainers_well w, afvalcontainers_container c
      WHERE w.id = c.well_id
      AND c.waste_name = '{fraction}'
-     AND c.active = true
+     AND c.active = 1
      ORDER BY
         w.geometrie_rd <-> p.wkb_geometry
      LIMIT 1) AS well
@@ -453,6 +453,9 @@ def create_site_clusters():
     log.info('Create sites with leftover wells')
     execute_sqlfile('sqlcode/create_well_cluster.sql')
     execute_sqlfile('sqlcode/create_sites_from_well_clusters.sql')
+
+    # merge overlapping sites
+
     # match left over wells with clusters
     log.info('Update left over wells with site_id')
     execute_sqlfile('sqlcode/update_well_site_id_nobgt.sql')
@@ -465,6 +468,8 @@ def create_site_clusters():
 
     log.info('Add short codes based on streetcode and number')
     execute_sqlfile('sqlcode/create_short_ids.sql')
+
+    # sites with no well/containers are not active.
 
 
 def site_fracties():
