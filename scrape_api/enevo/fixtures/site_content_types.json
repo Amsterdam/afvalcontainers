@@ -1,0 +1,42 @@
+{
+    "href": "https://api.enevo.com/api/3/siteContentTypes/?limit=0",
+    "scope": "siteContentTypes/",
+    "version": 3,
+    "customer": 1,
+    "count": 2,
+    "siteContentTypes": [
+        {
+            "id": 1,
+            "contentType": 1,
+            "contentTypeName": "test",
+            "categoryName": "testPMD",
+            "site": 1,
+            "fillLevel": 66,
+            "dateWhenFull": "2018-11-17",
+            "buildUpRate": 1.1,
+            "fillUpTime": 1, 
+            "containerSlots": [
+                1,
+                1
+            ],
+            "lastServiceEvent": "2018-11-08T09:10:53Z",
+            "lastModified": "2018-11-14T16:00:08Z"
+        },
+        {
+            "id": 2,
+            "contentType": 2,
+            "contentTypeName": "test",
+            "categoryName": "test",
+            "site": 2,
+            "fillLevel": 2,
+            "dateWhenFull": "2018-11-16",
+            "buildUpRate": 2.2,
+            "fillUpTime": 2,
+            "containerSlots": [
+                2
+            ],
+            "lastServiceEvent": "2018-11-14T05:54:58Z",
+            "lastModified": "2018-11-14T16:00:07Z"
+        }
+    ]
+}

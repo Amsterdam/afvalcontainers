@@ -1,0 +1,33 @@
+{
+    "href": "https://api.enevo.com/api/3/containerTypes/?limit=0",
+    "scope": "containerTypes/",
+    "version": 3,
+    "customer": 1,
+    "count": 2,
+    "containerTypes": [
+        {
+            "id": 1,
+            "name": "test",
+            "volume": 1,
+            "sensorHeight": 1.1,
+            "fullHeight": 1.1,
+            "shape": "test",
+            "hasBag": false,
+            "servicingAmount": "test",
+            "servicingMethod": "test",
+            "lastModified": "2017-08-30T14:19:06Z"
+        },
+        {
+            "id": 2,
+            "name": "SNAAS 7M³",
+            "volume": 2,
+            "sensorHeight": 2.2,
+            "fullHeight": 2.2,
+            "shape": "test",
+            "hasBag": false,
+            "servicingAmount": "test",
+            "servicingMethod": "test",
+            "lastModified": "2017-07-20T09:08:14Z"
+        }
+    ]
+}

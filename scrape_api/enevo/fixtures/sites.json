@@ -1,0 +1,42 @@
+{
+    "href": "https://api.enevo.com/api/3/sites/?limit=0",
+    "scope": "sites/",
+    "version": 3,
+    "customer": 1,
+    "count": 2,
+    "sites": [
+        {
+            "id": 1,
+            "type": 1,
+            "name": "test name",
+            "area": 1,
+            "address": "test address",
+            "city": "Amsterdam",
+            "country": "Netherlands",
+            "postalCode": "1",
+            "latitude": 1.1,
+            "longitude": 1.1,
+            "photo": false,
+            "siteContentTypes": [
+                1
+            ],
+            "lastModified": "2018-11-14T06:47:12Z"
+        },
+        {
+            "id": 2,
+            "type": 2,
+            "name": "test name 2",
+            "area": 2,
+            "address": "test address 2",
+            "city": "Amsterdam",
+            "country": "Netherlands",
+            "latitude": 2.2,
+            "longitude": 2.2,
+            "photo": false,
+            "siteContentTypes": [
+                2
+            ],
+            "lastModified": "2018-11-13T12:57:24Z"
+        }
+    ]
+}

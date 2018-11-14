@@ -1,0 +1,35 @@
+{
+    "href": "https://test.href.come/api/3/containers",
+    "scope": "containers/",
+    "version": 3,
+    "customer": 1,
+    "count": 2,
+    "containers": [
+        {
+            "id": 1,
+            "type": 1,
+            "site": 1,
+            "siteContentType": 1,
+            "containerSlot": 1,
+            "devices": [
+                1
+            ],
+            "cellLocation": {
+                "latitude": 1.1,
+                "longitude": 1.1,
+                "accuracy": 1
+            },
+            "customerKey": "key 1",
+            "lastModified": "2018-11-13T09:46:58Z"
+        },
+        {
+            "id": 2,
+            "type": 2,
+            "site": 2,
+            "siteContentType": 2,
+            "containerSlot": 2,
+            "customerKey": "key 2",
+            "lastModified": "2018-11-06T16:09:22Z"
+        }
+    ]
+}
