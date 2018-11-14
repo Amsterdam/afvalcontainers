@@ -116,11 +116,13 @@ class Site(models.Model):
     stadsdeel_naam = models.CharField(max_length=20, null=False)
     straatnaam = models.CharField(max_length=40, null=False)
     huisnummer = models.IntegerField(null=True)
+    # distance to address
     distance = models.IntegerField(null=True)
     bgt_based = models.NullBooleanField()
     centroid = models.PointField(name='centroid', srid=4326)
     geometrie = models.PolygonField(name='geometrie', srid=28992)
     extra_attributes = JSONField(null=True, default=dict)
+    # helper field during cleanup. do not publish.
     active = models.IntegerField(null=True)
 
     def __str__(self):

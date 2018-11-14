@@ -69,9 +69,12 @@ containers.register(
 containers.register(
     r"containertypes", api_views.TypeView, base_name="containertype")
 
-# LIVE KILOGRAM DATABASE UPDATES
 containers.register(
     r"sites", api_views.SiteView, base_name="site")
+containers.register(
+    r"sitefracties", api_views.SiteFractieView, base_name="sitefractie")
+
+# LIVE KILOGRAM DATABASE UPDATES
 containers.register(
     r"kilogram", kilo_views.KilogramView, base_name="kilogram")
 

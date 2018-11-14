@@ -16,6 +16,7 @@ from afvalcontainers.models import Well
 from afvalcontainers.models import ContainerType
 from afvalcontainers.models import Buurten
 from afvalcontainers.models import Site
+from afvalcontainers.models import SiteFractie
 
 # Move into new app?
 
@@ -25,6 +26,8 @@ from afvalcontainers.serializers import WellSerializer
 from afvalcontainers.serializers import TypeSerializer
 from afvalcontainers.serializers import SiteSerializer
 from afvalcontainers.serializers import SiteDetailSerializer
+from afvalcontainers.serializers import SiteFractieSerializer
+from afvalcontainers.serializers import SiteFractieDetailSerializer
 
 
 def buurt_choices():
@@ -279,7 +282,7 @@ class SiteFilter(FilterSet):
 
     def locatie_filter(self, qs, name, value):
         point, radius = bbox.parse_xyr(value)
-        return qs.filter(geometrie__dwithin=(point, radius))
+        return qs.filter(centroid__dwithin=(point, radius))
 
     def in_bbox_filter(self, qs, name, value):
         bbox_values, err = bbox.valid_bbox(value)
@@ -330,7 +333,7 @@ class SiteView(DatapuntViewSet):
     the non BGT based sites will most likely still change.
 
     extra_attributes:
-        chauffeur: instruction from and for a chauffeur.
+        chauffeur: manual instructions from chauffeur.
     """
 
     queryset = (
@@ -351,5 +354,24 @@ class SiteView(DatapuntViewSet):
     filter_backends = (DjangoFilterBackend, OrderingFilter)
 
     lookup_value_regex = '[^/]+'
+
+    ordering_fields = '__all__'
+
+
+class SiteFractieView(DatapuntViewSet):
+
+    queryset = (
+        SiteFractie.objects.all()
+        .order_by("id")
+        .prefetch_related("site")
+    )
+
+    pagination_class = SitePager
+
+    serializer_class = SiteFractieSerializer
+    serializer_detail_class = SiteFractieDetailSerializer
+
+    # filter_class = SiteFilter
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
 
     ordering_fields = '__all__'

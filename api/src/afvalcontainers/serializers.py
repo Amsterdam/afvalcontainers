@@ -4,6 +4,7 @@
 from rest_framework import serializers
 
 from datapunt_api.rest import DisplayField
+from datapunt_api.rest import LinksField
 from datapunt_api.rest import HALSerializer
 from datapunt_api.rest import RelatedSummaryField
 from afvalcontainers.models import Container
@@ -158,11 +159,31 @@ def fracties(obj):
     return fracties
 
 
-class SiteFractie(serializers.ModelSerializer):
+class SiteFractieSerializer(HALSerializer):
 
     class Meta:
         model = SiteFractie
         fields = [
+            # "_links",
+            'site_id',
+            'fractie',
+            'volume_m3',
+            'containers',
+        ]
+
+
+class SiteFractieDetailSerializer(HALSerializer):
+
+    site = LinksField(view_name='site-detail')
+
+    _display = DisplayField()
+
+    class Meta:
+        model = SiteFractie
+        fields = [
+            # "_links",
+            # "_display",
+            'site_id',
             'fractie',
             'volume_m3',
             'containers',
@@ -173,8 +194,6 @@ class SiteSerializer(HALSerializer):
 
     _display = DisplayField()
     wells = RelatedSummaryField()
-    # wells__containers = RelatedSummaryField()
-    # fracties = SiteFractie(many=True)
     fracties = serializers.SerializerMethodField()
 
     class Meta(object):
@@ -202,6 +221,7 @@ class SiteDetailSerializer(HALSerializer):
     _display = DisplayField()
     wells = WellModelSerializer(many=True)
     fracties = serializers.SerializerMethodField()
+    distance_to_address = serializers.IntegerField(source='distance')
 
     class Meta(object):
         model = Site
@@ -221,6 +241,7 @@ class SiteDetailSerializer(HALSerializer):
             "extra_attributes",
             "centroid",
             "geometrie",
+            "distance_to_address",
         ]
 
     def get_fracties(self, obj):

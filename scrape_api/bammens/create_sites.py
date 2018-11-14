@@ -4,6 +4,7 @@ import logging
 import models
 import argparse
 import os
+import overlapping_sites
 
 from sqlalchemy import func
 # from sqlalchemy.sql import select
@@ -28,6 +29,9 @@ AND w.geometrie is not null
 AND wt.id = w.id
 """
 
+INDEX_SQL = """
+create index on {bgt_table} using gist(geometrie);
+"""
 
 BGT_COLLECTION = """
 select ogc_fid, bgt_type, geometrie
@@ -222,10 +226,12 @@ def collect_bgt_for_wells():
     """For every well collect BGT items."""
     log.info('Matching wells with BGT.')
 
-    # make sure we have an rd coordinate (migration issues)
+    # make sure we have an rd coordinate.
 
     for bgt_table, geo_type, distance in BGT_TABLES:
         log.debug('Working on %s %s %s', bgt_table, geo_type, distance)
+        index_sql = INDEX_SQL.format(bgt_table=bgt_table)
+        results = session.execute(index_sql)
         f_bgt_dwithin = BGT_DWITHIN.format(
             bgt_table=bgt_table, distance=distance)
         results = session.execute(f_bgt_dwithin)
@@ -432,6 +438,26 @@ def fill_kilo_stats_table():
             session.commit()
 
 
+def merge_overlapping_sites():
+
+    bgt_tables = [
+        '"bgt"."BGT_OWGL_berm"',
+        '"bgt"."BGT_WGL_voetpad"',
+        '"bgt"."BGT_BTRN_groenvoorziening"',
+    ]
+
+    execute_sqlfile('sqlcode/merge_overlapping_sites.sql')
+
+    for table in bgt_tables:
+        log.info('Sites in same BGT %s', table)
+        index_sql = INDEX_SQL.format(bgt_table=table)
+        session.execute(index_sql)
+        fix_overlap = overlapping_sites.BGT_OVERLAP_SQL
+        fix_overlap = fix_overlap.format(bgt_table=table)
+        session.execute(fix_overlap)
+        session.commit()
+
+
 def create_site_clusters():
     """
     Cluster wells that should be together.
@@ -455,10 +481,13 @@ def create_site_clusters():
     execute_sqlfile('sqlcode/create_sites_from_well_clusters.sql')
 
     # merge overlapping sites
+    execute_sqlfile('sqlcode/merge_overlapping_sites.sql')
+    merge_overlapping_sites()
 
     # match left over wells with clusters
-    log.info('Update left over wells with site_id')
-    execute_sqlfile('sqlcode/update_well_site_id_nobgt.sql')
+    log.info('Update wells with site_id')
+    log.info('Overlapping sites have been removed')
+    execute_sqlfile('sqlcode/update_well_site_id.sql')
 
     log.info('Improve streetnames with lig_plaatsen')
     execute_sqlfile('sqlcode/update_site_address_with_ligplaats.sql')
@@ -468,8 +497,6 @@ def create_site_clusters():
 
     log.info('Add short codes based on streetcode and number')
     execute_sqlfile('sqlcode/create_short_ids.sql')
-
-    # sites with no well/containers are not active.
 
 
 def site_fracties():
