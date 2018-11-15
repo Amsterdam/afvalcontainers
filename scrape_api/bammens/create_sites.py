@@ -7,6 +7,11 @@ Sites are collection of wells containing containers.
 -A short ID is used for coupling sites with kilogram measurements.
 
 The clustering of wells into sites is a rather complex issue.
+
+
+active 0 = inactive
+active 1 = active
+active 2 = future active
 """
 
 import logging
