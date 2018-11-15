@@ -1,4 +1,13 @@
-"""Create cluster ID's."""
+"""Create Sites with short ID's.
+
+Sites are collection of wells containing containers.
+
+-They change every day in container content.
+-New wells are added / removed daily.
+-A short ID is used for coupling sites with kilogram measurements.
+
+The clustering of wells into sites is a rather complex issue.
+"""
 
 import logging
 import models

@@ -2,6 +2,11 @@
     combine sites based on bgt and non bgt if they overlap
 */
 
+/* reset site_id on wells */
+UPDATE afvalcontainers_well
+SET site_id = null;
+
+
 update afvalcontainers_site ts set
 	geometrie=newgeo,
 	active=4
