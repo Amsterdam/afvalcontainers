@@ -32,7 +32,7 @@ async def main(args):
 
 class EnevoAlert(Base):
     """Raw Enevo container data."""
-    __tablename__ = f"enevo_alarm_raw"
+    __tablename__ = f"enevo_alert_raw"
     id = Column(Integer, Sequence("grl_seq"), primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
     data = Column(JSONB)
@@ -72,7 +72,7 @@ class EnevoSite(Base):
 
 class EnevoSiteContentType(Base):
     """Raw Enevo SiteContentType data."""
-    __tablename__ = f"enevo_sitecontenttype"
+    __tablename__ = f"enevo_sitecontenttype_raw"
     id = Column(Integer, Sequence("grl_seq"), primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
     data = Column(JSONB)
