@@ -32,12 +32,12 @@ INSERT INTO enevo_enevosite (
 SELECT
     id,
     CAST(data->>'type' as int) as type,
-    CAST(data->>'name' as char) as name,
+    CAST(data->>'name' as varchar) as name,
     CAST(data->>'area' as int) as area,
-    CAST(data->>'address' as char) as address,
-    CAST(data->>'city' as char) as city,
-    CAST(data->>'country' as char) as country,
-    CAST(data->>'postalCode' as char) as postal_code,
+    CAST(data->>'address' as varchar) as address,
+    CAST(data->>'city' as varchar) as city,
+    CAST(data->>'country' as varchar) as country,
+    CAST(data->>'postalCode' as varchar) as postal_code,
     ST_SetSRID(
         ST_POINT(
             CAST(data->>'longitude' as float),
@@ -73,8 +73,8 @@ INSERT INTO enevo_enevositecontenttype (
 SELECT
     id,
     CAST(data->>'contentType' as int) as content_type,
-    CAST(data->>'contentTypeName' as char) as content_type_name,
-    CAST(data->>'categoryName' as char) as category_name,
+    CAST(data->>'contentTypeName' as varchar) as content_type_name,
+    CAST(data->>'categoryName' as varchar) as category_name,
     CAST(data->>'site_id' as int) as site,
     CAST(data->>'fillLevel' as int) as fill_level,
     CAST(data->>'dateWhenFull' as timestamp) as date_when_full,
@@ -101,14 +101,14 @@ INSERT INTO enevo_enevocontainertype (
 )
 SELECT
     id,
-    CAST(data->>'name' as char) as name,
+    CAST(data->>'name' as varchar) as name,
     CAST(data->>'volume' as int) as volume,
     CAST(data->>'sensorHeight' as float) as sensor_height,
     CAST(data->>'fullHeight' as float) as full_height,
-    CAST(data->>'shape' as char) as shape,
+    CAST(data->>'shape' as varchar) as shape,
     CAST(data->>'hasBag' as bool) as has_bag,
-    CAST(data->>'servicingAmount' as char) as servicing_amount,
-    CAST(data->>'servicingMethod' as char) as servicing_method,
+    CAST(data->>'servicingAmount' as varchar) as servicing_amount,
+    CAST(data->>'servicingMethod' as varchar) as servicing_method,
     CAST(data->>'lastModified' as timestamp) as last_modified
 FROM
     enevo_containertype_raw;
@@ -130,7 +130,7 @@ INSERT INTO enevo_enevocontainerslot (
 )
 SELECT
     id,
-    CAST(data->>'name' as char) as name,
+    CAST(data->>'name' as varchar) as name,
     CAST(data->>'contentType' as int) as content_type,
     CAST(data->>'container' as int) as container,
     CAST(data->>'siteContentType_id' as int) as site_content_type_id,
@@ -162,7 +162,7 @@ SELECT
     CAST(data->>'site' as int) as site_id,
     CAST(data->>'siteContentType' as int) as site_content_type_id,
     CAST(data->>'containerSlot' as int) as container_slot_id,
-    CAST(data->>'customerKey' as char) as customer_key,
+    CAST(data->>'customerKey' as varchar) as customer_key,
     CAST(data->>'lastModified' as timestamp) as last_modified
 FROM
     enevo_container_raw;
@@ -187,15 +187,15 @@ INSERT INTO enevo_enevoalert (
 SELECT
     id,
     CAST(data->>'type' as int) as type,
-    CAST(data->>'typeName' as char) as type_name,
+    CAST(data->>'typeName' as varchar) as type_name,
     CAST(data->>'reported' as timestamp) as reported,
     CAST(data->>'lastObserved' as timestamp) as last_observed,
     CAST(data->>'site' as int) as site,
-    CAST(data->>'site_name' as char) as site_name,
+    CAST(data->>'site_name' as varchar) as site_name,
     CAST(data->>'area' as int) as area,
-    CAST(data->>'areaName' as char) as area_name,
+    CAST(data->>'areaName' as varchar) as area_name,
     CAST(data->>'contentType' as int) as content_type,
-    CAST(data->>'contentTypeName' as char) as content_type_name,
+    CAST(data->>'contentTypeName' as varchar) as content_type_name,
     CAST(data->>'start' as timestamp) as start
 FROM
     enevo_alert_raw;
