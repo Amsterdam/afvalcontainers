@@ -13,6 +13,27 @@ from bammens.validation import validate_attribute_counts
 
 log = logging.getLogger(__name__)
 
+INSERT_CONTENTTYPES = """
+INSERT INTO enevo_enevocontenttype (
+    id,
+    category,
+    category_name,
+    name,
+    state,
+    weight_to_volume_ratio,
+    last_modified
+)
+SELECT
+    id,
+    CAST(data->>'category' as int) as category,
+    CAST(data->>'categoryName' as varchar) as category_name,
+    CAST(data->>'name' as varchar) as name,
+    CAST(data->>'state' as varchar) as state,
+    CAST(data->>'weightToVolumeRatio' as float) as weight_to_volume_ration,
+    CAST(data->>'lastModified' as timestamp) as last_modified
+FROM
+    enevo_contenttype_raw;
+"""  # noqa
 
 INSERT_SITES = """
 INSERT INTO enevo_enevosite (
@@ -59,7 +80,7 @@ FROM
 INSERT_SITECONTENTTYPES = """
 INSERT INTO enevo_enevositecontenttype (
     id,
-    content_type,
+    content_type_id,
     content_type_name,
     category_name,
     site_id,
@@ -72,7 +93,7 @@ INSERT INTO enevo_enevositecontenttype (
 )
 SELECT
     id,
-    CAST(data->>'contentType' as int) as content_type,
+    CAST(data->>'contentType' as int) as content_type_id,
     CAST(data->>'contentTypeName' as varchar) as content_type_name,
     CAST(data->>'categoryName' as varchar) as category_name,
     CAST(data->>'site_id' as int) as site,
@@ -118,10 +139,10 @@ INSERT_CONTAINERSLOTS = """
 INSERT INTO enevo_enevocontainerslot (
     id,
     name,
-    content_type,
+    content_type_id,
     container,
-    site_content_type_id,
-    site_id,
+    site_content_type_fk,
+    site_fk,
     fill_level,
     date_when_full,
     last_service_event,
@@ -131,10 +152,10 @@ INSERT INTO enevo_enevocontainerslot (
 SELECT
     id,
     CAST(data->>'name' as varchar) as name,
-    CAST(data->>'contentType' as int) as content_type,
+    CAST(data->>'contentType' as int) as content_type_id,
     CAST(data->>'container' as int) as container,
-    CAST(data->>'siteContentType_id' as int) as site_content_type_id,
-    CAST(data->>'site_id' as int) as site,
+    CAST(data->>'siteContentType' as int) as site_content_type_fk,
+    CAST(data->>'site' as int) as site_fk,
     CAST(data->>'fillLevel' as int) as fill_level,
     CAST(data->>'dateWhenFull' as timestamp) as date_when_full,
     CAST(data->>'lastServiceEvent' as timestamp) as last_service_event,
@@ -149,21 +170,37 @@ FROM
 INSERT_CONTAINERS = """
 INSERT INTO enevo_enevocontainer (
     id,
-    type,
+    container_type_id,
     site_id,
     site_content_type_id,
     container_slot_id,
     customer_key,
+    geometrie,
+    geometrie_rd,
+    geo_accuracy,
     last_modified
 )
 SELECT
     id,
-    CAST(data->>'type' as int) as type,
+    CAST(data->>'type' as int) as container_type_id,
     CAST(data->>'site' as int) as site_id,
     CAST(data->>'siteContentType' as int) as site_content_type_id,
     CAST(data->>'containerSlot' as int) as container_slot_id,
     CAST(data->>'customerKey' as varchar) as customer_key,
+    ST_SetSRID(
+        ST_POINT(
+            CAST(data->'cellLocation'->>'longitude' as float),
+            CAST(data->'cellLocation'->>'latitude' as float)
+        ), 4326) as geometrie,
+    ST_Transform(
+        ST_SetSRID(
+            ST_POINT(
+                CAST(data->'cellLocation'->>'longitude' as float),
+                CAST(data->'cellLocation'->>'latitude' as float)
+            ), 4326), 28992) as geometrie,
+    CAST(data->'cellLocation'->>'accuracy' as int) as geo_accuracy,
     CAST(data->>'lastModified' as timestamp) as last_modified
+
 FROM
     enevo_container_raw;
 """  # noqa
@@ -180,7 +217,7 @@ INSERT INTO enevo_enevoalert (
     site_name,
     area,
     area_name,
-    content_type,
+    content_type_id,
     content_type_name,
     start
 )
@@ -194,12 +231,19 @@ SELECT
     CAST(data->>'site_name' as varchar) as site_name,
     CAST(data->>'area' as int) as area,
     CAST(data->>'areaName' as varchar) as area_name,
-    CAST(data->>'contentType' as int) as content_type,
+    CAST(data->>'contentType' as int) as content_type_id,
     CAST(data->>'contentTypeName' as varchar) as content_type_name,
     CAST(data->>'start' as timestamp) as start
 FROM
     enevo_alert_raw;
 """  # noqa
+
+
+def update_contenttypes():
+    sql = INSERT_CONTENTTYPES
+    session.execute("TRUNCATE TABLE enevo_enevocontenttype CASCADE;")
+    session.execute(sql)
+    session.commit()
 
 
 def update_containertypes():
@@ -344,6 +388,7 @@ OPTIONS = {
     "container_slots": update_containerslots,
     "containers": update_containers,
     "alerts": update_alerts,
+    "content_types": update_contenttypes,
 }
 
 TABLE_COUNTS = [

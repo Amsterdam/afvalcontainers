@@ -27,7 +27,7 @@ api_config = {
 assert api_config["password"]
 
 WORKERS = 1
-ENDPOINTS = ["alerts", "containers", "container_types", "container_slots",
+ENDPOINTS = ["content_types", "alerts", "containers", "container_types", "container_slots",
              "sites", "site_content_types", "fill_levels"]
 
 until = '{}Z'.format(datetime.datetime.utcnow().isoformat(timespec='seconds'))
@@ -39,6 +39,7 @@ ENDPOINT_URL = {
     "containers": f"{API_URL}/containers/?limit=0",
     "container_types": f"{API_URL}/containerTypes/?limit=0",
     "container_slots": f"{API_URL}/containerSlots/?limit=0",
+    "content_types": f"{API_URL}/contentTypes/?limit=0",
     "sites": f"{API_URL}/sites/?limit=0",
     "site_content_types": f"{API_URL}/siteContentTypes/?limit=0",
     "alerts": f"{API_URL}/alerts/recent",
@@ -52,6 +53,7 @@ ENDPOINT_KEY = {
     "containers": "containers",
     "container_types": "containerTypes",
     "container_slots": "containerSlots",
+    "content_types": "contentTypes",
     "sites": "sites",
     "site_content_types": "siteContentTypes",
     "fill_levels": "fillLevels",
@@ -62,6 +64,7 @@ ENDPOINT_MODEL = {
     "containers": models.EnevoContainer,
     "container_types": models.EnevoContainerType,
     "container_slots": models.EnevoContainerSlot,
+    "content_types": models.EnevoContentType,
     "sites": models.EnevoSite,
     "site_content_types": models.EnevoSiteContentType,
     "fill_levels": models.EnevoFillLevel,

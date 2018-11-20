@@ -62,6 +62,14 @@ class EnevoContainerSlot(Base):
     data = Column(JSONB)
 
 
+class EnevoContentType(Base):
+    """Raw Enevo ContentType data."""
+    __tablename__ = f"enevo_contenttype_raw"
+    id = Column(Integer, Sequence("grl_seq"), primary_key=True)
+    scraped_at = Column(TIMESTAMP, index=True)
+    data = Column(JSONB)
+
+
 class EnevoSite(Base):
     """Raw Enevo Sites data."""
     __tablename__ = f"enevo_site_raw"

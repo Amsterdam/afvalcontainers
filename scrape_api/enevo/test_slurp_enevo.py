@@ -209,3 +209,25 @@ class TestDBWriting(unittest.TestCase):
         slurp.start_import(endpoint='site_content_types', make_engine=False)
         count = session.query(models.EnevoSiteContentType).count()
         self.assertEqual(count, 2)
+
+    @asynctest.patch("enevo.slurp.get_session_token")
+    @asynctest.patch("enevo.slurp.fetch")
+    def test_import_content_types(self, fetch_mock, get_token_mock):
+        with open(FIX_DIR + "/enevo/fixtures/content_types.json") as content_types:
+            content_types_json = json.loads(content_types.read())
+
+        mr = MockResponse()
+        mr._json = content_types_json
+        fetch_mock.side_effect = [mr]
+        get_token_mock.side_effect = ['test_token']
+
+        slurp.start_import(endpoint='content_types', make_engine=False)
+        count = session.query(models.EnevoContentType).count()
+        self.assertEqual(count, 2)
+
+        fetch_mock.side_effect = [mr]
+        get_token_mock.side_effect = ['test_token']
+
+        slurp.start_import(endpoint='content_types', make_engine=False)
+        count = session.query(models.EnevoContentType).count()
+        self.assertEqual(count, 2)
