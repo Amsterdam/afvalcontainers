@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# We doen deze import los van de cleanup. want
-# bammens.nl is erg traag.
+#
+#
 
 set -e
 set -u
@@ -47,7 +47,7 @@ dc run --rm importer python enevo/slurp.py site_content_types
 dc run --rm importer python enevo/slurp.py container_types
 dc run --rm importer python enevo/slurp.py container_slots
 dc run --rm importer python enevo/slurp.py containers
-dc run --rm importer python enevo/slurp.py alerts
+# dc run --rm importer python enevo/slurp.py alerts
 
 # Insert data into django database
 dc run --rm importer python enevo/copy_to_django.py sites
@@ -55,7 +55,7 @@ dc run --rm importer python enevo/copy_to_django.py site_content_types
 dc run --rm importer python enevo/copy_to_django.py container_types
 dc run --rm importer python enevo/copy_to_django.py container_slots
 dc run --rm importer python enevo/copy_to_django.py containers
-dc run --rm importer python enevo/copy_to_django.py alerts
+# dc run --rm importer python enevo/copy_to_django.py alerts
 
 # backup raw data for debuging
 dc exec -T database backup-db.sh afvalcontainers
