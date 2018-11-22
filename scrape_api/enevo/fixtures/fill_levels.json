@@ -1,0 +1,35 @@
+{
+    "href": "https://api.enevo.com/api/3/fillLevels",
+    "scope": "fillLevels",
+    "version": 3,
+    "customer": 1,
+    "count": 2,
+    "fillLevels": [
+        {
+            "time": "2018-11-14T09:00:00Z",
+            "fillLevel": 90,
+            "site": 1,
+            "siteName": "test site name 1",
+            "siteContentType": 1,
+            "contentType": 1,
+            "contentTypeName": "PLASTIC",
+            "containerSlot": 1,
+            "containerSlotName": "1",
+            "confidence": 100,
+            "frozen": false
+        },
+        {
+            "time": "2018-11-14T09:00:00Z",
+            "fillLevel": 9,
+            "site": 2,
+            "siteName": "test site name 2",
+            "siteContentType": 2,
+            "contentType": 2,
+            "contentTypeName": "PLASTIC",
+            "containerSlot": 2,
+            "containerSlotName": "1",
+            "confidence": 100,
+            "frozen": false
+        }
+    ]
+}

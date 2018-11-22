@@ -19,6 +19,7 @@ INSTALLED_APPS += [
     "drf_yasg",
     "afvalcontainers",
     "kilogram",
+    "enevo",
     # "crispy_forms",
 ]
 

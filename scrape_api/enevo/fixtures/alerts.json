@@ -1,0 +1,41 @@
+{
+    "href": "https://api.enevo.com/api/3/alerts/",
+    "scope": "alerts/",
+    "version": 3,
+    "customer": 1,
+    "count": 2,
+    "alerts": [
+        {
+            "id": 1,
+            "type": 1,
+            "typeName": "TEST",
+            "reported": "2018-11-14T07:35:58Z",
+            "lastObserved": "2018-11-14T08:10:36Z",
+            "siteContentType": 1,
+            "deactivated": "2018-11-14T08:19:05Z",
+            "site": 1,
+            "siteName": "test",
+            "area": 1,
+            "areaName": "test",
+            "contentTypeName": "test",
+            "contentType": 1,
+            "start": "2018-11-14T07:32:16Z"
+        },
+        {
+            "id": 2,
+            "type": 2,
+            "typeName": "TEST",
+            "reported": "2018-11-14T07:35:58Z",
+            "lastObserved": "2018-11-14T08:10:36Z",
+            "siteContentType": 2,
+            "deactivated": "2018-11-14T08:19:05Z",
+            "site": 2,
+            "siteName": "test",
+            "area": 2,
+            "areaName": "test",
+            "contentTypeName": "test",
+            "contentType": 2,
+            "start": "2018-11-14T07:27:36Z"
+        }
+    ]
+}

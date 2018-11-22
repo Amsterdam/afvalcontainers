@@ -25,6 +25,7 @@ from rest_framework import permissions
 
 from . import views as api_views
 from kilogram import views as kilo_views
+from enevo import views as enevo_views
 
 
 class ContainersView(routers.APIRootView):
@@ -96,7 +97,33 @@ containers.register(
     r'kilos/neighborhood/monthly',
     kilo_views.WeighDataBuurtMonthView, base_name='stats-wijk-month')
 
+containers.register(
+    r'enevo/containers',
+    enevo_views.ContainerView, base_name='enevocontainer')
 
+containers.register(
+    r'enevo/containertypes',
+    enevo_views.ContainerTypeView, base_name='enevocontainertype')
+
+containers.register(
+    r'enevo/site',
+    enevo_views.SiteView, base_name='enevosite')
+
+containers.register(
+    r'enevo/sitecontenttypes',
+    enevo_views.SiteContentTypeView, base_name='enevositecontenttype')
+
+containers.register(
+    r'enevo/containerslots',
+    enevo_views.ContainerSlotView, base_name='enevocontainerslot')
+
+containers.register(
+    r'enevo/alert',
+    enevo_views.AlertView, base_name='enevoalert')
+
+containers.register(
+    r'enevo/contenttypes',
+    enevo_views.ContentTypeView, base_name='enevocontenttype')
 # containers.register(r"stats", stats, base_name='stats')
 
 

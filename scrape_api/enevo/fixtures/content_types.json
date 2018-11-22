@@ -1,0 +1,27 @@
+{
+    "href": "https://api.enevo.com/api/3/contentTypes/?limit=0",
+    "scope": "contentTypes/",
+    "version": 3,
+    "customer": 1,
+    "count": 2,
+    "contentTypes": [
+        {
+            "id": 1,
+            "category": 1,
+            "categoryName": "Plastic",
+            "name": "PLASTIC ASW",
+            "state": "solid",
+            "weightToVolumeRatio": 1.1,
+            "lastModified": "2017-09-05T07:25:00Z"
+        },
+        {
+            "id": 2,
+            "category": 2,
+            "categoryName": "PMD",
+            "name": "PMD",
+            "state": "solid",
+            "weightToVolumeRatio": 2,
+            "lastModified": "2017-08-30T14:12:50Z"
+        }
+    ]
+}

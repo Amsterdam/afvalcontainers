@@ -1,0 +1,35 @@
+{
+    "href": "https://api.enevo.com/api/3/containerSlots",
+    "scope": "containerSlots",
+    "version": 3,
+    "customer": 1,
+    "count": 2,
+    "containerSlots": [
+        {
+            "id": 1,
+            "name": "TEST",
+            "contentType": 1,
+            "container": 1,
+            "siteContentType": 1,
+            "site": 1,
+            "fillLevel": 1,
+            "dateWhenFull": "2018-11-15",
+            "lastServiceEvent": "2018-11-12T08:51:53Z",
+            "photo": false,
+            "lastModified": "2018-11-14T15:56:55Z"
+        },
+        {
+            "id": 2,
+            "name": "2",
+            "contentType": 2,
+            "container": 2,
+            "siteContentType": 2,
+            "site": 2,
+            "fillLevel": 2,
+            "dateWhenFull": "2018-11-19",
+            "lastServiceEvent": "2018-10-29T14:35:14Z",
+            "photo": false,
+            "lastModified": "2018-11-14T15:56:54Z"
+        }
+    ]
+}

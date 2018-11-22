@@ -11,9 +11,9 @@ TESTING = {"running": False}
 # BAMMENS_API_USERNAME = os.getenv('BAMMENS_API_USERNAME')
 # BAMMENS_API_PASSWORD = os.getenv('BAMMENS_API_PASSWORD')
 
-
 API_BAMMENS_URL = "https://bammensservice.nl"
 API_KILOGRAM_URL = "https://webservice.kilogram.nl"
+API_ENEVO_URL = "https://api.enevo.com/api/3"
 
 
 KILO_ENVIRONMENT_OVERRIDES = [
