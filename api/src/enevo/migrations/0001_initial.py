@@ -4,6 +4,8 @@ import django.contrib.gis.db.models.fields
 from django.db import migrations, models
 import django.db.models.deletion
 
+from django.conf import settings
+
 
 class Migration(migrations.Migration):
 
@@ -29,8 +31,9 @@ class Migration(migrations.Migration):
             ],
             options={
                 'db_table': 'enevo_filllevel',
-                'managed': False,
+                'managed': settings.TESTING,
             },
+
         ),
         migrations.CreateModel(
             name='EnevoAlert',
