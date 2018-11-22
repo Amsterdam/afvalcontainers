@@ -27,8 +27,13 @@ api_config = {
 assert api_config["password"]
 
 WORKERS = 1
-ENDPOINTS = ["content_types", "alerts", "containers", "container_types", "container_slots",
-             "sites", "site_content_types", "fill_levels"]
+ENDPOINTS = [
+    "content_types",
+    "alerts",
+    "containers", "container_types", "container_slots",
+    "sites", "site_content_types",
+    "fill_levels"
+]
 
 until = '{}Z'.format(datetime.datetime.utcnow().isoformat(timespec='seconds'))
 after = datetime.datetime.utcnow() - datetime.timedelta(minutes=30)

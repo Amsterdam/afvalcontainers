@@ -15,27 +15,32 @@ class EnevoSite(models.Model):
     geometrie = models.PointField(name="geometrie", srid=4326)
     geometrie_rd = models.PointField(
         name="geometrie_rd", srid=28992, null=True)
-    photo = models.BooleanField()
+    photo = models.NullBooleanField()
     last_modified = models.DateTimeField()
 
 
 class EnevoContainer(models.Model):
-    container_type = models.ForeignKey("EnevoContainerType",
-                                       related_name="containers",
-                                       on_delete=models.DO_NOTHING,
-                                       null=True)
-    site = models.ForeignKey("EnevoSite",
-                             related_name="containers",
-                             on_delete=models.DO_NOTHING,
-                             null=True)
-    site_content_type = models.ForeignKey("EnevoSiteContentType",
-                                          related_name="containers",
-                                          on_delete=models.DO_NOTHING,
-                                          null=True)
-    container_slot = models.ForeignKey("EnevoContainerSlot",
-                                       related_name="containers",
-                                       on_delete=models.DO_NOTHING,
-                                       null=True)
+    container_type = models.ForeignKey(
+        "EnevoContainerType",
+        related_name="containers",
+        on_delete=models.DO_NOTHING,
+        null=True)
+    site = models.ForeignKey(
+        "EnevoSite",
+        related_name="containers",
+        on_delete=models.DO_NOTHING,
+        null=True)
+    site_content_type = models.ForeignKey(
+        "EnevoSiteContentType",
+        related_name="containers",
+        on_delete=models.DO_NOTHING,
+        null=True)
+    container_slot = models.ForeignKey(
+        "EnevoContainerSlot",
+        related_name="containers",
+        on_delete=models.DO_NOTHING,
+        null=True)
+
     geometrie = models.PointField(name="geometrie", srid=4326, null=True)
     geometrie_rd = models.PointField(
         name="geometrie_rd", srid=28992, null=True)
@@ -46,25 +51,29 @@ class EnevoContainer(models.Model):
 
 class EnevoContainerSlot(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
-    content_type = models.ForeignKey("EnevoContentType",
-                                     related_name="container_slots",
-                                     on_delete=models.DO_NOTHING,
-                                     null=True)
+    content_type = models.ForeignKey(
+        "EnevoContentType",
+        related_name="container_slots",
+        on_delete=models.DO_NOTHING,
+        null=True)
+
     container = models.IntegerField(blank=True, null=True)
-    site_content_type = models.ForeignKey("EnevoSiteContentType",
-                                          related_name="container_slots",
-                                          on_delete=models.DO_NOTHING,
-                                          null=True)
-    site = models.ForeignKey("EnevoSite",
-                             related_name="container_slots",
-                             on_delete=models.DO_NOTHING,
-                             null=True)
+    site_content_type = models.ForeignKey(
+        "EnevoSiteContentType",
+        related_name="container_slots",
+        on_delete=models.DO_NOTHING,
+        null=True)
+    site = models.ForeignKey(
+        "EnevoSite",
+        related_name="container_slots",
+        on_delete=models.DO_NOTHING,
+        null=True)
     site_fk = models.IntegerField(null=True)
     site_content_type_fk = models.IntegerField(null=True)
     fill_level = models.IntegerField(blank=True, null=True)
     date_when_full = models.DateTimeField(blank=True, null=True)
     last_service_event = models.DateTimeField(blank=True, null=True)
-    photo = models.BooleanField(blank=True, null=True)
+    photo = models.NullBooleanField(blank=True, null=True)
     last_modified = models.DateTimeField()
 
 
@@ -74,7 +83,7 @@ class EnevoContainerType(models.Model):
     sensor_height = models.FloatField()
     full_height = models.FloatField()
     shape = models.CharField(max_length=100)
-    has_bag = models.BooleanField()
+    has_bag = models.NullBooleanField()
     servicing_amount = models.CharField(max_length=100)
     servicing_method = models.CharField(max_length=100)
     last_modified = models.DateTimeField()
@@ -137,7 +146,7 @@ class FillLevel(models.Model):
     content_type = models.IntegerField()
     content_type_name = models.CharField(max_length=100)
     confidence = models.IntegerField()
-    frozen = models.BooleanField()
+    frozen = models.NullBooleanField()
 
     class Meta:
         managed = settings.TESTING
