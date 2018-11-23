@@ -47,6 +47,7 @@ class EnevoContainer(models.Model):
     geo_accuracy = models.IntegerField(null=True)
     customer_key = models.CharField(max_length=100, blank=True, null=True)
     last_modified = models.DateTimeField()
+    valid = models.NullBooleanField()
 
 
 class EnevoContainerSlot(models.Model):

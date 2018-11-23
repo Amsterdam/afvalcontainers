@@ -1,14 +1,8 @@
 """Copy raw data into django api models."""
 
 import argparse
-from enevo import models
 import logging
-from sqlalchemy.sql import select
-from sqlalchemy import bindparam
 import db_helper
-
-from bammens.validation import validate_counts
-from bammens.validation import validate_attribute_counts
 
 
 log = logging.getLogger(__name__)
@@ -96,7 +90,7 @@ SELECT
     CAST(data->>'contentType' as int) as content_type_id,
     CAST(data->>'contentTypeName' as varchar) as content_type_name,
     CAST(data->>'categoryName' as varchar) as category_name,
-    CAST(data->>'site_id' as int) as site,
+    CAST(data->>'site' as int) as site_id,
     CAST(data->>'fillLevel' as int) as fill_level,
     CAST(data->>'dateWhenFull' as timestamp) as date_when_full,
     CAST(data->>'buildUpRate' as float) as build_up_rate,
@@ -288,56 +282,6 @@ def update_alerts():
     session.commit()
 
 
-def validate_timestamps(item):
-    """Clean up invalid timestamps."""
-    timestamp_keys = (
-        "created_at",
-        "placing_date",
-        "warranty_date",
-        "operational_date")
-
-    for key in timestamp_keys:
-        date = item.get(key)
-        if not date:
-            continue
-
-        invalid = False
-        # d2 = dateparser.parse(date)
-        # d = parser.parse(date)
-        if date.startswith('000'):
-            invalid = True
-        elif date.startswith('-0'):
-            invalid = True
-        elif date.startswith('-10'):
-            invalid = True
-        if invalid:
-            log.error("Invalid %s %s %s", key, date, item["id"])
-            item[key] = None
-
-    return item
-
-
-def cleanup_dates(endpoint):
-    """Bad dates needs to be cleaned up."""
-    conn = engine.connect()
-    dbitem = models.ENDPOINT_MODEL[endpoint]
-
-    s = select([dbitem])
-    results = conn.execute(s)
-    cleaned = []
-    for row in results:
-        data = validate_timestamps(row[2])
-        new = {'id': row[0], 'scraped_at': row[1], 'data': data}
-        cleaned.append(new)
-
-    upd_stmt = (
-        dbitem.__table__.update()
-        .where(dbitem.id == bindparam('id'))
-        .values(id=bindparam('id'))
-    )
-    conn.execute(upd_stmt, cleaned)
-
-
 LINK_SQL = """
 UPDATE afvalcontainers_container bc
 SET well_id = wlist.id
@@ -362,22 +306,52 @@ FROM (SELECT * from stadsdeel) as s
 WHERE ST_DWithin(s.wkb_geometry, tt.geometrie_rd, 0)
 """
 
+LINK_SITE = """
+UPDATE enevo_enevocontainerslot
+SET site_id = site_fk
+WHERE site_fk IN (select id from enevo_enevosite)
+"""
 
-def link_containers_to_wells():
-    sql = LINK_SQL
+LINK_SITECONTENTTYPE = """
+UPDATE enevo_enevocontainerslot
+SET site_content_type_id = site_content_type_fk
+WHERE site_content_type_fk IN (select id from enevo_enevositecontenttype)
+"""
+
+VALIDATE_CONTAINERS = """
+UPDATE enevo_enevocontainer
+SET valid = TRUE
+WHERE customer_key IN (
+select id_number from afvalcontainers_container
+)
+"""
+
+INVALIDATE_CONTAINERS = """
+UPDATE enevo_enevocontainer
+SET valid = FALSE
+WHERE customer_key NOT IN (
+select id_number from afvalcontainers_container
+)
+"""
+
+
+def link_container_slots():
+    sql = LINK_SITE
+    session.execute(sql)
+    session.commit()
+
+    sql = LINK_SITECONTENTTYPE
     session.execute(sql)
     session.commit()
 
 
-def link_gebieden():
-    target_table = 'afvalcontainers_well'
-    u_sql = UPDATE_STADSDEEL.format(target_table=target_table)
-    session.execute(u_sql)
+def validate_containers():
+    sql = VALIDATE_CONTAINERS
+    session.execute(sql)
     session.commit()
 
-    target_table = 'afvalcontainers_well'
-    u_sql = UPDATE_BUURT.format(target_table=target_table)
-    session.execute(u_sql)
+    sql = INVALIDATE_CONTAINERS
+    session.execute(sql)
     session.commit()
 
 
@@ -411,23 +385,12 @@ VALIDATE_SQL = [
 
 
 def main():  # noqa
-    if args.link_gebieden:
-        link_gebieden()
+    if args.link_container_slots:
+        link_container_slots()
         return
-    if args.validate:
-        validate_counts(TABLE_COUNTS, session)
-        validate_attribute_counts(VALIDATE_SQL, session)
-        return
-    if args.link_containers:
-        link_containers_to_wells()
-        return
-    if args.cleanup:
-        if args.endpoint:
-            endpoint = args.endpoint[0]
-            cleanup_dates(endpoint)
-        else:
-            for endpoint in OPTIONS.items():
-                cleanup_dates(endpoint)
+
+    if args.validate_containers:
+        validate_containers()
         return
 
     if args.endpoint:
@@ -452,38 +415,18 @@ if __name__ == "__main__":
     )
 
     inputparser.add_argument(
-        "--link_gebieden", action="store_true",
-        default=False, help="Voeg stadsdeel / buurt to aan datasets"
+        "--link_container_slots", action="store_true",
+        default=False, help="Link containerslots with sites and sitecontenttypes"
     )
 
     inputparser.add_argument(
-        "--validate", action="store_true",
-        default=False, help="Validate counts to check import was OK"
-    )
-
-    inputparser.add_argument(
-        "--geoview", action="store_true",
-        default=False, help="Geoview containers"
-    )
-
-    inputparser.add_argument(
-        "--cleanup", action="store_true",
-        default=False, help="Cleanup"
-    )
-
-    inputparser.add_argument(
-        "--wastename", action="store_true",
-        default=False, help="Add waste name to containers"
-    )
-
-    inputparser.add_argument(
-        "--link_containers", action="store_true",
-        default=False, help="Cleanup"
+        "--validate_containers", action="store_true",
+        default=False, help="Validate the customer_keys are in bammens"
     )
 
     args = inputparser.parse_args()
 
-    engine = db_helper.make_engine("dev")
+    engine = db_helper.make_engine()
     session = db_helper.set_session(engine)
 
     main()
