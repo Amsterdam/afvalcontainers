@@ -187,8 +187,9 @@ async def fill_url_queue(session, endpoint):
 
 
 def get_session_token():
-    resp = requests.post(ENDPOINT_URL['session'], json=api_config,
-                         headers={'ContentType': 'application/json'})
+    resp = requests.post(
+        ENDPOINT_URL['session'], json=api_config,
+        headers={'ContentType': 'application/json'})
 
     session = resp.json().get('session')
 
@@ -216,8 +217,8 @@ async def main(endpoint, make_engine=True):
     # when testing we do not want an engine.
     if make_engine:
         engine = db_helper.make_engine(
-            section="dev")
-            #environment=KILO_ENVIRONMENT_OVERRIDES)
+            section="docker")
+        # environment=KILO_ENVIRONMENT_OVERRIDES)
         db_helper.set_session(engine)
     await run_workers(endpoint)
 
