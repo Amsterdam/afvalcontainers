@@ -37,6 +37,8 @@ services:
       OBJECTSTORE_PASSWORD:
       OBJECTSTORE_LOCAL:
       PYTHONPATH: "/app"
+      ENEVO_API_USERNAME:
+      ENEVO_API_PASSWORD:
     volumes:
       - afvalcontainers_import_cache:/data
       - ./backups:/backups
