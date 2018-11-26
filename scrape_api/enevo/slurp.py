@@ -24,7 +24,8 @@ api_config = {
     "password": os.getenv("ENEVO_API_PASSWORD", ""),
 }
 
-assert api_config["password"]
+assert api_config["username"], "Missing ENEVO_API_USERNAME"
+assert api_config["password"], "Missing ENEVO_API_PASSWORD"
 
 WORKERS = 1
 ENDPOINTS = [
@@ -188,6 +189,12 @@ async def fill_url_queue(session, endpoint):
 def get_session_token():
     resp = requests.post(ENDPOINT_URL['session'], json=api_config,
                          headers={'ContentType': 'application/json'})
+
+    session = resp.json().get('session')
+
+    if not session:
+        raise Exception('Authentication Error')
+
     return resp.json()['session']['token']
 
 

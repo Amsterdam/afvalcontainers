@@ -106,7 +106,7 @@ containers.register(
     enevo_views.ContainerTypeView, base_name='enevocontainertype')
 
 containers.register(
-    r'enevo/site',
+    r'enevo/sites',
     enevo_views.SiteView, base_name='enevosite')
 
 containers.register(
@@ -118,7 +118,7 @@ containers.register(
     enevo_views.ContainerSlotView, base_name='enevocontainerslot')
 
 containers.register(
-    r'enevo/alert',
+    r'enevo/alerts',
     enevo_views.AlertView, base_name='enevoalert')
 
 containers.register(
