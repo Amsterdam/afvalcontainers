@@ -1,0 +1,49 @@
+version: '3.0'
+services:
+  database:
+    image: amsterdam/postgres
+    environment:
+      POSTGRES_PASSWORD: insecure
+      POSTGRES_USER: afvalcontainers
+      POSTGRES_DB: afvalcontainers
+    volumes:
+      - ./backups:/tmp/backups
+      - afvalcontainers_import_cache:/data
+
+  api:
+    image: build.datapunt.amsterdam.nl:5000/afvalcontainers:${ENVIRONMENT}
+    links:
+      - database
+    environment:
+      ENVIRONMENT:
+      DATABASE_NAME: afvalcontainers
+      DATABASE_USER: afvalcontainers
+
+  importer:
+    image: build.datapunt.amsterdam.nl:5000/afvalcontainers_importer:${ENVIRONMENT}
+    # build: ../..
+    links:
+      - database
+    environment:
+      ENVIRONMENT:
+      DATABASE_NAME: afvalcontainers
+      DATABASE_USER: afvalcontainers
+      DATABASE_PASSWORD: insecure
+      BAMMENS_API_USERNAME:
+      BAMMENS_API_PASSWORD:
+      TENANT_NAME: BGE000081_afvalbakken
+      TENANT_ID: 010f69210d4f4d5c96da979f723350a9
+      OBJECTSTORE_USER: afvalbakken
+      OBJECTSTORE_PASSWORD:
+      OBJECTSTORE_LOCAL:
+      ENEVO_API_USERNAME:test
+      ENEVO_API_PASSWORD:test
+      PYTHONPATH: "/app"
+    volumes:
+      - afvalcontainers_import_cache:/data
+      - ./backups:/backups
+    command: >
+      bash -c "/deploy/import/import-enevo.sh"
+
+volumes:
+  afvalcontainers_import_cache:

@@ -4,6 +4,7 @@ from rest_framework.test import APITestCase
 
 from . import factories
 from kilogram.tests import factories as kilofactory
+from enevo.tests import factories as enevofactory
 
 # import logging
 
@@ -22,6 +23,12 @@ class BrowseDatasetsTestCase(APITestCase):
         "afval/kilos/sites/weekly",
         "afval/kilos/neighborhood/monthly",
         "afval/kilos/sites/monthly",
+        "afval/enevo/containers",
+        "afval/enevo/containertypes",
+        "afval/enevo/containerslots",
+        "afval/enevo/sites",
+        "afval/enevo/sitecontenttypes",
+        "afval/enevo/alerts",
     ]
 
     def setUp(self):
@@ -44,6 +51,30 @@ class BrowseDatasetsTestCase(APITestCase):
         self.k.save()
 
         kilofactory.make_stats_values(self.s)
+
+        self.es = enevofactory.SiteFactory()
+        self.et = enevofactory.ContentTypeFactory()
+        self.ect = enevofactory.ContainerTypeFactory()
+        self.ea = enevofactory.AlertFactory(site=self.es)
+
+        self.est = enevofactory.SiteContentTypeFactory()
+        self.est.site = self.es
+        self.est.content_type = self.et
+        self.est.save()
+
+        self.ecs = enevofactory.ContainerSlotFactory()
+        self.ecs.site = self.es
+        self.ecs.content_type = self.et
+        self.ecs.site_content_type = self.est
+        self.ecs.save()
+
+        self.ec = enevofactory.ContainerFactory()
+        self.ec.site = self.es
+        self.ec.site_content_type = self.est
+        self.ec.container_slot = self.ecs
+        self.ec.container_type = self.ect
+        self.ec.valid = True
+        self.ec.save()
 
     def valid_response(self, url, response, content_type):
         """Check common status/json."""
@@ -131,3 +162,28 @@ class BrowseDatasetsTestCase(APITestCase):
         self.valid_response(url, response, 'application/json')
         self.assertEqual(response.data['count'], 1)
         self.assertEqual(int(response.data['results'][0]['id']), self.snull.id)
+
+    def test_enevo_container_in_bammens_filter_true(self):
+        url = "afval/enevo/containers"
+        response = self.client.get(f"/{url}/", {'in_bammens': True})
+        self.valid_response(url, response, 'application/json')
+        self.assertEqual(response.data['count'], 1)
+        self.assertEqual(int(response.data['results'][0]['id']), self.ec.id)
+
+        response = self.client.get(f"/{url}/", {'in_bammens': False})
+        self.valid_response(url, response, 'application/json')
+        self.assertEqual(response.data['count'], 0)
+
+    def test_enevo_container_in_bammens_filter_false(self):
+        url = "afval/enevo/containers"
+        response = self.client.get(f"/{url}/", {'in_bammens': True})
+        self.valid_response(url, response, 'application/json')
+        self.assertEqual(response.data['count'], 1)
+        self.assertEqual(int(response.data['results'][0]['id']), self.ec.id)
+
+        enevofactory.ContainerFactory.create_batch(3, valid=False)
+
+        response = self.client.get(f"/{url}/", {'in_bammens': False})
+
+        self.valid_response(url, response, 'application/json')
+        self.assertEqual(response.data['count'], 3)
