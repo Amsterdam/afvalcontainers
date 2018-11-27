@@ -56,7 +56,7 @@ def create_db(section="test", environment=[]):
 
 
 def drop_db(section="test", environment=[]):
-    """Cleanup."""
+    """Cleanup test database."""
     LOG.info(f"Drop database")
     CONF = make_conf(section)
     if database_exists(CONF):

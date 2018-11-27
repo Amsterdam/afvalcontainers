@@ -17,15 +17,25 @@ LOG = logging.getLogger(__name__)
 
 Base = declarative_base()
 
+KILOGRAM_TABLES = [
+    "kilogram_weigh_raw",
+    "kilogram_weigh_measurement",
+]
 
-async def main(args):
+
+async def create_tables(args):
     """Main."""
     engine = db_helper.make_engine(environment=KILO_ENVIRONMENT_OVERRIDES)
+
+    session = db_helper.set_session(engine)
 
     if args.drop:
         # resets everything
         LOG.warning("DROPPING ALL DEFINED TABLES")
-        Base.metadata.drop_all(engine)
+        for table in KILOGRAM_TABLES:
+            session.execute(f"DROP table if exists {table};")
+        session.commit()
+        # Base.metadata.drop_all(engine)
 
     LOG.warning("CREATING DEFINED TABLES")
     # recreate tables
@@ -72,7 +82,6 @@ class KilogramMeasurement(Base):
     valid = Column(Boolean, index=True)
 
 
-
 if __name__ == "__main__":
     desc = "Create/Drop defined model tables."
     inputparser = argparse.ArgumentParser(desc)
@@ -83,4 +92,4 @@ if __name__ == "__main__":
 
     args = inputparser.parse_args()
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(main(args))
+    loop.run_until_complete(create_tables(args))
