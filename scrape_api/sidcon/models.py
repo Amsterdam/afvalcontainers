@@ -19,7 +19,8 @@ Base = declarative_base()
 
 
 SIDCON_TABLES = [
-    "sidcon_container_status_raw",
+    # should never be dropped
+    # "sidcon_container_status_raw",
     "sidcon_container_states",
 ]
 
@@ -51,33 +52,73 @@ class SidcomRaw(Base):
     data = Column(JSONB)
 
 
-# class SidComFillLevel(Base):
-#     """Sidcon Fill level Statusses.
-#
-#     extracted from the json
-#     """
-#
-#     __tablename__ = f"sidcon_container_states"
-    # id = Column(Integer, Sequence("grl_seq"), primary_key=True)  # Seq
-    # seq_id = Column(Integer, index=True)
-    # system_id = Column(Integer, index=True)
-    # weigh_at = Column(TIMESTAMP, index=True)
-    # container_ids = Column(String, index=True)
-    # container_count = Column(String, index=True)
-    # fill_chance = Column(Float)
-    # fill_level = Column(Float)
-    # fractie = Column(String, index=True)  # Afvalnaam
-    # fill_level = Column(Float, index=True)
-    # second_weight = Column(Integer, index=True)
-    # net_weight = Column(Integer, index=True)
-    # district = Column(String, index=True)
-    # neighborhood = Column(String, index=True)
-    # stadsdeel = Column(String(1), index=True)
-    # buurt_code = Column(String(4), index=True)
-    # location = Column(String, index=True)
-    # site_id = Column(Integer, index=True)
-    # geometrie = Column(Geometry('POINT', srid=4326), index=True)
-    # valid = Column(Boolean, index=True)
+class SidcomFillLevel(Base):
+    """Sidcon Fill level Statusses.
+
+    extracted from the json
+    """
+
+    __tablename__ = f"sidcon_container_states"
+
+    id = Column(Integer, Sequence("grl_seq"), primary_key=True)  # Seq
+    scraped_at = Column(TIMESTAMP, index=True)
+    geometrie = Column(Geometry('POINT', srid=4326), index=True)
+    valid = Column(Boolean)
+
+    _id = Column(Integer, index=True)
+    unit_id = Column(Integer)
+    city = Column(String(100))
+    number = Column(String(100))
+    street = Column(String(150))
+
+    filling = Column(Integer)      # "Filling": 2,
+    device_id = Column(Integer)    # "DeviceId": 296,
+    entity_id = Column(Integer)    # "EntityId": 1001,
+    fraction = Column(String(50))  # "Fraction": "Rest Afval",
+    status_id = Column(Integer)    # "StatusId": 285,
+    limit_full = Column(Integer)   # "LimitFull": 100,
+    # "Postalcode": null,
+    container_id = Column(Integer)  # "ContainerId": 208,
+    description = Column(String(50))   # "description": "RE K 00313",
+
+    house_number = Column(Integer)   # house_number": "38",
+    press_status = Column(Integer)   # "PressStatus": 3,
+    press_current = Column(Integer)  # "PressCurrent": 32,
+
+    status_device = Column(String(50))   # "StatusDevice": "NoError",
+    container_name = Column(String(50))  # container name
+
+    limit_near_full = Column(Integer)   # "LimitNearFull": 80,
+    placement_date = Column(TIMESTAMP)
+    # "PlacementDate": "2018-01-08T16:29:44Z",
+    # "UserAddressId": null,
+    battery_voltage = Column(Float)        # "batteryVoltage": 240.0,
+    nr_press_strokes = Column(Integer)     # "NrPressStrokes": 5,
+    drum_action_count = Column(Integer)    # "DrumActionCount": 7,
+    network_strenght = Column(Integer)     # "NetworkStrength": 18,
+    status_chip_cards = Column(String(50))  # "StatusChipcards": "Active",
+    status_container = Column(String(100))  # "StatusContainer": "NoError",
+    status_incidents = Column(Boolean)      # "StatusIncidents": false,
+    max_nr_press_strokes = Column(Integer)  # "MaxNrPressStrokes": 0,
+    status_trigger_name = Column(String(100))
+    # "StatusTriggerName": "PressStopped"
+    drum_position_status = Column(Integer)     # "DrumPositionStatus": 1,
+    lock_position_status = Column(Integer)     # "LockPositionStatus": 2,
+    nr_press_strokes_to_go: Column(Integer)    # "NrPressStrokesToGo": null,
+    status_configuration = Column(String(50))
+    # "StatusConfiguration": "Active",
+    total_nr_press_strokes = Column(Integer)   # "TotalNrPressStrokes": 7936,
+    total_nr_empty_detected = Column(Integer)  #
+    communication_date_time = Column(TIMESTAMP, index=True)
+    # "CommunicationDateTime": "2018-11-28T11:20:17.12Z",
+    volume_correction_factor = Column(Float)
+    # "VolumeCorrectionFactor": 1.0,
+    max_dump_count_on_dump_location = Column(Integer)
+    # "MaxDumpCountOnDumpLocation": 100,
+    successfull_transaction_since_reset = Column(Integer)
+    # "SuccessfulTransactionsSinceReset": 0,
+    unsuccessfull_transaction_since_reset = Column(Integer)
+    # "UnsuccessfulTransactionsSinceReset": null
 
 
 if __name__ == "__main__":

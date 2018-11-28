@@ -13,6 +13,8 @@ from afvalcontainers.models import ContainerType
 from afvalcontainers.models import Site
 from afvalcontainers.models import SiteFractie
 
+from .field_selector import DynamicFieldsMixin
+
 
 class WellSerializer(HALSerializer):
     _display = DisplayField()
@@ -84,7 +86,7 @@ class InlineWellModelSerializer(serializers.ModelSerializer):
         ]
 
 
-class ContainerSerializer(HALSerializer):
+class ContainerSerializer(DynamicFieldsMixin, HALSerializer):
     _display = DisplayField()
 
     container_type = ContainerTypeSerializer()

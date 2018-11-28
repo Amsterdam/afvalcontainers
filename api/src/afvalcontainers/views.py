@@ -108,7 +108,12 @@ class ContainerView(DatapuntViewSet):
 
     Containers are linked to a Well and Well to a Site.
 
-    *NOTE* id_number is a legacy number
+    *NOTE* id_number is the number shared between systems
+    and human understandable by the garbade container maintainers.
+    unfortunately not unique / humanly maintained so we have our
+    own id in the API.
+
+    ?id_number=xxx should work
     """
 
     queryset = (
