@@ -71,15 +71,15 @@ class SidcomFillLevel(Base):
     number = Column(String(100))
     street = Column(String(150))
 
-    filling = Column(Integer)      # "Filling": 2,
+    filling = Column(Integer, index=True)   # "Filling": 2,
     device_id = Column(Integer)    # "DeviceId": 296,
     entity_id = Column(Integer)    # "EntityId": 1001,
     fraction = Column(String(50))  # "Fraction": "Rest Afval",
     status_id = Column(Integer)    # "StatusId": 285,
     limit_full = Column(Integer)   # "LimitFull": 100,
     # "Postalcode": null,
-    container_id = Column(Integer)  # "ContainerId": 208,
-    description = Column(String(50))   # "description": "RE K 00313",
+    container_id = Column(Integer, index=True)  # "ContainerId": 208,
+    description = Column(String(50), index=True)   # "description": "RE K 00313",
 
     house_number = Column(Integer)   # house_number": "38",
     press_status = Column(Integer)   # "PressStatus": 3,
@@ -89,7 +89,7 @@ class SidcomFillLevel(Base):
     container_name = Column(String(50))  # container name
 
     limit_near_full = Column(Integer)   # "LimitNearFull": 80,
-    placement_date = Column(TIMESTAMP)
+    placement_date = Column(TIMESTAMP, index=True)
     # "PlacementDate": "2018-01-08T16:29:44Z",
     # "UserAddressId": null,
     battery_voltage = Column(Float)        # "batteryVoltage": 240.0,

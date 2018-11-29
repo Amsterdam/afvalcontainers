@@ -6,6 +6,7 @@ services:
     environment:
       ENVIRONMENT:
       KILOGRAM_API_PASSWORD:
+      SIDCON_PASSWORD:
       DATABASE_NAME: kilogram
       DATABASE_USER: kilogram
       DATABASE_KILOGRAM_PASSWORD:

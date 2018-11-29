@@ -76,6 +76,7 @@ dc exec -T database update-table.sh bag bag_pand public afvalcontainers
 dc exec -T database update-table.sh bag bag_ligplaats public afvalcontainers
 
 # restore kilogram weigh measurements (24h old)
+# TODO do this on live database?
 dc exec -T database update-table.sh kilogram kilogram_weigh_measurement public afvalcontainers
 
 # importeer buurt/stadseel

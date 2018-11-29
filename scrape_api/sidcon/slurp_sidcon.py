@@ -20,7 +20,6 @@ import os
 import argparse
 import requests
 import hashlib
-import os
 import json
 import logging
 import datetime
@@ -36,7 +35,7 @@ LOG = logging.getLogger(__name__)
 BASE_URL = 'https://sidconpers2.mic-o-data.nl'
 
 API_URLS = {
-    'acceptance': 'http://127.0.0.1:8000',
+    'acceptance': 'http://acc.api.data.amsterdam.nl',
     # 'acceptance': 'https://acc.api.data.amsterdam.nl',
     'production': 'https://api.data.amsterdam.nl'
 }
@@ -52,7 +51,7 @@ def get_container_ids():
     FULL_URL = f'{url}/afval/containers/'
     params = dict(
         fields='id_number',
-        page_size=14000,
+        page_size=18000,
         format='json'
     )
     r = requests.get(FULL_URL, params=params)

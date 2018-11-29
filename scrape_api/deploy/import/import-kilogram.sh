@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Import sidcon / kilogram.nl live weeg en vullgraad gegevens.
+
 set -u   # crash on missing env variables
 set -e   # stop on any error
 set -x   # print what we are doing
@@ -39,4 +41,7 @@ dc run --rm importer python kilogram/copy_to_model.py
 dc run --rm importer python kilogram/copy_to_model.py --link_gebieden
 
 dc run --rm importer python kilogram/copy_to_model.py --fix_perscontainers
+
+
+
 dc down -v
