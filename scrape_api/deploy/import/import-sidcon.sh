@@ -32,10 +32,10 @@ fi
 # dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/gebieden buurt_simple,stadsdeel 4326 --db kilogram
 
 # slurp latest and greatest of kilogram.nl
-dc run --rm importer python sidcon/slurp.py --slurp
+dc run --rm importer python sidcon/slurp-sidcon.py --slurp
 # copy data into final table for serving to django
 
-dc run --rm importer python sidcon/slurp.py --copy
+dc run --rm importer python sidcon/slurp-sidcon.py --copy
 
 # add gebieden data to endpoint
 
