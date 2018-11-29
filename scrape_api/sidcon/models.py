@@ -120,6 +120,12 @@ class SidcomFillLevel(Base):
     unsuccessfull_transaction_since_reset = Column(Integer)
     # "UnsuccessfulTransactionsSinceReset": null
 
+    # DP manual added (TODO)
+    # district = Column(String, index=True)
+    # neighborhood = Column(String, index=True)
+    # stadsdeel = Column(String(1), index=True)
+    # buurt_code = Column(String(4), index=True)
+
 
 if __name__ == "__main__":
     desc = "Create/Drop defined model tables."
