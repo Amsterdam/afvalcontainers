@@ -20,13 +20,12 @@ import os
 import argparse
 import requests
 import hashlib
-import os
 import json
 import logging
 import datetime
 import db_helper
-from sidcon.models import SidcomRaw
-from sidcon.models import SidcomFillLevel
+from sidcon.models import SidconRaw
+from sidcon.models import SidconFillLevel
 
 from settings import KILO_ENVIRONMENT_OVERRIDES
 from settings import BASE_DIR
@@ -55,8 +54,13 @@ def get_container_ids():
         page_size=14000,
         format='json'
     )
-    r = requests.get(FULL_URL, params=params)
-    all_containers = r.json()
+
+    with requests.Session() as s:
+        r = s.get(FULL_URL, params=params)
+        all_containers = r.json()
+
+        LOG.error(type(r))
+        LOG.error(type(all_containers))
 
     for item in all_containers['results']:
         ALL_ID_NUMBERS.add(item['id_number'])
@@ -66,9 +70,10 @@ def get_container_ids():
 
 def store_raw_response(raw_json):
     db_session = db_helper.session
-    db_model = SidcomRaw
+    db_model = SidconRaw
     objects = []
     scraped_at = datetime.datetime.now()
+    assert raw_json
     grj = dict(scraped_at=scraped_at, data=raw_json)
     objects.append(grj)
     db_session.bulk_insert_mappings(db_model, objects)
@@ -139,7 +144,7 @@ def set_geometrie(container_state: dict):
 def _store_single_container_states(snapshot):
     LOG.info('storing..')
     db_session = db_helper.session
-    db_model = SidcomFillLevel
+    db_model = SidconFillLevel
 
     scraped_at = snapshot.scraped_at
     rawdata = snapshot.data
@@ -175,22 +180,22 @@ def _get_latest_inserts():
     """Get lastest insert since we last copied to API."""
     db_session = db_helper.session
     latest = (
-        db_session.query(SidcomFillLevel)
-        .order_by(SidcomFillLevel.scraped_at.desc())
+        db_session.query(SidconFillLevel)
+        .order_by(SidconFillLevel.scraped_at.desc())
         .first()
     )
 
     if latest:
         # update since api
         new_states = (
-            db_session.query(SidcomRaw)
-            .order_by(SidcomRaw.scraped_at.desc())
-            .filter(SidcomRaw.scraped_at > latest.scraped_at)
+            db_session.query(SidconRaw)
+            .order_by(SidconRaw.scraped_at.desc())
+            .filter(SidconRaw.scraped_at > latest.scraped_at)
         )
     else:
         # empty api.
         new_states = (
-            db_session.query(SidcomRaw).all()
+            db_session.query(SidconRaw).all()
         )
 
     return new_states

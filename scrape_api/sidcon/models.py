@@ -43,7 +43,7 @@ async def create_tables(args):
     Base.metadata.create_all(engine)
 
 
-class SidcomRaw(Base):
+class SidconRaw(Base):
     """Raw sidcon API data."""
 
     __tablename__ = f"sidcon_container_status_raw"
@@ -52,7 +52,7 @@ class SidcomRaw(Base):
     data = Column(JSONB)
 
 
-class SidcomFillLevel(Base):
+class SidconFillLevel(Base):
     """Sidcon Fill level Statusses.
 
     extracted from the json
