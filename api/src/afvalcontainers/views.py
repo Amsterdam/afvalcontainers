@@ -7,6 +7,8 @@ from django.contrib.gis.geos import Polygon
 from django.conf import settings
 # from django.contrib.gis.measure import Distance
 
+from rest_flex_fields import FlexFieldsModelViewSet
+
 from datapunt_api.rest import DatapuntViewSet
 from datapunt_api.pagination import HALPagination
 from datapunt_api import bbox
@@ -103,7 +105,7 @@ class ContainerFilter(FilterSet):
             well__geometrie__dwithin=(point, radius))
 
 
-class ContainerView(DatapuntViewSet):
+class ContainerView(DatapuntViewSet, FlexFieldsModelViewSet):
     """View of Containers.
 
     Containers are linked to a Well and Well to a Site.
@@ -115,6 +117,8 @@ class ContainerView(DatapuntViewSet):
 
     ?id_number=xxx should work
     """
+
+    permit_list_expands = ['well']
 
     queryset = (
         Container.objects.all()

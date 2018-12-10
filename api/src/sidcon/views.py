@@ -7,6 +7,9 @@ from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import FilterSet
 
 from sidcon.models import SidconFillLevel
+from sidcon.serializers import SidconSerializer
+from sidcon.serializers import SidconDetailSerializer
+
 
 FILTERS = ['exact', 'lt', 'gt']
 
@@ -15,7 +18,7 @@ class SidconPager(HALPagination):
     """Site objects are rather "heavy" so put limits on pagination."""
 
     page_size = 100
-    max_page_size = 9000
+    max_page_size = 1000
 
 
 class SidconFilter(FilterSet):
@@ -23,11 +26,10 @@ class SidconFilter(FilterSet):
     pass
 
 
-
 class SidconView(DatapuntViewSet):
-    """View of container weigh measurements.
+    """View of SIDCON container fill level measurements.
 
-    source: kilogram.nl
+    source: https://sidconpers2.mic-o-data.nl
 
     extract all examples measurements:
 
@@ -42,10 +44,13 @@ class SidconView(DatapuntViewSet):
     bbox_filter_field = 'geometrie'
     filter_backends = (DjangoFilterBackend, OrderingFilter)
     filter_class = SidconFilter
+    pagination_class = SidconPager
     ordering_fields = '__all__'
 
     def get_queryset(self):
-        """
+        """Default use kilogram database.
+
+        except when testing
         """
         queryset = (
             SidconFillLevel.objects.all()
@@ -55,5 +60,3 @@ class SidconView(DatapuntViewSet):
             queryset = queryset.using('kilogram')
 
         return queryset
-
-
