@@ -1,0 +1,76 @@
+{
+    "_links": {
+        "self": {
+            "href": "https://api.data.amsterdam.nl/afval/containers/?fields=id_number&format=json"
+        },
+        "next": {
+            "href": "https://api.data.amsterdam.nl/afval/containers/?fields=id_number&format=json&page=2"
+        },
+        "previous": {
+            "href": null
+        }
+    },
+    "count": 12619,
+    "results": [
+        {
+            "id_number": "RE K 00313"
+        },
+        {
+            "id_number": "RE K 00309"
+        },
+        {
+            "id_number": "RE K 00298"
+        },
+        {
+            "id_number": "RE K 00264"
+        },
+        {
+            "id_number": "REF31196"
+        },
+        {
+            "id_number": "PAF32018"
+        },
+        {
+            "id_number": "REF60538"
+        },
+        {
+            "id_number": "PAF60317"
+        },
+        {
+            "id_number": "REF60325"
+        },
+        {
+            "id_number": "REF31791"
+        },
+        {
+            "id_number": "REF60725"
+        },
+        {
+            "id_number": "REF88577"
+        },
+        {
+            "id_number": "REF88579"
+        },
+        {
+            "id_number": "SR31448"
+        },
+        {
+            "id_number": "REF31420"
+        },
+        {
+            "id_number": "REF31419"
+        },
+        {
+            "id_number": "REF31049"
+        },
+        {
+            "id_number": "REF31050"
+        },
+        {
+            "id_number": "PAF32049"
+        },
+        {
+            "id_number": "Algemeneorder"
+        }
+    ]
+}

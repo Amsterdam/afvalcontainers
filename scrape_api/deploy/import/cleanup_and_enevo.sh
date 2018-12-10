@@ -18,7 +18,7 @@ dc() {
 	docker-compose -p cleanup${ENVIRONMENT} -f ${DIR}/docker-compose.yml $*
 }
 
-trap 'dc kill ; dc rm -f' EXIT
+trap 'dc down ; dc rm -f' EXIT
 
 # For database backups:
 rm -rf ${DIR}/backups

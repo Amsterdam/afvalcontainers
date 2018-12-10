@@ -13,7 +13,9 @@ from afvalcontainers.models import ContainerType
 from afvalcontainers.models import Site
 from afvalcontainers.models import SiteFractie
 
-from .field_selector import DynamicFieldsMixin
+#from .field_selector import DynamicFieldsMixin
+from rest_flex_fields import FlexFieldsModelSerializer
+
 
 
 class WellSerializer(HALSerializer):
@@ -56,7 +58,7 @@ class ContainerTypeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class WellModelSerializer(serializers.ModelSerializer):
+class WellModelSerializer(FlexFieldsModelSerializer):
     """Serializer to use in site detail."""
 
     containers = ContainerModelSerializer(many=True)
@@ -86,7 +88,7 @@ class InlineWellModelSerializer(serializers.ModelSerializer):
         ]
 
 
-class ContainerSerializer(DynamicFieldsMixin, HALSerializer):
+class ContainerSerializer(FlexFieldsModelSerializer, HALSerializer):
     _display = DisplayField()
 
     container_type = ContainerTypeSerializer()
@@ -113,6 +115,13 @@ class ContainerSerializer(DynamicFieldsMixin, HALSerializer):
             "well",
             "address",
         ]
+
+    expandable_fields = {
+        'well': (
+            WellModelSerializer, {
+                'source': 'well',
+                'fields': ['id', 'id_number', 'geometrie']})
+    }
 
     def get_address(self, obj):
         if obj.well:

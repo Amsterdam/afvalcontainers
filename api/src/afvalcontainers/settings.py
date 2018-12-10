@@ -20,6 +20,7 @@ INSTALLED_APPS += [
     "afvalcontainers",
     "kilogram",
     "enevo",
+    "sidcon",
     # "crispy_forms",
 ]
 

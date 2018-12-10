@@ -43,7 +43,7 @@ async def create_tables(args):
     Base.metadata.create_all(engine)
 
 
-class SidcomRaw(Base):
+class SidconRaw(Base):
     """Raw sidcon API data."""
 
     __tablename__ = f"sidcon_container_status_raw"
@@ -52,7 +52,7 @@ class SidcomRaw(Base):
     data = Column(JSONB)
 
 
-class SidcomFillLevel(Base):
+class SidconFillLevel(Base):
     """Sidcon Fill level Statusses.
 
     extracted from the json
@@ -119,6 +119,12 @@ class SidcomFillLevel(Base):
     # "SuccessfulTransactionsSinceReset": 0,
     unsuccessfull_transaction_since_reset = Column(Integer)
     # "UnsuccessfulTransactionsSinceReset": null
+
+    # DP manual added (TODO)
+    # district = Column(String, index=True)
+    # neighborhood = Column(String, index=True)
+    # stadsdeel = Column(String(1), index=True)
+    # buurt_code = Column(String(4), index=True)
 
 
 if __name__ == "__main__":

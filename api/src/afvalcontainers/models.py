@@ -1,5 +1,6 @@
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields import JSONField
+from django.conf import settings
 
 """
 {
@@ -139,7 +140,8 @@ class SiteFractie(models.Model):
     # AKA waste name
     fractie = models.CharField(max_length=20, db_index=True)
     containers = models.IntegerField(null=True, default=0)
-    volume_m3 = models.IntegerField(null=True, default=0)
+    volume_m3 = models.DecimalField(
+        null=True, default=0, max_digits=6, decimal_places=3)
 
 
 class ContainerType(models.Model):
@@ -147,7 +149,10 @@ class ContainerType(models.Model):
 
     id = models.IntegerField(primary_key=True)
     name = models.TextField()
-    volume = models.IntegerField()
+
+    volume = models.DecimalField(
+        null=True, default=0, max_digits=6, decimal_places=3)
+
     weight = models.IntegerField(null=True)
 
     def __str__(self):
@@ -162,3 +167,4 @@ class Buurten(models.Model):
 
     class Meta:
         db_table = 'buurt_simple'
+        managed = settings.TESTING

@@ -140,7 +140,7 @@ REST_FRAMEWORK = dict(
         'rest_framework.filters.OrderingFilter',
         "django_filters.rest_framework.DjangoFilterBackend"
     ),
-    COERCE_DECIMAL_TO_STRING=True,
+    COERCE_DECIMAL_TO_STRING=False,
 )
 
 # Static files (CSS, JavaScript, Images)
