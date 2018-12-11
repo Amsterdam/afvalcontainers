@@ -44,7 +44,11 @@ ALL_ID_NUMBERS = set()
 
 
 def get_container_ids():
-    """Get container ids from API."""
+    """Get container ids from afval api API.
+
+    The fill-level historical data lives in its own KILOGRAM database
+    so we cannot do a simple join. We just use our own API.
+    """
     environment = os.environ.get('ENVIRONMENT', 'acceptance')
     url = API_URLS[environment]
 

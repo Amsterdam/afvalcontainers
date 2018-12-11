@@ -7,7 +7,7 @@ from django.contrib.gis.geos import Polygon
 from django.conf import settings
 # from django.contrib.gis.measure import Distance
 
-from rest_flex_fields import FlexFieldsModelViewSet
+from rest_flex_fields.views import FlexFieldsMixin
 
 from datapunt_api.rest import DatapuntViewSet
 from datapunt_api.pagination import HALPagination
@@ -105,7 +105,7 @@ class ContainerFilter(FilterSet):
             well__geometrie__dwithin=(point, radius))
 
 
-class ContainerView(DatapuntViewSet, FlexFieldsModelViewSet):
+class ContainerView(FlexFieldsMixin, DatapuntViewSet):
     """View of Containers.
 
     Containers are linked to a Well and Well to a Site.
