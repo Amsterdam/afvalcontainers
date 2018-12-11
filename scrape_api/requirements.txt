@@ -10,6 +10,7 @@ certifi==2018.10.15
 chardet==3.0.4
 datapunt-config-loader==1.1.0
 datapunt-objectstore==2018.12.10
+drf-flex-fields==0.3.4
 debtcollector==1.20.0
 GeoAlchemy2==0.5.0
 idna==2.7
