@@ -32,6 +32,10 @@ from afvalcontainers.serializers import SiteFractieSerializer
 from afvalcontainers.serializers import SiteFractieDetailSerializer
 
 
+EXACT = ['exact']
+FILTERS = ['exact', 'lt', 'gt']
+
+
 def buurt_choices():
     options = Buurten.objects.values_list('vollcode', 'naam')
     return [(c, '%s (%s)' % (n, c)) for c, n in options]
@@ -62,27 +66,27 @@ class ContainerFilter(FilterSet):
 
     class Meta(object):
         model = Container
-        fields = (
-            "detailed",
-            "id",
-            "id_number",
-            "serial_number",
-            "active",
-            "waste_type",
-            "waste_name",
-            "placing_date",
-            "operational_date",
-            "warranty_date",
-            "well__buurt_code",
-            "well__stadsdeel",
-            "well",
-            "no_well",
-            "container_type",
-            "container_type__volume",
-            "container_type__weight",
-            "in_bbox",
-            "location",
-        )
+        fields = {
+            "detailed": EXACT,
+            "id": EXACT,
+            "id_number": EXACT,
+            "serial_number": EXACT,
+            "active": FILTERS,
+            "waste_type": EXACT,
+            "waste_name": EXACT,
+            "placing_date": FILTERS,
+            "operational_date": FILTERS,
+            "warranty_date": FILTERS,
+            "well__buurt_code": EXACT,
+            "well__stadsdeel": EXACT,
+            "well": EXACT,
+            "no_well": EXACT,
+            "container_type": EXACT,
+            "container_type__volume": FILTERS,
+            "container_type__weight": FILTERS,
+            "in_bbox": EXACT,
+            "location": EXACT,
+        }
 
     def in_bbox_filter(self, qs, name, value):
         bbox_values, err = bbox.valid_bbox(value)
@@ -285,21 +289,21 @@ class SiteFilter(FilterSet):
 
     class Meta(object):
         model = Site
-        fields = (
-            "detailed",
-            "id",
-            "short_id",
+        fields = {
+            "detailed": EXACT,
+            "id": EXACT,
+            "short_id": EXACT,
             # "buurt_code",
-            "stadsdeel",
-            # "containers",
-            "wells",
-            "in_bbox",
-            "location",
-            "bgt_based",
-            "no_container",
-            "fractie",
-            "no_short_id",
-        )
+            "stadsdeel": EXACT,
+            "wells__containers__container_type__volume": FILTERS,
+            "wells": EXACT,
+            "in_bbox": EXACT,
+            "location": EXACT,
+            "bgt_based": EXACT,
+            "no_container": EXACT,
+            "fractie": EXACT,
+            "no_short_id": EXACT,
+        }
 
     def locatie_filter(self, qs, name, value):
         point, radius = bbox.parse_xyr(value)
@@ -335,7 +339,7 @@ class SitePager(HALPagination):
     max_page_size = 9000
 
 
-class SiteView(DatapuntViewSet):
+class SiteView(FlexFieldsMixin, DatapuntViewSet):
     """Site's containing wells.
 
     the ID is a RD coordinate with buurt_code x-y-code
@@ -356,6 +360,10 @@ class SiteView(DatapuntViewSet):
     extra_attributes:
         chauffeur: manual instructions from chauffeur.
     """
+
+    permit_list_expands = [
+        'wells', 'wells.containers',
+        'wells.containers.container_type']
 
     queryset = (
         Site.objects.all()

@@ -43,19 +43,31 @@ class WellSerializer(HALSerializer):
         ]
 
 
-class ContainerModelSerializer(serializers.ModelSerializer):
+class ContainerTypeSerializer(FlexFieldsModelSerializer):
+
+    class Meta:
+        model = ContainerType
+        fields = '__all__'
+
+
+class ContainerModelSerializer(FlexFieldsModelSerializer):
     """Serializer used by well."""
 
     class Meta:
         model = Container
         fields = '__all__'
 
-
-class ContainerTypeSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = ContainerType
-        fields = '__all__'
+    expandable_fields = {
+        'container_type': (
+            ContainerTypeSerializer, {
+                'source': 'container_type',
+                'fields': [
+                    'id', 'name',
+                    'volume', 'weight',
+                ]
+            }
+        ),
+    }
 
 
 class SiteModelSerializer(FlexFieldsModelSerializer):
@@ -69,7 +81,6 @@ class WellModelSerializer(FlexFieldsModelSerializer):
     """Serializer to use in site detail."""
 
     containers = ContainerModelSerializer(many=True)
-    # address = serializers.SerializerMethodField()
 
     class Meta:
         model = Well
@@ -86,6 +97,16 @@ class WellModelSerializer(FlexFieldsModelSerializer):
                     'buurt', 'active'
                 ]
             }),
+        'containers': (
+            ContainerModelSerializer, {
+                'source': 'containers',
+                'many': True,
+                'fields': [
+                    'id', 'id_number',
+                    'container_type', 'active',
+                ]
+            }
+        ),
     }
 
 
@@ -251,6 +272,20 @@ class SiteSerializer(FlexFieldsModelSerializer, HALSerializer):
 
     def get_fracties(self, obj):
         return fracties(obj)
+
+    expandable_fields = {
+        'wells': (
+            WellModelSerializer, {
+                'source': 'wells',
+                'many': True,
+                'fields': [
+                    'id', 'id_number',
+                    'geometrie', 'site',
+                    'buurt_code'
+                ]
+            }
+        ),
+    }
 
 
 class SiteDetailSerializer(HALSerializer):
