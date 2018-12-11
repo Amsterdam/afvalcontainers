@@ -22,4 +22,5 @@ services:
       KILOGRAM_API_PASSWORD: test
       ENEVO_API_USERNAME: test
       ENEVO_API_PASSWORD: test
+      SIDCON_PASSWORD: test
       PYTHONPATH: /app/
