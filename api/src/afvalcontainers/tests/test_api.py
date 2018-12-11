@@ -76,6 +76,13 @@ class BrowseDatasetsTestCase(APITestCase):
         self.ec.valid = True
         self.ec.save()
 
+    def test_openapi(self):
+        """Check if we can get openapi json."""
+        url = "/afval/swagger/"
+        response = self.client.get(url, {'format': 'openapi'})
+        self.valid_response(
+            url, response, 'application/openapi+json; charset=utf-8')
+
     def valid_response(self, url, response, content_type):
         """Check common status/json."""
         self.assertEqual(
