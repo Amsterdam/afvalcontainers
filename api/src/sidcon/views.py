@@ -1,29 +1,39 @@
 
 from django.conf import settings
 from datapunt_api.rest import DatapuntViewSet
-from datapunt_api.pagination import HALPagination
+# from datapunt_api.pagination import HALPagination
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import OrderingFilter
+# from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import FilterSet
 
 from sidcon.models import SidconFillLevel
 from sidcon.serializers import SidconSerializer
 from sidcon.serializers import SidconDetailSerializer
 
+from rest_framework.pagination import CursorPagination
 
 FILTERS = ['exact', 'lt', 'gt']
 
 
-class SidconPager(HALPagination):
+class SidconPager(CursorPagination):
     """Site objects are rather "heavy" so put limits on pagination."""
 
     page_size = 100
     max_page_size = 1000
+    ordering = "-id"
 
 
 class SidconFilter(FilterSet):
-    """wip"""
-    pass
+    """Filtering on sidcon fill level entries."""
+
+    class Meta(object):
+        model = SidconFillLevel
+
+        fields = {
+            "scraped_at": FILTERS,
+            "filling": FILTERS,
+            "container_id": FILTERS,
+        }
 
 
 class SidconView(DatapuntViewSet):
@@ -42,15 +52,15 @@ class SidconView(DatapuntViewSet):
     serializer_class = SidconSerializer
     serializer_detail_class = SidconDetailSerializer
     bbox_filter_field = 'geometrie'
-    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filter_backends = (DjangoFilterBackend)
     filter_class = SidconFilter
     pagination_class = SidconPager
     ordering_fields = '__all__'
 
     def get_queryset(self):
-        """Default use kilogram database.
+        """By default use kilogram database.
 
-        except when testing
+        EXCEPT when testing
         """
         queryset = (
             SidconFillLevel.objects.all()

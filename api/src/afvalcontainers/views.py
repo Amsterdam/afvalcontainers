@@ -110,15 +110,27 @@ class ContainerView(FlexFieldsMixin, DatapuntViewSet):
 
     Containers are linked to a Well and Well to a Site.
 
-    *NOTE* id_number is the number shared between systems
+    *NOTE* `id_number` is the number shared between systems
     and human understandable by the garbade container maintainers.
-    unfortunately not unique / humanly maintained so we have our
+
+    unfortunately `id_number` is humanly maintained so we have our
     own id in the API.
 
     ?id_number=xxx should work
-    """
 
-    permit_list_expands = ['well']
+        active = 0 inactive
+        active = 1 active
+        active = 2 planned
+
+
+    [detailed list objects](https://api.data.amsterdam.nl/afval/containers/?detailed=1).
+
+    [example specific list fields](https://api.data.amsterdam.nl/afval/containers/?fields=id,well.site.active&expand=well.site)
+
+
+    """  # noqa
+
+    permit_list_expands = ['well', 'well.site']
 
     queryset = (
         Container.objects.all()

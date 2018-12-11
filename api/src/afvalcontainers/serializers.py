@@ -58,6 +58,13 @@ class ContainerTypeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class SiteModelSerializer(FlexFieldsModelSerializer):
+
+    class Meta:
+        model = Site
+        fields = '__all__'
+
+
 class WellModelSerializer(FlexFieldsModelSerializer):
     """Serializer to use in site detail."""
 
@@ -67,6 +74,19 @@ class WellModelSerializer(FlexFieldsModelSerializer):
     class Meta:
         model = Well
         fields = '__all__'
+
+    expandable_fields = {
+        'site': (
+            SiteModelSerializer, {
+                'source': 'site',
+                'fields': [
+                    'id', 'short_id',
+                    'geometrie', 'centroid'
+                    'straatnaam', 'huisnummer',
+                    'buurt', 'active'
+                ]
+            }),
+    }
 
 
 class InlineWellModelSerializer(serializers.ModelSerializer):
@@ -120,7 +140,13 @@ class ContainerSerializer(FlexFieldsModelSerializer, HALSerializer):
         'well': (
             WellModelSerializer, {
                 'source': 'well',
-                'fields': ['id', 'id_number', 'geometrie']})
+                'fields': [
+                    'id', 'id_number',
+                    'geometrie', 'site',
+                    'buurt_code'
+                ]
+            }
+        ),
     }
 
     def get_address(self, obj):
@@ -201,7 +227,7 @@ class SiteFractieDetailSerializer(HALSerializer):
         ]
 
 
-class SiteSerializer(HALSerializer):
+class SiteSerializer(FlexFieldsModelSerializer, HALSerializer):
 
     _display = DisplayField()
     wells = RelatedSummaryField()
