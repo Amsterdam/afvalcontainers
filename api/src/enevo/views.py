@@ -66,7 +66,7 @@ class ContainerView(DatapuntViewSet):
 class ContainerTypeView(DatapuntViewSet):
 
     queryset = (
-        EnevoContainerType.objects.all()
+        EnevoContainerType.objects.all().order_by('id')
     )
     serializer_detail_class = ContainerTypeSerializer
     serializer_class = ContainerTypeSerializer
@@ -83,7 +83,7 @@ class ContainerTypeView(DatapuntViewSet):
 class ContainerSlotView(DatapuntViewSet):
 
     queryset = (
-        EnevoContainerSlot.objects.all()
+        EnevoContainerSlot.objects.all().order_by('id')
     )
     serializer_detail_class = ContainerSlotSerializer
     serializer_class = ContainerSlotSerializer
@@ -102,6 +102,7 @@ class SiteView(DatapuntViewSet):
 
     queryset = (
         EnevoSite.objects.all()
+        .order_by('id')
     )
     serializer_detail_class = SiteDetailSerializer
     serializer_class = SiteSerializer
@@ -120,6 +121,7 @@ class SiteView(DatapuntViewSet):
 class SiteContentTypeView(DatapuntViewSet):
     queryset = (
         EnevoSiteContentType.objects.all()
+        .order_by('id')
     )
     serializer_detail_class = SiteContentTypeSerializer
     serializer_class = SiteContentTypeSerializer
@@ -135,6 +137,7 @@ class SiteContentTypeView(DatapuntViewSet):
 class AlertView(DatapuntViewSet):
     queryset = (
         EnevoAlert.objects.all()
+        .order_by('id')
     )
     serializer_detail_class = AlertSerializer
     serializer_class = AlertSerializer
@@ -151,6 +154,7 @@ class AlertView(DatapuntViewSet):
 class ContentTypeView(DatapuntViewSet):
     queryset = (
         EnevoContentType.objects.all()
+        .order_by('id')
     )
     serializer_detail_class = ContentTypeSerializer
     serializer_class = ContentTypeSerializer
