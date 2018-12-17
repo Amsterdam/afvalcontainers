@@ -106,6 +106,7 @@ class SidconView(FlexFieldsMixin, DatapuntViewSet):
             SidconFillLevel.objects.all()
             .order_by("-id")
         )
+
         if not settings.TESTING:
             queryset = queryset.using('kilogram')
 
@@ -117,16 +118,18 @@ class SidconView(FlexFieldsMixin, DatapuntViewSet):
         delta = datetime.timedelta(days=1)
         filter_day = today - delta
         filter_day = filter_day.replace(tzinfo=pytz.UTC)
-        qs = SidconFillLevel.objects.all().filter(filling__gt=90)
+        qs = self.get_queryset()
+        qs = qs.filter(filling__gt=90)
         today_full = qs.filter(communication_date_time__gt=filter_day)
         serializer = self.get_serializer(today_full, many=True)
         return Response(serializer.data)
 
     @action(detail=False)
     def latest(self, request):
+
+        qs = self.get_queryset()
         qs = (
-            SidconFillLevel.objects.all()
-            .order_by('-scraped_at', 'id').distinct('scraped_at', 'id')
+            qs.order_by('-scraped_at', 'id').distinct('scraped_at', 'id')
         )
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
