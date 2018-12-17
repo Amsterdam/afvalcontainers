@@ -146,7 +146,6 @@ def set_geometrie(container_state: dict):
 
 
 def _store_single_container_states(snapshot):
-    LOG.info('storing..')
     db_session = db_helper.session
     db_model = SidconFillLevel
 
@@ -155,6 +154,7 @@ def _store_single_container_states(snapshot):
     # rawdata = json.loads(rawdata)
 
     objects = []
+    LOG.info('storing..%s', scraped_at)
 
     for rpc_response in rawdata:
         for single_state in rpc_response['result'].get('data', []):
