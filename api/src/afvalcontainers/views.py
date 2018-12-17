@@ -43,6 +43,10 @@ def buurt_choices():
 
 class ContainerFilter(FilterSet):
     id = filters.CharFilter()
+
+    like_id_number = filters.CharFilter(
+        method='like_id_filter', label='like id')
+
     in_bbox = filters.CharFilter(method='in_bbox_filter', label='bbox')
     no_well = filters.BooleanFilter(method='no_well_filter', label='no_well')
     no_site = filters.BooleanFilter(method='no_site_filter', label='no_site')
@@ -70,6 +74,7 @@ class ContainerFilter(FilterSet):
             "detailed": EXACT,
             "id": EXACT,
             "id_number": EXACT,
+            "like_id_number": EXACT,
             "serial_number": EXACT,
             "active": FILTERS,
             "waste_type": EXACT,
@@ -107,6 +112,9 @@ class ContainerFilter(FilterSet):
         point, radius = bbox.parse_xyr(value)
         return qs.filter(
             well__geometrie__dwithin=(point, radius))
+
+    def like_id_filter(self, qs, name, value):
+        return qs.filter(id_number__contains=value)
 
 
 class ContainerView(FlexFieldsMixin, DatapuntViewSet):

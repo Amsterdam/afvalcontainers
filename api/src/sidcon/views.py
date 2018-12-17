@@ -54,6 +54,7 @@ class SidconFilter(FilterSet):
             "communication_date_time": FILTERS,
             "container_id": ['exact'],
             "days_back": ['exact'],
+            "valid": ['exact'],
         }
 
     def container_filter(self, qs, name, value):
@@ -114,6 +115,7 @@ class SidconView(FlexFieldsMixin, DatapuntViewSet):
 
     @action(detail=False)
     def today_full(self, request):
+        """Show containers that have a filling of more then 90 for today."""
         today = datetime.datetime.now()
         delta = datetime.timedelta(days=1)
         filter_day = today - delta
@@ -126,10 +128,19 @@ class SidconView(FlexFieldsMixin, DatapuntViewSet):
 
     @action(detail=False)
     def latest(self, request):
+        """Return the latest scraped data."""
 
         qs = self.get_queryset()
         qs = (
             qs.order_by('-scraped_at', 'id').distinct('scraped_at', 'id')
         )
+        serializer = self.get_serializer(qs, many=True)
+        return Response(serializer.data)
+
+    @action(detail=False)
+    def invalid_container_id(self, request):
+        qs = self.get_queryset()
+        qs = qs.filter(valid=False)
+        qs = qs.order_by('-scraped_at', 'id').distinct('scraped_at', 'id')
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
