@@ -43,6 +43,14 @@ API_URLS = {
 ALL_ID_NUMBERS = set()
 
 
+PATTERN = re.compile(r'\s+')
+
+
+def remove_white_space(long_id_code):
+    long_id_code = re.sub(PATTERN, '', long_id_code)
+    return long_id_code
+
+
 def get_container_ids():
     """Get container ids from afval api API.
 
@@ -67,7 +75,7 @@ def get_container_ids():
         LOG.error(type(all_containers))
 
     for item in all_containers['results']:
-        ALL_ID_NUMBERS.add(item['id_number'])
+        ALL_ID_NUMBERS.add(remove_white_space(item['id_number']))
 
     LOG.info('Found %s ids', len(ALL_ID_NUMBERS))
 
@@ -169,8 +177,11 @@ def _store_single_container_states(snapshot):
             _id = container_state.pop('id')
             container_state['_id'] = _id
             container_state['valid'] = False
-            if container_state['description'] in ALL_ID_NUMBERS:
+            description = container_state['description']
+            description = remove_white_space(description)
+            if description in ALL_ID_NUMBERS:
                 container_state['valid'] = True
+
             container_state = set_geometrie(container_state)
             grj = dict(scraped_at=scraped_at, **container_state)
             objects.append(grj)

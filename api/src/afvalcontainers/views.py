@@ -1,3 +1,5 @@
+import re
+
 from django_filters.rest_framework import FilterSet
 from django_filters.rest_framework import filters
 from rest_framework.filters import OrderingFilter
@@ -35,10 +37,17 @@ from afvalcontainers.serializers import SiteFractieDetailSerializer
 EXACT = ['exact']
 FILTERS = ['exact', 'lt', 'gt']
 
+PATTERN = re.compile(r'\s+')
+
 
 def buurt_choices():
     options = Buurten.objects.values_list('vollcode', 'naam')
     return [(c, '%s (%s)' % (n, c)) for c, n in options]
+
+
+def remove_white_space(long_id_code):
+    long_id_code = re.sub(PATTERN, '', long_id_code)
+    return long_id_code
 
 
 class ContainerFilter(FilterSet):
@@ -46,6 +55,8 @@ class ContainerFilter(FilterSet):
 
     like_id_number = filters.CharFilter(
         method='like_id_filter', label='like id')
+
+    id_number = filters.CharFilter(method='id_number_get', label='id number')
 
     in_bbox = filters.CharFilter(method='in_bbox_filter', label='bbox')
     no_well = filters.BooleanFilter(method='no_well_filter', label='no_well')
@@ -115,6 +126,10 @@ class ContainerFilter(FilterSet):
 
     def like_id_filter(self, qs, name, value):
         return qs.filter(id_number__contains=value)
+
+    def id_number_get(self, qs, name, value):
+        no_ws = remove_white_space(value)
+        return qs.filter(id_number=no_ws)
 
 
 class ContainerView(FlexFieldsMixin, DatapuntViewSet):

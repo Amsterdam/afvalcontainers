@@ -140,7 +140,7 @@ class SidconView(FlexFieldsMixin, DatapuntViewSet):
     @action(detail=False)
     def invalid_container_id(self, request):
         qs = self.get_queryset()
-        qs = qs.filter(valid=False)
         qs = qs.order_by('-scraped_at', 'id').distinct('scraped_at', 'id')
+        qs = qs.filter(valid=False)
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
