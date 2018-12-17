@@ -13,9 +13,8 @@ from afvalcontainers.models import ContainerType
 from afvalcontainers.models import Site
 from afvalcontainers.models import SiteFractie
 
-#from .field_selector import DynamicFieldsMixin
+# from .field_selector import DynamicFieldsMixin
 from rest_flex_fields import FlexFieldsModelSerializer
-
 
 
 class WellSerializer(HALSerializer):
@@ -74,7 +73,17 @@ class SiteModelSerializer(FlexFieldsModelSerializer):
 
     class Meta:
         model = Site
-        fields = '__all__'
+        fields = [
+            'id',
+            'short_id',
+            'huisnummer',
+            'straatnaam',
+            'geometrie',
+            'centroid',
+            'active',
+            'stadsdeel',
+            'buurt_code',
+        ]
 
 
 class WellModelSerializer(FlexFieldsModelSerializer):
@@ -217,22 +226,37 @@ def fracties(obj):
     return fracties
 
 
-class SiteFractieSerializer(HALSerializer):
+class SiteFractieSerializer(FlexFieldsModelSerializer, HALSerializer):
+
+    _display = DisplayField()
 
     class Meta:
         model = SiteFractie
         fields = [
-            # "_links",
-            'site_id',
+            "_links",
+            '_display',
+            'site',
             'fractie',
             'volume_m3',
             'containers',
         ]
 
+    expandable_fields = {
+        'site': (
+            SiteModelSerializer, {
+                'fields': [
+                    'id',
+                    'short_id',
+                    'buurt_code',
+                    'straatnaam',
+                    'huisnummer',
+                ]
+            }
+        ),
+    }
 
-class SiteFractieDetailSerializer(HALSerializer):
 
-    site = LinksField(view_name='site-detail')
+class SiteFractieDetailSerializer(FlexFieldsModelSerializer, HALSerializer):
 
     _display = DisplayField()
 
@@ -240,12 +264,27 @@ class SiteFractieDetailSerializer(HALSerializer):
         model = SiteFractie
         fields = [
             # "_links",
-            # "_display",
-            'site_id',
+            "_display",
+            # 'site_id',
+            "site",
+            # 'site',
             'fractie',
             'volume_m3',
             'containers',
         ]
+
+    expandable_fields = {
+        'site': (
+            SiteModelSerializer, {
+                'fields': [
+                    'id',
+                    'short_id',
+                    'centroid'
+                    'buurt_code',
+                ]
+            }
+        ),
+    }
 
 
 class SiteSerializer(FlexFieldsModelSerializer, HALSerializer):

@@ -1,10 +1,13 @@
 # Packages
+import datetime
+import pytz
 
 from rest_framework.test import APITestCase
 
 from . import factories
 from kilogram.tests import factories as kilofactory
 from enevo.tests import factories as enevofactory
+from sidcon.tests import factories as sidconfactory
 
 # import logging
 
@@ -18,17 +21,21 @@ class BrowseDatasetsTestCase(APITestCase):
         "afval/wells",
         "afval/containertypes",
         "afval/sites",
+
         "afval/kilogram",
         "afval/kilos/neighborhood/weekly",
         "afval/kilos/sites/weekly",
         "afval/kilos/neighborhood/monthly",
         "afval/kilos/sites/monthly",
+
         "afval/enevo/containers",
         "afval/enevo/containertypes",
         "afval/enevo/containerslots",
         "afval/enevo/sites",
         "afval/enevo/sitecontenttypes",
         "afval/enevo/alerts",
+
+        "afval/sidcon/filllevels",
     ]
 
     def setUp(self):
@@ -75,6 +82,19 @@ class BrowseDatasetsTestCase(APITestCase):
         self.ec.container_type = self.ect
         self.ec.valid = True
         self.ec.save()
+
+        self.sidcon1 = sidconfactory.SidconFillLevelFactory(
+            valid=False,
+            scraped_at=datetime.datetime.utcnow().replace(tzinfo=pytz.UTC)
+        )
+        day1 = datetime.timedelta(days=1)
+        self.sidcon1.valid = True
+        self.sidcon1.save()
+
+        yesterday = datetime.datetime.utcnow().replace(tzinfo=pytz.UTC) - day1
+        self.sidcon2 = sidconfactory.SidconFillLevelFactory()
+        self.sidcon2.scraped_at = yesterday
+        self.sidcon2.save()
 
     def test_openapi(self):
         """Check if we can get openapi json."""

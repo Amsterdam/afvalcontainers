@@ -387,7 +387,17 @@ class SiteView(FlexFieldsMixin, DatapuntViewSet):
     ordering_fields = '__all__'
 
 
-class SiteFractieView(DatapuntViewSet):
+class SiteFractieView(FlexFieldsMixin, DatapuntViewSet):
+    """Fractie informatie per site.
+
+    example usage:
+
+    [http://127.0.0.1:8000/afval/sitefracties/?expand=site](http://127.0.0.1:8000/afval/sitefracties/?expand=site)
+
+    [http://127.0.0.1:8000/afval/sitefracties/?expand=site&fields=fractie,volume_m3,site.short_id](http://127.0.0.1:8000/afval/sitefracties/?expand=site&fields=fractie,volume_m3,site.short_id)
+    """ # noqa
+
+    permit_list_expands = ['site', ]
 
     queryset = (
         SiteFractie.objects.all()

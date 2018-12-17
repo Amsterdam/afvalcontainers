@@ -137,11 +137,15 @@ class SiteFractie(models.Model):
         'Site', null=True,
         related_name="fracties", on_delete=models.SET_NULL
     )
+
     # AKA waste name
     fractie = models.CharField(max_length=20, db_index=True)
     containers = models.IntegerField(null=True, default=0)
     volume_m3 = models.DecimalField(
         null=True, default=0, max_digits=6, decimal_places=3)
+
+    def __str__(self):
+        return f'{self.fractie} - {self.volume_m3} - {self.site.short_id}'
 
 
 class ContainerType(models.Model):

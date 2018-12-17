@@ -104,7 +104,7 @@ class SidconFillLevel(Base):
     # "StatusTriggerName": "PressStopped"
     drum_position_status = Column(Integer)     # "DrumPositionStatus": 1,
     lock_position_status = Column(Integer)     # "LockPositionStatus": 2,
-    nr_press_strokes_to_go: Column(Integer)    # "NrPressStrokesToGo": null,
+    nr_press_strokes_to_go = Column(Integer)    # "NrPressStrokesToGo": null,
     status_configuration = Column(String(50))
     # "StatusConfiguration": "Active",
     total_nr_press_strokes = Column(Integer)   # "TotalNrPressStrokes": 7936,

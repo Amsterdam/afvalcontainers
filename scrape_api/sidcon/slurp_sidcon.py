@@ -181,7 +181,7 @@ def _store_single_container_states(snapshot):
 
 
 def _get_latest_inserts():
-    """Get lastest insert since we last copied to API."""
+    """Get lastest inserts since we last copied to API."""
     db_session = db_helper.session
     latest = (
         db_session.query(SidconFillLevel)

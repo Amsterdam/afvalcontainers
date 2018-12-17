@@ -26,6 +26,7 @@ from rest_framework import permissions
 from . import views as api_views
 from kilogram import views as kilo_views
 from enevo import views as enevo_views
+from sidcon import views as sidcon_views
 
 
 class ContainersView(routers.APIRootView):
@@ -126,6 +127,9 @@ containers.register(
     enevo_views.ContentTypeView, base_name='enevocontenttype')
 # containers.register(r"stats", stats, base_name='stats')
 
+containers.register(
+    r'sidcon/filllevels',
+    sidcon_views.SidconView, base_name='sidconfilllevel')
 
 urls = containers.urls
 
