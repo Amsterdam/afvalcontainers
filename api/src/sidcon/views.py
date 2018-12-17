@@ -1,5 +1,6 @@
 
 import datetime
+import pytz
 
 from django.conf import settings
 from datapunt_api.rest import DatapuntViewSet
@@ -74,6 +75,15 @@ class SidconView(FlexFieldsMixin, DatapuntViewSet):
 
     parameter ?detailed=1  Will give you geometry and extra information
 
+    show all available fields
+
+    [/afval/sidcon/filllevels/?detailed=1](https://api.data.amsterdam.nl/afval/sidcon/filllevels/?detailed=1)
+
+    use fields parameter to filter fields
+
+    [/afval/sidcon/filllevels/?detailed=1&fields=scraped_at,valid](https://api.data.amsterdam.nl/afval/sidcon/filllevels/?detailed=1&fields=scraped_at,valid)
+
+    *checkout the extra action views above*
     """
 
     serializer_class = SidconSerializer
@@ -106,6 +116,7 @@ class SidconView(FlexFieldsMixin, DatapuntViewSet):
         today = datetime.datetime.now()
         delta = datetime.timedelta(days=1)
         filter_day = today - delta
+        filter_day = filter_day.replace(tzinfo=pytz.UTC)
         qs = SidconFillLevel.objects.all().filter(filling__gt=90)
         today_full = qs.filter(communication_date_time__gt=filter_day)
         serializer = self.get_serializer(today_full, many=True)

@@ -29,10 +29,15 @@ class SidconFillLevelFactory(factory.DjangoModelFactory):
 
     id = factory.Sequence(lambda n: n)
     _id = factory.Sequence(lambda n: n)
-    filling = fuzzy.FuzzyInteger(0, 100)
+    # do not mess up fill test by going higher then 90
+    filling = fuzzy.FuzzyInteger(0, 90)
     valid = True
 
     scraped_at = fuzzy.FuzzyDateTime(
+        datetime.datetime.now().replace(tzinfo=pytz.UTC) - week1,
+        datetime.datetime.now().replace(tzinfo=pytz.UTC))
+
+    communication_date_time = fuzzy.FuzzyDateTime(
         datetime.datetime.now().replace(tzinfo=pytz.UTC) - week1,
         datetime.datetime.now().replace(tzinfo=pytz.UTC))
 

@@ -392,9 +392,9 @@ class SiteFractieView(FlexFieldsMixin, DatapuntViewSet):
 
     example usage:
 
-    [http://127.0.0.1:8000/afval/sitefracties/?expand=site](http://127.0.0.1:8000/afval/sitefracties/?expand=site)
+    [https://api.data.amsterdam.nl/afval/sitefracties/?expand=site](http://127.0.0.1:8000/afval/sitefracties/?expand=site)
 
-    [http://127.0.0.1:8000/afval/sitefracties/?expand=site&fields=fractie,volume_m3,site.short_id](http://127.0.0.1:8000/afval/sitefracties/?expand=site&fields=fractie,volume_m3,site.short_id)
+    [https://api.data.amsterdam.nl/afval/sitefracties/?expand=site&fields=fractie,volume_m3,site.short_id](http://127.0.0.1:8000/afval/sitefracties/?expand=site&fields=fractie,volume_m3,site.short_id)
     """ # noqa
 
     permit_list_expands = ['site', ]
