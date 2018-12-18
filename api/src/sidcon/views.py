@@ -128,19 +128,39 @@ class SidconView(FlexFieldsMixin, DatapuntViewSet):
 
     @action(detail=False)
     def latest(self, request):
-        """Return the latest scraped data."""
+        """Return the latest scraped data.
+
+        Returns distinct container id's scraped in the last hour.
+        """
+        today = datetime.datetime.now()
+        delta = datetime.timedelta(hours=1)
+        filter_day = today - delta
+        filter_day = filter_day.replace(tzinfo=pytz.UTC)
 
         qs = self.get_queryset()
         qs = (
-            qs.order_by('-scraped_at', 'id').distinct('scraped_at', 'id')
+            qs.order_by('-scraped_at', 'description')
+            .filter(communication_date_time__gt=filter_day)
+            .distinct('scraped_at', 'description')
         )
+
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
 
     @action(detail=False)
     def invalid_container_id(self, request):
+        today = datetime.datetime.now()
+        delta = datetime.timedelta(hours=1)
+        filter_day = today - delta
+        filter_day = filter_day.replace(tzinfo=pytz.UTC)
+
         qs = self.get_queryset()
-        qs = qs.order_by('-scraped_at', 'id').distinct('scraped_at', 'id')
-        qs = qs.filter(valid=False)
+        qs = (
+            qs.order_by('-scraped_at', 'description')
+            .distinct('scraped_at', 'description')
+            .filter(valid=False)
+            .filter(communication_date_time__gt=filter_day)
+        )
+
         serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)

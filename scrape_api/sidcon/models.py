@@ -66,7 +66,7 @@ class SidconFillLevel(Base):
     valid = Column(Boolean)
 
     _id = Column(Integer, index=True)
-    unit_id = Column(Integer)
+    unit_id = Column(Integer, index=True)
     city = Column(String(100))
     number = Column(String(100))
     street = Column(String(150))

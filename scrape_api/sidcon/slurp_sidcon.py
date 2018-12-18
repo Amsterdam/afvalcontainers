@@ -181,6 +181,8 @@ def _store_single_container_states(snapshot):
             description = remove_white_space(description)
             if description in ALL_ID_NUMBERS:
                 container_state['valid'] = True
+            # remove white space from key.
+            container_state['description'] = description
 
             container_state = set_geometrie(container_state)
             grj = dict(scraped_at=scraped_at, **container_state)
