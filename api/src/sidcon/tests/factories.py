@@ -13,6 +13,7 @@ BBOX = [52.03560, 4.58565, 52.48769, 5.31360]
 
 
 week1 = datetime.timedelta(days=7)
+day1 = datetime.timedelta(days=1)
 
 
 def get_puntje():
@@ -39,6 +40,6 @@ class SidconFillLevelFactory(factory.DjangoModelFactory):
 
     communication_date_time = fuzzy.FuzzyDateTime(
         datetime.datetime.now().replace(tzinfo=pytz.UTC) - week1,
-        datetime.datetime.now().replace(tzinfo=pytz.UTC))
+        datetime.datetime.now().replace(tzinfo=pytz.UTC) - day1)
 
     geometrie = get_puntje()

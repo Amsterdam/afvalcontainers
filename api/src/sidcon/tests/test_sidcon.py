@@ -14,7 +14,7 @@ from sidcon.tests import factories as sidconfactory
 class SidconActionTestCase(APITestCase):
 
     urls_counts = [
-        ("afval/sidcon/filllevels/latest", 3),
+        ("afval/sidcon/filllevels/latest", 2),
         ("afval/sidcon/filllevels/today_full", 1),
     ]
 
@@ -34,21 +34,30 @@ class SidconActionTestCase(APITestCase):
 
         self.sidcon1 = sidconfactory.SidconFillLevelFactory(
             valid=False,
-            scraped_at=datetime.datetime.utcnow().replace(tzinfo=pytz.UTC)
+            description='A',
+            scraped_at=
+                datetime.datetime.utcnow().replace(tzinfo=pytz.UTC),
+            communication_date_time=
+                datetime.datetime.utcnow().replace(tzinfo=pytz.UTC)
         )
         self.sidcon1.valid = True
         self.sidcon1.save()
 
         day1 = datetime.timedelta(days=1)
         yesterday = datetime.datetime.utcnow().replace(tzinfo=pytz.UTC) - day1
-        self.sidcon2 = sidconfactory.SidconFillLevelFactory()
+        self.sidcon2 = sidconfactory.SidconFillLevelFactory(
+            description='B',
+        )
         self.sidcon2.scraped_at = yesterday
         self.sidcon2.save()
 
         self.sidcon3 = sidconfactory.SidconFillLevelFactory(
             valid=False,
-            scraped_at=datetime.datetime.utcnow().replace(tzinfo=pytz.UTC),
-            communication_date_time=datetime.datetime.utcnow().replace(tzinfo=pytz.UTC),
+            description='C',
+            scraped_at=
+                datetime.datetime.utcnow().replace(tzinfo=pytz.UTC),
+            communication_date_time=
+                datetime.datetime.utcnow().replace(tzinfo=pytz.UTC),
             filling=100
         )
         self.sidcon3.valid = True
@@ -59,7 +68,7 @@ class SidconActionTestCase(APITestCase):
             response = self.client.get("/{}/".format(url))
             # default should be json
             self.valid_response(url, response, 'application/json')
-
-            self.assertEqual(len(response.data), count)
+            self.assertEqual(
+                len(response.data), count, f"{url}")
 
     # TODO test filters fields etc

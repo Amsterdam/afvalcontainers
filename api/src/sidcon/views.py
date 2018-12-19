@@ -121,9 +121,13 @@ class SidconView(FlexFieldsMixin, DatapuntViewSet):
         filter_day = today - delta
         filter_day = filter_day.replace(tzinfo=pytz.UTC)
         qs = self.get_queryset()
-        qs = qs.filter(filling__gt=90)
-        today_full = qs.filter(communication_date_time__gt=filter_day)
-        serializer = self.get_serializer(today_full, many=True)
+
+        qs = (
+            qs.filter(filling__gt=90)
+            .filter(communication_date_time__gt=filter_day)
+        )
+
+        serializer = self.get_serializer(qs, many=True)
         return Response(serializer.data)
 
     @action(detail=False)
