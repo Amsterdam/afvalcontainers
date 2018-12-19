@@ -9,16 +9,16 @@ set -x   # print what we are doing
 DIR=`dirname "$0"`
 
 dc() {
-	docker-compose -p enevocontainers${ENVIRONMENT} -f $DIR/docker-compose-kilo.yml $*
+	docker-compose -p enevocontainers${ENVIRONMENT} -f ${DIR}/docker-compose.yml $*
 }
-
-# Download latest dump from objectstore
-dc run --rm importer python -m objectstore.databasedumps /data db_dumps --download-db
 
 ENV="acceptance"
 if [ "$ENVIRONMENT" == "production" ]; then
   ENV="production"
 fi
+
+# Download latest dump from objectstore
+dc run --rm importer python -m objectstore.databasedumps /data db_dumps --download-db
 
 dc exec -T database pg_restore --no-privileges --no-owner --if-exists -j 4 -c -C -d postgres -U afvalcontainers /data/database.$ENV
 
