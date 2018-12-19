@@ -11,6 +11,7 @@ from validation import validate_attribute_counts
 
 
 log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
 
 
 INSERT_WELLS = """

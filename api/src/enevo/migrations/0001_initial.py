@@ -49,6 +49,11 @@ class Migration(migrations.Migration):
                 ('content_type_name', models.CharField(max_length=100)),
                 ('start', models.DateTimeField()),
             ],
+            options={
+                'db_table': 'enevo_alert',
+                'managed': settings.TESTING,
+            },
+
         ),
         migrations.CreateModel(
             name='EnevoContainer',

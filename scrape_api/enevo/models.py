@@ -32,6 +32,7 @@ async def main(args):
 
 class EnevoAlert(Base):
     """Raw Enevo container data."""
+
     __tablename__ = f"enevo_alert_raw"
     id = Column(Integer, Sequence("grl_seq"), primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
@@ -40,6 +41,7 @@ class EnevoAlert(Base):
 
 class EnevoContainer(Base):
     """Raw Enevo container data."""
+
     __tablename__ = f"enevo_container_raw"
     id = Column(Integer, Sequence("grl_seq"), primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)

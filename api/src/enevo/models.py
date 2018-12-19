@@ -91,22 +91,24 @@ class EnevoContainerType(models.Model):
 
 
 class EnevoSiteContentType(models.Model):
-    content_type = models.ForeignKey("EnevoContentType",
-                                     related_name="site_content_types",
-                                     on_delete=models.DO_NOTHING,
-                                     null=True)
+    content_type = models.ForeignKey(
+        "EnevoContentType",
+        related_name="site_content_types",
+        on_delete=models.DO_NOTHING,
+        null=True)
     content_type_name = models.CharField(max_length=100)
     category_name = models.CharField(max_length=100)
-    site = models.ForeignKey("EnevoSite",
-                             related_name="site_content_types",
-                             on_delete=models.DO_NOTHING,
-                             null=True)
+    site = models.ForeignKey(
+        "EnevoSite",
+        related_name="site_content_types",
+        on_delete=models.DO_NOTHING,
+        null=True)
     fill_level = models.IntegerField(blank=True, null=True)
     date_when_full = models.DateTimeField(blank=True, null=True)
     build_up_rate = models.FloatField(blank=True, null=True)
     fill_up_time = models.IntegerField(blank=True, null=True)
-    last_service_event = models.CharField(max_length=100,
-                                          blank=True, null=True)
+    last_service_event = models.CharField(
+        max_length=100, blank=True, null=True)
     last_modified = models.CharField(max_length=100)
 
 
@@ -124,18 +126,24 @@ class EnevoAlert(models.Model):
     type_name = models.CharField(max_length=100)
     reported = models.DateTimeField()
     last_observed = models.DateTimeField()
-    site = models.ForeignKey("EnevoSite",
-                             related_name="alerts",
-                             on_delete=models.DO_NOTHING)
+    site = models.ForeignKey(
+        "EnevoSite",
+        related_name="alerts",
+        on_delete=models.DO_NOTHING)
     site_name = models.CharField(max_length=100, blank=True, null=True)
     area = models.IntegerField()
     area_name = models.CharField(max_length=100)
-    content_type = models.ForeignKey("EnevoContentType",
-                                     related_name="alerts",
-                                     on_delete=models.DO_NOTHING,
-                                     null=True)
+    content_type = models.ForeignKey(
+        "EnevoContentType",
+        related_name="alerts",
+        on_delete=models.DO_NOTHING,
+        null=True)
     content_type_name = models.CharField(max_length=100)
     start = models.DateTimeField()
+
+    class Meta:
+        managed = settings.TESTING
+        db_table = 'enevo_alert'
 
 
 class FillLevel(models.Model):

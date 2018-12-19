@@ -76,32 +76,9 @@ dc run --rm importer python bammens/copy_to_django.py containers --geoview
 # Validate import counts
 dc run --rm importer python bammens/copy_to_django.py containers --validate
 
-# Import ENEVO API
-
-dc run --rm importer python enevo/models.py
-# Importeer enevo api endpoints
-dc run --rm importer python enevo/slurp.py content_types
-dc run --rm importer python enevo/slurp.py sites
-dc run --rm importer python enevo/slurp.py site_content_types
-dc run --rm importer python enevo/slurp.py container_types
-dc run --rm importer python enevo/slurp.py container_slots
-dc run --rm importer python enevo/slurp.py containers
-# dc run --rm importer python enevo/slurp.py alerts
-
-# Insert data into django ENEVO database tables
-dc run --rm importer python enevo/copy_to_django.py content_types
-dc run --rm importer python enevo/copy_to_django.py sites
-dc run --rm importer python enevo/copy_to_django.py site_content_types
-dc run --rm importer python enevo/copy_to_django.py container_types
-dc run --rm importer python enevo/copy_to_django.py container_slots
-dc run --rm importer python enevo/copy_to_django.py containers
-
-dc run --rm importer python enevo/copy_to_django.py container_slots --link_container_slots
-dc run --rm importer python enevo/copy_to_django.py containers --validate_containers
-
 echo "Running backups"
 dc exec -T database backup-db.sh afvalcontainers
 
-echo "Store DB dump in objectstore for site creation step"
+echo "Store DB dump in objectstore for next step"
 dc run --rm importer python -m objectstore.databasedumps /backups/database.dump db_dumps --upload-db
 dc run --rm importer python -m objectstore.databasedumps /backups/database.dump db_dumps --days 20

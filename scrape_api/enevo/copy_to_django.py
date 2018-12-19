@@ -361,7 +361,7 @@ OPTIONS = {
     "site_content_types": update_sitecontenttypes,
     "container_slots": update_containerslots,
     "containers": update_containers,
-    "alerts": update_alerts,
+    # "alerts": update_alerts,
     "content_types": update_contenttypes,
 }
 

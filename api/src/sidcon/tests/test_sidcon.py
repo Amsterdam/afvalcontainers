@@ -35,10 +35,12 @@ class SidconActionTestCase(APITestCase):
         self.sidcon1 = sidconfactory.SidconFillLevelFactory(
             valid=False,
             description='A',
-            scraped_at=
-                datetime.datetime.utcnow().replace(tzinfo=pytz.UTC),
-            communication_date_time=
-                datetime.datetime.utcnow().replace(tzinfo=pytz.UTC)
+            scraped_at=(
+                datetime.datetime.utcnow()
+                .replace(tzinfo=pytz.UTC)),
+            communication_date_time=(
+                datetime.datetime.utcnow()
+                .replace(tzinfo=pytz.UTC))
         )
         self.sidcon1.valid = True
         self.sidcon1.save()
@@ -54,10 +56,12 @@ class SidconActionTestCase(APITestCase):
         self.sidcon3 = sidconfactory.SidconFillLevelFactory(
             valid=False,
             description='C',
-            scraped_at=
-                datetime.datetime.utcnow().replace(tzinfo=pytz.UTC),
-            communication_date_time=
-                datetime.datetime.utcnow().replace(tzinfo=pytz.UTC),
+            scraped_at=(
+                datetime.datetime.utcnow()
+                .replace(tzinfo=pytz.UTC)),
+            communication_date_time=(
+                datetime.datetime.utcnow()
+                .replace(tzinfo=pytz.UTC)),
             filling=100
         )
         self.sidcon3.valid = True
