@@ -35,7 +35,7 @@ dc run --rm importer /app/deploy/docker-wait.sh
 dc exec -T database touch /data/test.txt
 
 # Download latest dump from objectstore
-dc run --rm importer python -m objectstore.databasedumps /data db_dumps --download-db
+dc run --rm importer python -m objectstore.databasedumps /data db_enevo --download-db
 
 
 ENV="acceptance"
