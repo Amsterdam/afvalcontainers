@@ -29,13 +29,8 @@ dc rm -f
 dc pull
 dc build
 
-# create database tables if not exists.
-if [ "$DROP" = "yes" ]
-then
-   dc run --rm importer python enevo/models.py --drop
-else
-   dc run --rm importer python enevo/models.py
-fi
+# create enevo tables if not exists
+dc run --rm importer python enevo/models.py
 
 # Importeer enevo api endpoints
 dc run --rm importer python enevo/slurp.py content_types
