@@ -48,6 +48,7 @@ class EnevoContainer(Base):
 
 class EnevoContainerType(Base):
     """Raw Enevo ContainerType data."""
+
     __tablename__ = f"enevo_containertype_raw"
     id = Column(Integer, Sequence("grl_seq"), primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
@@ -56,6 +57,7 @@ class EnevoContainerType(Base):
 
 class EnevoContainerSlot(Base):
     """Raw Enevo ContainerSlot data."""
+
     __tablename__ = f"enevo_containerslot_raw"
     id = Column(Integer, Sequence("grl_seq"), primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
@@ -64,6 +66,7 @@ class EnevoContainerSlot(Base):
 
 class EnevoContentType(Base):
     """Raw Enevo ContentType data."""
+
     __tablename__ = f"enevo_contenttype_raw"
     id = Column(Integer, Sequence("grl_seq"), primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
@@ -72,6 +75,7 @@ class EnevoContentType(Base):
 
 class EnevoSite(Base):
     """Raw Enevo Sites data."""
+
     __tablename__ = f"enevo_site_raw"
     id = Column(Integer, Sequence("grl_seq"), primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
@@ -80,6 +84,7 @@ class EnevoSite(Base):
 
 class EnevoSiteContentType(Base):
     """Raw Enevo SiteContentType data."""
+
     __tablename__ = f"enevo_sitecontenttype_raw"
     id = Column(Integer, Sequence("grl_seq"), primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
@@ -88,6 +93,7 @@ class EnevoSiteContentType(Base):
 
 class EnevoDevice(Base):
     """Raw Enevo Device data."""
+
     __tablename__ = f"enevo_device_raw"
     id = Column(Integer, Sequence("grl_seq"), primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
@@ -96,6 +102,7 @@ class EnevoDevice(Base):
 
 class EnevoServiceList(Base):
     """Raw Enevo ServiceList data."""
+
     __tablename__ = f"enevo_servicelist_raw"
     id = Column(Integer, Sequence("grl_seq"), primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
@@ -104,6 +111,7 @@ class EnevoServiceList(Base):
 
 class EnevoServiceEvent(Base):
     """Raw Enevo ServiceEvent data."""
+
     __tablename__ = f"enevo_serviceevent_raw"
     id = Column(Integer, Sequence("grl_seq"), primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)

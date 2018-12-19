@@ -133,6 +133,7 @@ WASTE_DESCRIPTIONS = {
     31: "KCA",
     -1: "Unkown",
     None: "Unknown",
+    23: "Unknown",
 }
 
 
@@ -215,7 +216,13 @@ def cleanup_dates(endpoint):
 
 def add_waste_name_to_data(data):
     """Try to determine what kind of waste goes into container."""
-    waste_name = WASTE_DESCRIPTIONS[data.get('waste_type', -1)]
+    try:
+        fractie_id = data.get('waste_type', -1)
+        waste_name = WASTE_DESCRIPTIONS[fractie_id]
+    except KeyError:
+        log.error("UNKNOWN fractie id nummer in %s in %s", fractie_id, data)
+        fractie_id = -1
+
     data['waste_name'] = waste_name
     return data
 
