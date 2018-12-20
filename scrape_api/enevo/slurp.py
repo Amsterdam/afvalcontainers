@@ -29,6 +29,9 @@ assert api_config["password"], "Missing ENEVO_API_PASSWORD"
 
 WORKERS = 1
 
+RESULT_QUEUE = asyncio.Queue()
+URL_QUEUE = asyncio.Queue()
+
 ENDPOINTS = [
     "content_types",
     "alerts",
@@ -82,9 +85,6 @@ ENDPOINT_MODEL = {
     "fill_levels": models.EnevoFillLevelRaw,
     "alerts": models.EnevoAlertRaw,
 }
-
-RESULT_QUEUE = asyncio.Queue()
-
 
 def prepare_object(endpoint, item):
     if endpoint == "fill_levels":
@@ -215,6 +215,53 @@ def check_current_date(endpoint):
         f'{start}', '%Y-%m-%dT%H:%M:%SZ')
     # fall back to default.
     return beginning
+
+
+async def do_request(work_id, endpoint, params={}):
+    """WIP Do request in our own private session."""
+    count = 0
+    session = None
+
+    while True:
+
+        if not session:
+            # session = ClientSession()
+            # set login credentials in session
+            try:
+                await # login.set_login_cookies(session)
+            except (aiohttp.client_exceptions.ServerDisconnectedError):
+                log.exception("Server disconnect..wait a bit")
+                await session.close()
+                asyncio.sleep(5)
+                session = None
+                continue
+
+        item = await URL_QUEUE.get()
+
+        if item == "terminate":
+            await session.close()
+            break
+
+        # url = ENDPOINT_URL[endpoint]
+        _id = item["id"]
+        json_response = await get_the_json(session, endpoint, _id)
+
+        if not json_response:
+            URL_QUEUE.put(item)
+            log.debug("skipping")
+            continue
+
+        _type = list(json_response.keys())[0]
+        item = json_response[_type]
+        await RESULT_QUEUE.put(item)
+
+        count += 1
+        if count > 40:
+            await session.close()
+            session = None
+            count = 0
+
+    log.debug(f"Done {work_id}")
 
 
 async def fetch_historical_endpoint(session, endpoint):

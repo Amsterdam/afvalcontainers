@@ -144,7 +144,7 @@ def add_items_to_db(endpoint, json: list):
 
 
 async def do_request(work_id, endpoint, params={}):
-    """Do request in our own private session."""
+    """WIP Do request in our own private session."""
     count = 0
     session = None
 
