@@ -58,3 +58,5 @@ dc exec -T database backup-db.sh afvalcontainers
 echo "Store DB dump in objectstore for next step"
 dc run --rm importer python -m objectstore.databasedumps /backups/database.dump db_enevo --upload-db
 dc run --rm importer python -m objectstore.databasedumps /backups/database.dump db_enevo --days 20
+
+dc down -v

@@ -106,11 +106,10 @@ dc run --rm importer python bammens/create_sites.py --kilostats
 dc run --rm importer python bammens/create_sites.py --buurtcontainercounts
 dc run --rm importer python bammens/create_sites.py --validate
 
-echo "Running backups"
+echo "creating database dump"
 dc exec -T database backup-db.sh afvalcontainers
 
 echo "Store final DB dump in objectstore"
 dc run --rm importer python -m objectstore.databasedumps /backups/database.dump db_cleaned --upload-db
 
 dc down -v
-dc rm -f
