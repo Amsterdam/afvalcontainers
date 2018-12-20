@@ -28,6 +28,7 @@ assert api_config["username"], "Missing ENEVO_API_USERNAME"
 assert api_config["password"], "Missing ENEVO_API_PASSWORD"
 
 WORKERS = 1
+
 ENDPOINTS = [
     "content_types",
     "alerts",
@@ -40,6 +41,12 @@ until = '{}Z'.format(datetime.datetime.utcnow().isoformat(timespec='seconds'))
 after = datetime.datetime.utcnow() - datetime.timedelta(minutes=30)
 after = '{}Z'.format(after.isoformat(timespec='seconds'))
 
+HISTORICAL_ENDPOINTS = {
+    # until - after parameter start.
+    'alerts': ('2014-10-01T00:00:00Z'),
+    'fill_levels': ('2014-10-01T00:00:00Z'),
+}
+
 ENDPOINT_URL = {
     "session": f"{API_URL}/session",
     "containers": f"{API_URL}/containers/?limit=0",
@@ -48,11 +55,10 @@ ENDPOINT_URL = {
     "content_types": f"{API_URL}/contentTypes/?limit=0",
     "sites": f"{API_URL}/sites/?limit=0",
     "site_content_types": f"{API_URL}/siteContentTypes/?limit=0",
-    "alerts": f"{API_URL}/alerts/recent",
 
+    "alerts": f"{API_URL}/alerts/",
     "fill_levels":
         f"{API_URL}/fillLevels/?after={after}&until={until}&limit=0",
-
 }
 
 ENDPOINT_KEY = {
@@ -73,8 +79,8 @@ ENDPOINT_MODEL = {
     "content_types": models.EnevoContentType,
     "sites": models.EnevoSite,
     "site_content_types": models.EnevoSiteContentType,
-    "fill_levels": models.EnevoFillLevel,
-    "alerts": models.EnevoAlert,
+    "fill_levels": models.EnevoFillLevelRaw,
+    "alerts": models.EnevoAlertRaw,
 }
 
 RESULT_QUEUE = asyncio.Queue()
@@ -164,11 +170,11 @@ async def store_results(endpoint):
         add_items_to_db(endpoint, results)
 
 
-async def fill_url_queue(session, endpoint):
+async def fetch_endpoint(session, endpoint):
     """Fill queue with urls to fetch."""
     url = ENDPOINT_URL[endpoint]
     url = url.format(API_URL)
-    print(url)
+    log.info(url)
     response = await fetch(url, session)
     json_body = await response.json()
     itemname = ENDPOINT_KEY[endpoint]
@@ -178,12 +184,49 @@ async def fill_url_queue(session, endpoint):
     total = len(json_body[itemname])
     log.info("%s: size %s", endpoint, total)
     all_items = list(json_body[itemname])
-    random.shuffle(all_items)
+    # random.shuffle(all_items)
 
     for item in all_items:
         await RESULT_QUEUE.put(item)
 
     return total
+
+
+def check_current_date(endpoint):
+    """Determine date endpoint where history is left off.
+
+    So we can start add data from that point on.
+    """
+    db_session = db_helper.session
+    dbmodel = models.EnevoFillLevelRaw
+    record = (
+        db_session
+        .query(dbmodel)
+        .order_by(dbmodel.time.desc())
+        .first()
+    )
+
+    if record:
+        return record.time
+
+    start = HISTORICAL_ENDPOINTS[endpoint]
+    # 2014-10-01T00:00:00Z
+    beginning = datetime.datetime.strptime(
+        f'{start}', '%Y-%m-%dT%H:%M:%SZ')
+    # fall back to default.
+    return beginning
+
+
+async def fetch_historical_endpoint(session, endpoint):
+    """Fill queue with urls to fetch."""
+    after = check_current_date(endpoint)
+    # before = after + datetime.timedelta(days=1)
+    # pass
+    import q; q.d()
+    # determine start date
+    # derived from current data in db or default.
+
+    # fetch data in chunks of 10.000
 
 
 def get_session_token():
@@ -206,7 +249,11 @@ async def run_workers(endpoint):
     # for endpoint get a list of items to pick up
     headers = {'X-token': get_session_token()}
     async with aiohttp.ClientSession(headers=headers) as session:
-        await fill_url_queue(session, endpoint)
+
+        if endpoint in HISTORICAL_ENDPOINTS:
+            await fetch_historical_endpoint(session, endpoint)
+        else:
+            await fetch_endpoint(session, endpoint)
 
     await RESULT_QUEUE.put("terminate")
     await asyncio.gather(store_data)

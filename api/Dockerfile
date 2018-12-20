@@ -7,8 +7,6 @@ EXPOSE 8000
 
 RUN mkdir -p /static && chown datapunt /static
 
-
-
 COPY src /app/
 COPY deploy /deploy/
 COPY requirements.txt /app/
