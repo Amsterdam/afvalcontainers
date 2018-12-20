@@ -25,6 +25,7 @@ dc exec -T database pg_restore --no-privileges --no-owner --if-exists -j 4 -c -C
 
 trap 'dc kill ; dc down ; dc rm -f' EXIT
 
+dc down
 dc rm -f
 dc pull
 dc build
