@@ -20,3 +20,4 @@ drf_yasg
 swagger-spec-validator
 markdown
 pygments
+sentry-sdk

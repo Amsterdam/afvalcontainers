@@ -1,9 +1,11 @@
 import os
 import sys
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 from afvalcontainers.settings_common import *  # noqa F403
 from afvalcontainers.settings_common import INSTALLED_APPS
-from afvalcontainers.settings_common import REST_FRAMEWORK
+from afvalcontainers.settings_common import REST_FRAMEWORK  # noqa
 
 
 from afvalcontainers.settings_databases import (
@@ -138,3 +140,10 @@ STADSDELEN = (
 )
 
 WASTE_CHOICES = [(w, w) for w in WASTE_DESCRIPTIONS]
+
+SENTRY_DSN = os.getenv('SENTRY_DSN')
+if SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[DjangoIntegration()]
+    )
