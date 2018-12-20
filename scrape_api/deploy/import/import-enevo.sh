@@ -17,12 +17,6 @@ if [ "$ENVIRONMENT" == "production" ]; then
   ENV="production"
 fi
 
-# Download latest dump from objectstore
-dc run --rm importer python -m objectstore.databasedumps /data db_dumps --download-db
-
-dc exec -T database pg_restore --no-privileges --no-owner --if-exists -j 4 -c -C -d postgres -U afvalcontainers /data/database.$ENV
-
-
 trap 'dc kill ; dc down ; dc rm -f' EXIT
 
 echo "Building / pull / cleanup images"
@@ -34,6 +28,11 @@ dc build
 echo "Bringing up and waiting for database"
 dc up -d database
 dc run importer /app/deploy/docker-wait.sh
+
+# Download latest dump from objectstore
+dc run --rm importer python -m objectstore.databasedumps /data db_dumps --download-db
+dc exec -T database pg_restore --no-privileges --no-owner --if-exists -j 4 -c -C -d postgres -U afvalcontainers /data/database.$ENV
+
 
 # create enevo tables if not exists
 dc run --rm importer python enevo/models.py
