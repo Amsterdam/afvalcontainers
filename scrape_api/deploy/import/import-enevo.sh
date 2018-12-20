@@ -25,10 +25,15 @@ dc exec -T database pg_restore --no-privileges --no-owner --if-exists -j 4 -c -C
 
 trap 'dc kill ; dc down ; dc rm -f' EXIT
 
+echo "Building / pull / cleanup images"
 dc down
 dc rm -f
 dc pull
 dc build
+
+echo "Bringing up and waiting for database"
+dc up -d database
+dc run importer /app/deploy/docker-wait.sh
 
 # create enevo tables if not exists
 dc run --rm importer python enevo/models.py
