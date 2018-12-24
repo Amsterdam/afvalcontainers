@@ -112,10 +112,10 @@ class Well(models.Model):
 class Site(models.Model):
     id = models.CharField(max_length=30, primary_key=True)
     short_id = models.IntegerField(unique=True, null=True)
-    buurt_code = models.CharField(max_length=20, null=False)
-    stadsdeel = models.CharField(max_length=1, null=False)
-    stadsdeel_naam = models.CharField(max_length=20, null=False)
-    straatnaam = models.CharField(max_length=40, null=False)
+    buurt_code = models.CharField(max_length=20, null=True)
+    stadsdeel = models.CharField(max_length=1, null=True)
+    stadsdeel_naam = models.CharField(max_length=20, null=True)
+    straatnaam = models.CharField(max_length=40, null=True)
     huisnummer = models.IntegerField(null=True)
     # distance to address
     distance = models.IntegerField(null=True)
