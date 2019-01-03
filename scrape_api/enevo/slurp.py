@@ -10,6 +10,7 @@ import datetime
 import requests
 
 from settings import API_ENEVO_URL as API_URL
+from settings import KILO_ENVIRONMENT_OVERRIDES
 
 import db_helper
 
@@ -27,18 +28,21 @@ api_config = {
 assert api_config["username"], "Missing ENEVO_API_USERNAME"
 assert api_config["password"], "Missing ENEVO_API_PASSWORD"
 
-WORKERS = 1
+WORKERS = 6
 
 RESULT_QUEUE = asyncio.Queue()
 URL_QUEUE = asyncio.Queue()
 
-ENDPOINTS = [
-    "content_types",
-    "alerts",
-    "containers", "container_types", "container_slots",
-    "sites", "site_content_types",
-    "fill_levels"
-]
+ENDPOINTS = {
+    "content_types": "contentTypes",
+    "alerts": "alerts",
+    "containers": "containers",
+    "container_types": "containerTypes",
+    "container_slots": "containerSlots",
+    "sites": "Sites",
+    "site_content_types": "siteContentTypes",
+    "fill_levels": "fillLevels",
+}
 
 until = '{}Z'.format(datetime.datetime.utcnow().isoformat(timespec='seconds'))
 after = datetime.datetime.utcnow() - datetime.timedelta(minutes=30)
@@ -46,8 +50,8 @@ after = '{}Z'.format(after.isoformat(timespec='seconds'))
 
 HISTORICAL_ENDPOINTS = {
     # until - after parameter start.
-    'alerts': ('2014-10-01T00:00:00Z'),
-    'fill_levels': ('2014-10-01T00:00:00Z'),
+    'alerts': ('2018-10-01T00:00:00Z'),
+    'fill_levels': ('2018-10-01T00:00:00Z'),
 }
 
 ENDPOINT_URL = {
@@ -60,8 +64,7 @@ ENDPOINT_URL = {
     "site_content_types": f"{API_URL}/siteContentTypes/?limit=0",
 
     "alerts": f"{API_URL}/alerts/",
-    "fill_levels":
-        f"{API_URL}/fillLevels/?after={after}&until={until}&limit=0",
+    "fill_levels": f"{API_URL}/fillLevels/",
 }
 
 ENDPOINT_KEY = {
@@ -86,29 +89,31 @@ ENDPOINT_MODEL = {
     "alerts": models.EnevoAlertRaw,
 }
 
+
 def prepare_object(endpoint, item):
-    if endpoint == "fill_levels":
-        return dict(
-            time=item['time'],
-            fill_level=item['fillLevel'],
-            site=item['site'],
-            site_name=item['siteName'],
-            site_content_type=item['siteContentType'],
-            confidence=item['confidence'],
-            frozen=bool(item['frozen']),
-        )
-    return dict(
-        id=item['id'],
+    db_record = dict(
+        # id=item['id'],
         scraped_at=datetime.datetime.now(),
         data=item,
     )
 
+    if endpoint in HISTORICAL_ENDPOINTS:
+        data_key = ENDPOINTS[endpoint]
+        try:
+            time = item[data_key][-1]['time']
+            db_record['time'] = time
+        except TypeError:
+            log.debug(item[data_key])
+            raise ValueError
 
-def add_items_to_db(endpoint, json):
+    return db_record
+
+
+def add_items_to_db(endpoint, raw_json_list):
     """Store json to database."""
-    log.debug(f"Storing {len(json)} items")
+    log.debug(f"Storing {len(raw_json_list)} items")
 
-    if not json:
+    if not raw_json_list:
         log.error("No data recieved")
         return
 
@@ -119,39 +124,48 @@ def add_items_to_db(endpoint, json):
 
     objects = []
 
-    for item in json:
-        objects.append(prepare_object(endpoint, item))
+    for raw_item in raw_json_list:
+        objects.append(prepare_object(endpoint, raw_item))
 
     db_session.bulk_insert_mappings(db_model, objects)
     db_session.commit()
-    log.debug(f"Stored {len(json)} items")
+    log.debug(f"Stored {len(raw_json_list)} items")
 
 
-async def fetch(url, session, params=None, auth=None):
+async def fetch(url, session, params=None):
+
+    assert params
+
     try:
-        response = await session.get(url, ssl=True)
+        response = await session.get(
+            url,
+            compress=True,
+            ssl=True,
+            chunked=True,
+            params=params,
+        )
         return response
 
     except (aiohttp.client_exceptions.ServerDisconnectedError):
         log.error("Server disconnect..")
-        asyncio.sleep(random.random() * 10)
+        await asyncio.sleep(random.random() * 10)
         return None
 
 
 def clear_current_table(endpoint):
     """Clean start."""
     # make new session
-    session = db_helper.session
+    db_session = db_helper.session
     db_model = ENDPOINT_MODEL[endpoint]
-    session.query(db_model).delete()
-    session.commit()
+    db_session.query(db_model).delete()
+    db_session.commit()
 
 
 async def store_results(endpoint):
-    if endpoint != "fill_levels":
+    if endpoint not in HISTORICAL_ENDPOINTS.keys():
         clear_current_table(endpoint)
 
-    results = []
+    raw_results = []
 
     while True:
         value = await RESULT_QUEUE.get()
@@ -159,23 +173,30 @@ async def store_results(endpoint):
         if value == "terminate":
             break
 
-        results.append(value)
+        raw_results.append(value)
 
-        if len(results) > 25:
-            add_items_to_db(endpoint, results)
-            results = []
+        if len(raw_results) > 5:
+            add_items_to_db(endpoint, raw_results)
+            raw_results = []
 
-    if results:
+    if raw_results:
         # save whats left.
-        add_items_to_db(endpoint, results)
+        add_items_to_db(endpoint, raw_results)
 
 
-async def fetch_endpoint(session, endpoint):
+async def fetch_endpoint(endpoint):
     """Fill queue with urls to fetch."""
     url = ENDPOINT_URL[endpoint]
     url = url.format(API_URL)
     log.info(url)
-    response = await fetch(url, session)
+
+    # for endpoint get a list of items to pick up
+    xtoken = get_session_token()
+    headers = {'X-token': xtoken}
+
+    async with aiohttp.ClientSession(headers=headers) as session:
+        response = await fetch(url, session)
+
     json_body = await response.json()
     itemname = ENDPOINT_KEY[endpoint]
 
@@ -217,63 +238,188 @@ def check_current_date(endpoint):
     return beginning
 
 
-async def do_request(work_id, endpoint, params={}):
-    """WIP Do request in our own private session."""
-    count = 0
+async def get_session():
+
     session = None
 
-    while True:
-
-        if not session:
-            # session = ClientSession()
-            # set login credentials in session
-            try:
-                await # login.set_login_cookies(session)
-            except (aiohttp.client_exceptions.ServerDisconnectedError):
-                log.exception("Server disconnect..wait a bit")
+    while session is None:
+        try:
+            xtoken = get_session_token()
+            headers = {'X-token': xtoken}
+            session = aiohttp.ClientSession(headers=headers)
+        except (aiohttp.client_exceptions.ServerDisconnectedError):
+            log.exception("Server disconnect..wait a bit")
+            if session:
                 await session.close()
-                asyncio.sleep(5)
+                await asyncio.sleep(5)
                 session = None
-                continue
 
-        item = await URL_QUEUE.get()
+        if session:
+            return session
 
-        if item == "terminate":
-            await session.close()
-            break
 
-        # url = ENDPOINT_URL[endpoint]
-        _id = item["id"]
-        json_response = await get_the_json(session, endpoint, _id)
+async def get_the_json(session, endpoint, params):
+    """Get some json of endpoint.
 
-        if not json_response:
-            URL_QUEUE.put(item)
-            log.debug("skipping")
+    retry x times on failure.
+    """
+    json = []
+    response = None
+    url = ENDPOINT_URL[endpoint]
+
+    retry = 5
+
+    retry_codes = [500, 502, 503, 504, 400]
+
+    while retry > 0:
+        json = None
+
+        retry -= 1
+
+        response = await fetch(url, session, params=params)
+
+        if response is None:
+            log.error("RESPONSE NONE %s %s", url, params)
             continue
 
-        _type = list(json_response.keys())[0]
-        item = json_response[_type]
-        await RESULT_QUEUE.put(item)
+        elif response.status == 200:
+            log.debug(f" OK  {response.status}:{url}{params['after']}")
+        elif response.status == 401:
+            log.error(f" AUTH {response.status}:{url}")
+            continue
+        elif response.status in retry_codes:
+            log.debug(f"FAIL {response.status}:{url}")
+            await asyncio.sleep(0.01)
+            continue
 
-        count += 1
-        if count > 40:
-            await session.close()
-            session = None
-            count = 0
+        # Sometime ENEVO throws 400 for no reason!!
+        # too many request probably
+        elif response.status == 400:
+            log.error(response)
+            log.error(await response.text())
+            continue
+            # raise ValueError("400. wrong request. %s", params)
+
+        elif response.status == 404:
+            log.error(f" 404 {response.status}:{url}")
+            raise ValueError("404. NOT FOUND wrong request.")
+
+        if response:
+            json = await response.json()
+
+        return json
+
+
+async def load_day(session, endpoint, params):
+    """Load all data within a single day."""
+    # lookup key in object to look for in response
+    data_key = ENDPOINTS[endpoint]
+
+    limit = params['limit']
+    count = limit
+
+    while count == limit:
+
+        json_response = await get_the_json(session, endpoint, params)
+
+        if not json_response:
+            await URL_QUEUE.put(params)
+            log.debug("skipping, try again later")
+            count = None
+
+        else:
+            count = json_response['count']
+            latest_time = json_response[data_key][-1]['time']
+            until = params['until']
+
+            after_dt = datetime.datetime.strptime(
+                f'{latest_time}', '%Y-%m-%dT%H:%M:%SZ')
+            before_dt = datetime.datetime.strptime(
+                f'{until}', '%Y-%m-%dT%H:%M:%SZ')
+
+            assert after_dt < before_dt, 'Time Error'
+
+            params['after'] = latest_time
+
+            await RESULT_QUEUE.put(json_response)
+
+        await asyncio.sleep(0.01)
+
+
+async def do_request(work_id, endpoint):
+    """Download all data available for endoint item parameters.
+
+    We do request in our own private session.
+    """
+    # session = None
+
+    # for endpoint get a list of items to pick up
+    headers = {
+        'X-token': get_session_token(),
+    }
+
+    async with aiohttp.ClientSession(headers=headers) as session:
+
+        while True:
+            item = await URL_QUEUE.get()
+            if item == "terminate":
+                await session.close()
+                break
+
+            params = item
+            await load_day(session, endpoint, params)
 
     log.debug(f"Done {work_id}")
 
 
-async def fetch_historical_endpoint(session, endpoint):
-    """Fill queue with urls to fetch."""
-    after = check_current_date(endpoint)
-    # before = after + datetime.timedelta(days=1)
-    # pass
-    import q; q.d()
-    # determine start date
-    # derived from current data in db or default.
+async def log_progress():
+    start = URL_QUEUE.qsize()
+    while True:
+        size = URL_QUEUE.qsize()
+        log.info("Progress %s %s", size, start)
+        await asyncio.sleep(10)
 
-    # fetch data in chunks of 10.000
+
+async def fetch_historical_endpoint(endpoint, workers=WORKERS):
+    """Fill queue with urls to fetch."""
+    now = datetime.datetime.now()
+    # see where we left off, else start from 2014.
+    after = check_current_date(endpoint)
+    until = after + datetime.timedelta(days=1)
+
+    progress = asyncio.ensure_future(log_progress())
+    # test hack
+    # now = after + datetime.timedelta(days=10)
+    log.info('Starting from %s', after)
+
+    # fill queue with tasks
+    while after < now:
+        params = dict(
+            after=after.strftime('%Y-%m-%dT%H:%M:%SZ'),
+            until=until.strftime('%Y-%m-%dT%H:%M:%SZ'),
+            cid=152202,
+            limit=10000,
+        )
+        await URL_QUEUE.put(params)
+        # move one day forward.
+        after = until
+        until = until + datetime.timedelta(days=1)
+
+    workers = [
+        asyncio.ensure_future(do_request(i, endpoint))
+        for i in range(workers)]
+
+    # Terminate instructions for all workers
+    for _ in range(len(workers)):
+        await URL_QUEUE.put("terminate")
+
+    # wait till they are done
+    await asyncio.gather(*workers)
+    progress.cancel()
+
+
+class SessionException(Exception):
+    pass
 
 
 def get_session_token():
@@ -284,7 +430,7 @@ def get_session_token():
     session = resp.json().get('session')
 
     if not session:
-        raise Exception('Authentication Error')
+        raise SessionException('Authentication Error')
 
     return resp.json()['session']['token']
 
@@ -293,26 +439,25 @@ async def run_workers(endpoint):
     """Run X workers processing fetching tasks."""
     # start job of puting data into database
     store_data = asyncio.ensure_future(store_results(endpoint))
-    # for endpoint get a list of items to pick up
-    headers = {'X-token': get_session_token()}
-    async with aiohttp.ClientSession(headers=headers) as session:
 
-        if endpoint in HISTORICAL_ENDPOINTS:
-            await fetch_historical_endpoint(session, endpoint)
-        else:
-            await fetch_endpoint(session, endpoint)
+    if endpoint in HISTORICAL_ENDPOINTS:
+        await fetch_historical_endpoint(endpoint)
+    else:
+        await fetch_endpoint(endpoint)
 
     await RESULT_QUEUE.put("terminate")
+    # wait untill all data is stored in database
     await asyncio.gather(store_data)
-    log.debug("done!")
+
+    log.info("Done!")
 
 
 async def main(endpoint, make_engine=True):
     # when testing we do not want an engine.
     if make_engine:
         engine = db_helper.make_engine(
-            section="docker")
-        # environment=KILO_ENVIRONMENT_OVERRIDES)
+            section="docker",
+            environment=KILO_ENVIRONMENT_OVERRIDES)
         db_helper.set_session(engine)
     await run_workers(endpoint)
 
@@ -333,7 +478,7 @@ if __name__ == "__main__":
         "endpoint",
         type=str,
         default="qa_realtime",
-        choices=ENDPOINTS,
+        choices=ENDPOINTS.keys(),
         help="Provide Endpoint to scrape",
         nargs=1,
     )

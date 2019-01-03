@@ -41,11 +41,11 @@ async def main(args):
         LOG.warning("CREATING LIVE RELATED TABLES")
         meta = MetaData(engine)
         meta.reflect()
-
         for table in LIVE_TABLES:
             table_name = table.__table__.name
             if table_name not in meta.tables:
-                table.meta.create()
+                table.__table__.create(engine)
+        # stop creating more tables
         return
 
     LOG.warning("CREATING ALL DEFINED TABLES")
@@ -141,7 +141,7 @@ class EnevoAlertRaw(Base):
     """
 
     __tablename__ = f"enevo_alert_raw"
-    id = Column(Integer, Sequence("grl_seq"), primary_key=True)
+    id = Column(Integer, Sequence("alert_seq"), primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
     time = Column(TIMESTAMP, index=True)
     data = Column(JSONB)
@@ -154,7 +154,10 @@ class EnevoFillLevelRaw(Base):
     """
 
     __tablename__ = f"enevo_filllevel_raw"
-    id = Column(Integer, Sequence("grl_seq"), primary_key=True)
+    raw_id_seq = Sequence("raw_fill_id_seq", metadata=Base.metadata)
+    id = Column(
+        Integer, raw_id_seq, server_default=raw_id_seq.next_value(),
+        primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
     time = Column(TIMESTAMP, index=True)
     data = Column(JSONB)
@@ -164,7 +167,10 @@ class EnevoFillLevel(Base):
     """Enevo FillLevel data. used in data."""
 
     __tablename__ = f"enevo_filllevel"
-    id = Column(Integer, Sequence("grl_seq"), primary_key=True)
+    fill_id_seq = Sequence("fill_id_seq", metadata=Base.metadata)
+    id = Column(
+        Integer, fill_id_seq, server_default=fill_id_seq.next_value(),
+        primary_key=True)
     time = Column(String, index=True)
     fill_level = Column(Integer, index=True)
     site = Column(Integer, index=True)
@@ -176,6 +182,7 @@ class EnevoFillLevel(Base):
 
 DROP_TABLES = [
     EnevoFillLevel,
+    # EnevoFillLevelRaw,
 ]
 
 
