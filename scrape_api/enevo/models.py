@@ -171,13 +171,17 @@ class EnevoFillLevel(Base):
     id = Column(
         Integer, fill_id_seq, server_default=fill_id_seq.next_value(),
         primary_key=True)
-    time = Column(String, index=True)
+    time = Column(TIMESTAMP, index=True)
     fill_level = Column(Integer, index=True)
-    site = Column(Integer, index=True)
-    site_name = Column(String, index=True)
-    site_content_type = Column(Integer, index=True)
+    # e is for enevo
+    e_site = Column(Integer, index=True)
+    e_site_name = Column(String, index=True)
+    e_site_content_type = Column(Integer, index=True)
     confidence = Column(Integer, index=True)
+    content_type_name = Column(String, index=True)
+    content_type = Column(String, index=True)
     frozen = Column(Boolean, index=True)
+    container_slot_name = Column(String, index=True)
 
 
 DROP_TABLES = [
