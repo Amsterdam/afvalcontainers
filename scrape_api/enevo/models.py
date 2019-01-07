@@ -24,7 +24,6 @@ IMPORT_PREFIX = ''
 async def main(args):
     """Table management."""
     engine = db_helper.make_engine(
-        section="docker",
         environment=KILO_ENVIRONMENT_OVERRIDES,
     )
     session = db_helper.set_session(engine)
