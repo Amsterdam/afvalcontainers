@@ -39,12 +39,16 @@ async def main(args):
         for table in DROP_TABLES:
             table = table.__table__.name
             session.execute(f"DROP table if exists {table};")
+
+        for seq in DROP_SEQUENCE:
+            session.execute(f"DROP SEQUENCE IF EXISTS {seq};")
+
         session.commit()
 
     if args.live:
         LOG.warning("CREATING LIVE RELATED TABLES")
         meta = MetaData(engine)
-        meta.reflect()
+        meta.reflect(engine)
         for table in LIVE_TABLES:
             table_name = table.__table__.name
             if table_name not in meta.tables:
@@ -171,9 +175,9 @@ class EnevoFillLevel(Base):
     """Enevo FillLevel data. used in data."""
 
     __tablename__ = f"enevo_filllevel"
-    fill_id_seq = Sequence("fill_id_seq", metadata=Base.metadata)
+    id_seq = Sequence("fill_id_seq", metadata=Base.metadata)
     id = Column(
-        Integer, fill_id_seq, server_default=fill_id_seq.next_value(),
+        Integer, id_seq, server_default=id_seq.next_value(),
         primary_key=True)
     time = Column(TIMESTAMP, index=True)
     fill_level = Column(Integer, index=True)
@@ -191,6 +195,11 @@ class EnevoFillLevel(Base):
 DROP_TABLES = [
     EnevoFillLevel,
     # EnevoFillLevelRaw,
+]
+
+DROP_SEQUENCE = [
+    'fill_id_seq',
+    # 'raw_fill_id_seq',
 ]
 
 
