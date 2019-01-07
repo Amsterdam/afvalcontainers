@@ -1,14 +1,14 @@
 version: '3.0'
 services:
   importer:
-    image: build.datapunt.amsterdam.nl:5000/afvalcontainers_importer:${ENVIRONMENT}
-    # build: ../../
+    # image: build.datapunt.amsterdam.nl:5000/afvalcontainers_importer:${ENVIRONMENT}
+    build: ../../
     environment:
       ENVIRONMENT:
       KILOGRAM_API_PASSWORD:
       SIDCON_PASSWORD:
       ENEVO_API_PASSWORD:
-      ENEVO_API_USER:
+      ENEVO_API_USERNAME:
       DATABASE_NAME: kilogram
       DATABASE_USER: kilogram
       DATABASE_KILOGRAM_PASSWORD:
