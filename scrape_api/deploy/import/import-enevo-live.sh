@@ -17,10 +17,9 @@ if [ "$ENVIRONMENT" == "production" ]; then
   ENV="production"
 fi
 
-trap 'dc kill ; dc down ; dc rm -f' EXIT
+trap 'dc kill ; dc down -v ; dc rm -f' EXIT
 
 echo "Building / pull / cleanup images"
-dc down
 dc rm -f
 dc pull
 dc build
@@ -35,5 +34,3 @@ fi
 
 dc run --rm importer python enevo/slurp.py fill_levels
 dc run --rm importer python enevo/convert_live_raw.py
-
-dc down -v
