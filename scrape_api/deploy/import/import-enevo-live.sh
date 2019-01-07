@@ -20,9 +20,9 @@ fi
 trap 'dc kill ; dc down -v ; dc rm -f' EXIT
 
 echo "Building / pull / cleanup images"
-dc rm -f
+# dc rm -f
 dc pull
-dc build
+# dc build
 
 # create LIVE database tables if not exists.
 if [ "$DROP" = "yes" ]
