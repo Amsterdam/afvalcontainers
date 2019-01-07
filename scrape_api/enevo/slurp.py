@@ -185,8 +185,6 @@ async def store_results(endpoint):
             add_items_to_db(endpoint, raw_results)
             raw_results = []
 
-        await asyncio.sleep(0.01)
-
     if raw_results:
         # save whats left.
         add_items_to_db(endpoint, raw_results)
@@ -197,6 +195,7 @@ async def fetch_endpoint(endpoint):
     url = ENDPOINT_URL[endpoint]
     url = url.format(API_URL)
     log.info(url)
+    store_data = asyncio.ensure_future(store_results(endpoint))
 
     # for endpoint get a list of items to pick up
     xtoken = get_session_token()
@@ -217,6 +216,9 @@ async def fetch_endpoint(endpoint):
 
     for item in all_items:
         await RESULT_QUEUE.put(item)
+
+    await RESULT_QUEUE.put("terminate")
+    await asyncio.gather(store_data)
 
     return total
 
@@ -284,6 +286,11 @@ async def get_the_json(session, endpoint, params):
         json = None
 
         retry -= 1
+
+        if settings.TESTING['running']:
+            # no need to retry..
+            retry = -1
+
         response = None
         try:
             response = await fetch(url, session, params=params)
@@ -335,8 +342,8 @@ async def load_day(session, endpoint, params):
         json_response = await get_the_json(session, endpoint, params)
 
         if not json_response:
-            await URL_QUEUE.put(params)
-            log.debug("skipping, try again later")
+            # await URL_QUEUE.put(params)
+            log.debug("skipping")
             count = None
 
         else:
@@ -392,8 +399,10 @@ async def log_progress():
         await asyncio.sleep(10)
 
 
-async def fetch_historical_endpoint(endpoint, workers=WORKERS):
+async def fetch_historical_endpoint(endpoint, worker_count=WORKERS):
     """Fill queue with urls to fetch."""
+    store_data = asyncio.ensure_future(store_results(endpoint))
+
     now = datetime.datetime.now()
     # see where we left off, else start from 2014.
     after = check_current_date(endpoint)
@@ -401,13 +410,13 @@ async def fetch_historical_endpoint(endpoint, workers=WORKERS):
 
     progress = asyncio.ensure_future(log_progress())
     # test hack
-    # now = after + datetime.timedelta(days=10)
     log.info('Starting from %s', after)
 
     limit = 10000
 
     if settings.TESTING['running']:
         limit = 2
+        now = after + datetime.timedelta(days=1)
 
     # fill queue with tasks
     while after < now:
@@ -424,14 +433,17 @@ async def fetch_historical_endpoint(endpoint, workers=WORKERS):
 
     workers = [
         asyncio.ensure_future(do_request(i, endpoint))
-        for i in range(workers)]
+        for i in range(worker_count)]
 
     # Terminate instructions for all workers
     for _ in range(len(workers)):
         await URL_QUEUE.put("terminate")
 
-    # wait till they are done
     await asyncio.gather(*workers)
+
+    await RESULT_QUEUE.put("terminate")
+    await asyncio.gather(store_data)
+    # wait till they are done
     progress.cancel()
 
 
@@ -455,17 +467,13 @@ def get_session_token():
 async def run_workers(endpoint):
     """Run X workers processing fetching tasks."""
     # start job of puting data into database
-    store_data = asyncio.ensure_future(store_results(endpoint))
 
     if endpoint in HISTORICAL_ENDPOINTS:
         await fetch_historical_endpoint(endpoint)
     else:
         await fetch_endpoint(endpoint)
 
-    await RESULT_QUEUE.put("terminate")
-
     # wait untill all data is stored in database
-    await asyncio.gather(store_data)
     log.info("Done!")
 
 

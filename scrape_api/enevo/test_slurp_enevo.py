@@ -66,20 +66,18 @@ class TestDBWriting(unittest.TestCase):
 
         mr = MockResponse()
         mr._json = fill_levels_json
-        fetch_mock.side_effect = [mr]
-        get_token_mock.side_effect = ['test_token']
+        # we retry failed urls, so extra side effects needed.
+        fetch_mock.side_effect = 10 * [mr]
+        get_token_mock.side_effect = 10 * ['test_token']
 
         slurp.start_import(endpoint='fill_levels', make_engine=False)
         count = session.query(models.EnevoFillLevelRaw).count()
-        self.assertEqual(count, 1)
-
-        fetch_mock.side_effect = [mr]
-        get_token_mock.side_effect = ['test_token']
+        self.assertEqual(count, 10)
 
         # slurp.start_import(endpoint='fill_levels', make_engine=False)
         convert_live_raw.main(make_engine=False)
         count = session.query(models.EnevoFillLevel).count()
-        self.assertEqual(count, 2)
+        self.assertEqual(count, 20)
 
     @asynctest.patch("enevo.slurp.get_session_token")
     @asynctest.patch("enevo.slurp.fetch")
