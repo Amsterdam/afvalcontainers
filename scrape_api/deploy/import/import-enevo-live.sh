@@ -28,9 +28,9 @@ dc build
 # create LIVE database tables if not exists.
 if [ "$DROP" = "yes" ]
 then
-   dc run --rm importer python sidcon/models.py --drop --live
+   dc run --rm importer python enevo/models.py --drop --live
 else
-   dc run --rm importer python sidcon/models.py --live
+   dc run --rm importer python enevo/models.py --live
 fi
 
 dc run --rm importer python enevo/slurp.py fill_levels
