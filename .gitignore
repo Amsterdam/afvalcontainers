@@ -38,4 +38,4 @@ __pycache__
 /docs/*.inv
 /docs/*.inv.txt
 
-
+/api/src/afvalcontainers/settings_acc.py
