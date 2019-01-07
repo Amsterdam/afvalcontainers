@@ -31,7 +31,7 @@ assert api_config["password"], "Missing ENEVO_API_PASSWORD"
 
 WORKERS = 6
 
-if settings.TESTING:
+if settings.TESTING['running']:
     WORKERS = 1
 
 RESULT_QUEUE = asyncio.Queue()
@@ -406,7 +406,7 @@ async def fetch_historical_endpoint(endpoint, workers=WORKERS):
 
     limit = 10000
 
-    if settings.TESTING:
+    if settings.TESTING['running']:
         limit = 2
 
     # fill queue with tasks
