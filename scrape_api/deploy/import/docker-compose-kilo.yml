@@ -1,8 +1,8 @@
 version: '3.0'
 services:
   importer:
-    # image: build.datapunt.amsterdam.nl:5000/afvalcontainers_importer:${ENVIRONMENT}
-    build: ../../
+    image: build.datapunt.amsterdam.nl:5000/afvalcontainers_importer:${ENVIRONMENT}
+    # build: ../../
     environment:
       ENVIRONMENT:
       KILOGRAM_API_PASSWORD:
