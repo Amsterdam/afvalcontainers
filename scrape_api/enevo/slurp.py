@@ -8,6 +8,7 @@ import aiohttp
 import time
 import datetime
 import requests
+import settings
 
 from settings import API_ENEVO_URL as API_URL
 from settings import KILO_ENVIRONMENT_OVERRIDES
@@ -30,6 +31,9 @@ assert api_config["password"], "Missing ENEVO_API_PASSWORD"
 
 WORKERS = 6
 
+if settings.TESTING:
+    WORKERS = 1
+
 RESULT_QUEUE = asyncio.Queue()
 URL_QUEUE = asyncio.Queue()
 
@@ -50,7 +54,7 @@ after = '{}Z'.format(after.isoformat(timespec='seconds'))
 
 HISTORICAL_ENDPOINTS = {
     # until - after parameter start.
-    'alerts': ('2018-10-01T00:00:00Z'),
+    # 'alerts': ('2018-10-01T00:00:00Z'),
     'fill_levels': ('2018-10-01T00:00:00Z'),
 }
 
@@ -167,6 +171,8 @@ async def store_results(endpoint):
 
     raw_results = []
 
+    buffer_size = 5
+
     while True:
         value = await RESULT_QUEUE.get()
 
@@ -175,9 +181,11 @@ async def store_results(endpoint):
 
         raw_results.append(value)
 
-        if len(raw_results) > 5:
+        if len(raw_results) > buffer_size:
             add_items_to_db(endpoint, raw_results)
             raw_results = []
+
+        await asyncio.sleep(0.01)
 
     if raw_results:
         # save whats left.
@@ -272,11 +280,15 @@ async def get_the_json(session, endpoint, params):
     retry_codes = [500, 502, 503, 504, 400]
 
     while retry > 0:
+        await asyncio.sleep(0.01)
         json = None
 
         retry -= 1
-
-        response = await fetch(url, session, params=params)
+        response = None
+        try:
+            response = await fetch(url, session, params=params)
+        except StopIteration:
+            pass
 
         if response is None:
             log.error("RESPONSE NONE %s %s", url, params)
@@ -392,13 +404,18 @@ async def fetch_historical_endpoint(endpoint, workers=WORKERS):
     # now = after + datetime.timedelta(days=10)
     log.info('Starting from %s', after)
 
+    limit = 10000
+
+    if settings.TESTING:
+        limit = 2
+
     # fill queue with tasks
     while after < now:
         params = dict(
             after=after.strftime('%Y-%m-%dT%H:%M:%SZ'),
             until=until.strftime('%Y-%m-%dT%H:%M:%SZ'),
             cid=152202,
-            limit=10000,
+            limit=limit,
         )
         await URL_QUEUE.put(params)
         # move one day forward.
@@ -446,9 +463,9 @@ async def run_workers(endpoint):
         await fetch_endpoint(endpoint)
 
     await RESULT_QUEUE.put("terminate")
+
     # wait untill all data is stored in database
     await asyncio.gather(store_data)
-
     log.info("Done!")
 
 

@@ -6,7 +6,7 @@
     "count": 2,
     "fillLevels": [
         {
-            "time": "2018-11-14T09:00:00Z",
+            "time": "2014-11-14T09:00:00Z",
             "fillLevel": 90,
             "site": 1,
             "siteName": "test site name 1",
@@ -19,7 +19,7 @@
             "frozen": false
         },
         {
-            "time": "2018-11-14T09:00:00Z",
+            "time": "2014-11-14T09:00:00Z",
             "fillLevel": 9,
             "site": 2,
             "siteName": "test site name 2",
