@@ -47,8 +47,9 @@ async def main(args):
 
     if args.live:
         LOG.warning("CREATING LIVE RELATED TABLES")
-        meta = MetaData(engine)
-        meta.reflect(engine)
+        meta = MetaData()
+        meta.bind = engine
+        meta.reflect()
         for table in LIVE_TABLES:
             table_name = table.__table__.name
             if table_name not in meta.tables:

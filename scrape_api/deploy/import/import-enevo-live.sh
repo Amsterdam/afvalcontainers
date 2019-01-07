@@ -9,7 +9,7 @@ set -x   # print what we are doing
 DIR=`dirname "$0"`
 
 dc() {
-	docker-compose -p enevocontainers${ENVIRONMENT} -f ${DIR}/docker-compose.yml $*
+	docker-compose -p enevocontainers${ENVIRONMENT} -f ${DIR}/docker-compose-kilo.yml $*
 }
 
 ENV="acceptance"

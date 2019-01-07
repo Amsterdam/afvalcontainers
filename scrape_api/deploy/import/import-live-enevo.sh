@@ -17,26 +17,21 @@ dc() {
 trap 'dc kill ; dc down ; dc rm -f' EXIT
 
 dc rm -f
-dc pull
 dc build
+dc pull
 
 # create database tables if not exists.
 if [ "$DROP" = "yes" ]
 then
-   dc run --rm importer python enevo/models.py fill_levels --drop
+   dc run --rm importer python enevo/models.py --drop  --live
 else
-   dc run --rm importer python enevo/models.py fill_levels
+   dc run --rm importer python enevo/models.py --live
 fi
 
-# load current map / neighborhood data
-# dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/gebieden buurt_simple,stadsdeel 4326 --db kilogram
-
 # slurp latest and greatest of kilogram.nl
-dc run --rm importer python enevo/slurp_sidcon.py --slurp
+dc run --rm importer python enevo/slurp.py fill_levels
 # copy data into final table for serving to django
 
-dc run --rm importer python enevo/slurp_sidcon.py --copy
-
-# add gebieden data to endpoint
+dc run --rm importer python enevo/convert_live_raw.py
 
 dc down -v

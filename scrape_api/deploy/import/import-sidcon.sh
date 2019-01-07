@@ -28,15 +28,10 @@ else
    dc run --rm importer python sidcon/models.py
 fi
 
-# load current map / neighborhood data
-# dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/gebieden buurt_simple,stadsdeel 4326 --db kilogram
-
 # slurp latest and greatest of kilogram.nl
 dc run --rm importer python sidcon/slurp_sidcon.py --slurp
 # copy data into final table for serving to django
 
 dc run --rm importer python sidcon/slurp_sidcon.py --copy
-
-# add gebieden data to endpoint
 
 dc down -v
