@@ -9,6 +9,8 @@ from sqlalchemy.schema import Sequence
 from sqlalchemy import MetaData
 from geoalchemy2 import Geometry  # noqa
 
+from settings import KILO_ENVIRONMENT_OVERRIDES
+
 import db_helper
 
 logging.basicConfig(level=logging.DEBUG)
@@ -21,7 +23,10 @@ IMPORT_PREFIX = ''
 
 async def main(args):
     """Table management."""
-    engine = db_helper.make_engine(section="docker")
+    engine = db_helper.make_engine(
+        section="docker",
+        environment=KILO_ENVIRONMENT_OVERRIDES,
+    )
     session = db_helper.set_session(engine)
 
     if args.dropall:
