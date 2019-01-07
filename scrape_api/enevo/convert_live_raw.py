@@ -1,9 +1,9 @@
 """ETL for converting raw enevo measurement to cleaned measurements.
 
-We downloaded the raw source data with the slurp code. Now we have the original data
-safe and sound.  This enables us to convert the raw data in usable data records
-and merge usable information with it. And as a BONUS we can do it again later in the future
-since the raw original data is safely stored.
+We downloaded the raw source data with the slurp code. Now we have the original
+data safe and sound.  This enables us to convert the raw data in usable data
+records and merge usable information with it. And as a BONUS we can do it again
+later in the future since the raw original data is safely stored.
 
 TODO add datapunt site / enevo site information to the records
 """
@@ -22,19 +22,19 @@ log.setLevel(logging.DEBUG)
 
 
 """
-        {
-            'site': 344792,
-            'time': '2019-01-03T20:00:00Z',
-            'frozen': False,
-            'siteName': 'DE TOURTON BRUYNSSTRAAT 11 (PL F 30243)',
-            'fillLevel': 41,
-            'confidence': 100,
-            'contentType': 1821,
-            'containerSlot': 406148,
-            'contentTypeName': 'PLASTIC ASW',
-            'siteContentType': 538989,
-            'containerSlotName': '1'
-        }
+{
+    'site': 344792,
+    'time': '2019-01-03T20:00:00Z',
+    'frozen': False,
+    'siteName': 'DE TOURTON BRUYNSSTRAAT 11 (PL F 30243)',
+    'fillLevel': 41,
+    'confidence': 100,
+    'contentType': 1821,
+    'containerSlot': 406148,
+    'contentTypeName': 'PLASTIC ASW',
+    'siteContentType': 538989,
+    'containerSlotName': '1'
+}
 """
 
 
@@ -105,7 +105,6 @@ def extract_measurements():
         .filter(raw_measurements.time > left_off)
         .order_by(raw_measurements.time.asc())
     )
-
 
     log.debug('New records found: %s since %s', raw_new.count(), left_off)
 
