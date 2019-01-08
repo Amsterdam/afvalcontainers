@@ -193,7 +193,7 @@ class WeighDataSiteWeekFilter(FilterSet):
 
 
 class WeighDataSiteWeekView(DatapuntViewSet):
-    """Weekly Site Faction statistics."""
+    """Weekly Site Fraction statistics."""
 
     queryset = (
         SiteFractieStatWeek.objects.all()
