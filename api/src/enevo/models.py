@@ -146,12 +146,12 @@ class EnevoAlert(models.Model):
         db_table = 'enevo_alert'
 
 
-class FillLevel(models.Model):
+class EnevoFillLevel(models.Model):
     time = models.DateTimeField()
     fill_level = models.IntegerField()
-    site = models.IntegerField()
-    site_name = models.CharField(max_length=100)
-    site_content_type = models.IntegerField()
+    e_site = models.IntegerField()
+    e_site_name = models.CharField(max_length=100)
+    e_site_content_type = models.IntegerField()
     content_type = models.IntegerField()
     content_type_name = models.CharField(max_length=100)
     confidence = models.IntegerField()

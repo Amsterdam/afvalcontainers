@@ -126,6 +126,10 @@ containers.register(
     r'enevo/contenttypes',
     enevo_views.ContentTypeView, base_name='enevocontenttype')
 # containers.register(r"stats", stats, base_name='stats')
+containers.register(
+    r'enevo/filllevels',
+    enevo_views.FillLevelView, base_name='enevofilllevel')
+
 
 containers.register(
     r'sidcon/filllevels',

@@ -4,6 +4,8 @@ from django_filters.rest_framework import FilterSet
 from django_filters.rest_framework import filters
 
 from datapunt_api.rest import DatapuntViewSet
+from django.conf import settings
+
 from enevo.models import EnevoContainer
 from enevo.models import EnevoContainerType
 from enevo.models import EnevoContainerSlot
@@ -11,7 +13,7 @@ from enevo.models import EnevoSite
 from enevo.models import EnevoSiteContentType
 from enevo.models import EnevoAlert
 from enevo.models import EnevoContentType
-
+from enevo.models import EnevoFillLevel
 
 from enevo.serializers import ContainerSerializer
 from enevo.serializers import ContainerDetailSerializer
@@ -22,6 +24,7 @@ from enevo.serializers import SiteDetailSerializer
 from enevo.serializers import SiteContentTypeSerializer
 from enevo.serializers import AlertSerializer
 from enevo.serializers import ContentTypeSerializer
+from enevo.serializers import FillLevelSerializer
 
 
 class ContainerFilter(FilterSet):
@@ -149,6 +152,43 @@ class AlertView(DatapuntViewSet):
 
     filter_fields = ['content_type', 'site']
     ordering_fields = '__all__'
+
+
+class FillLevelView(DatapuntViewSet):
+
+    serializer_detail_class = FillLevelSerializer
+    serializer_class = FillLevelSerializer
+
+    filter_backends = (
+        DjangoFilterBackend,
+        OrderingFilter
+    )
+
+    filter_fields = [
+        'content_type',
+        'content_type_name',
+        'e_site',
+        'e_site_name',
+        'frozen',
+        'time',
+    ]
+
+    ordering_fields = '__all__'
+
+    def get_queryset(self):
+        """
+        """
+        queryset = (
+            EnevoFillLevel.objects.all()
+            .order_by("-time")
+        )
+
+        if not settings.TESTING:
+            queryset = queryset.using('kilogram')
+
+        return queryset
+
+
 
 
 class ContentTypeView(DatapuntViewSet):

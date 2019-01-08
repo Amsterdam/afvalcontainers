@@ -10,6 +10,7 @@ from enevo.models import EnevoContainerSlot
 from enevo.models import EnevoSiteContentType
 from enevo.models import EnevoAlert
 from enevo.models import EnevoContentType
+from enevo.models import EnevoFillLevel
 
 
 class ContentTypeSerializer(serializers.ModelSerializer):
@@ -66,6 +67,13 @@ class AlertSerializer(HALSerializer):
 
     class Meta:
         model = EnevoAlert
+        fields = '__all__'
+
+
+class FillLevelSerializer(HALSerializer):
+
+    class Meta:
+        model = EnevoFillLevel
         fields = '__all__'
 
 
