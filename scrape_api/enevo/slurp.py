@@ -166,6 +166,7 @@ def clear_current_table(endpoint):
 
 
 async def store_results(endpoint):
+
     if endpoint not in HISTORICAL_ENDPOINTS.keys():
         clear_current_table(endpoint)
 

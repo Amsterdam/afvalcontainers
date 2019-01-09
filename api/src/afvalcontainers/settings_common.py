@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 import os
 import sys
 
+from afvalcontainers import API_VERSIONS
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -141,6 +143,10 @@ REST_FRAMEWORK = dict(
         "django_filters.rest_framework.DjangoFilterBackend"
     ),
     COERCE_DECIMAL_TO_STRING=False,
+
+    DEFAULT_VERSIONING_CLASS='rest_framework.versioning.NamespaceVersioning',
+    DEFAULT_VERSION='v0',
+    ALLOWED_VERSIONS=API_VERSIONS.keys(),
 )
 
 # Static files (CSS, JavaScript, Images)

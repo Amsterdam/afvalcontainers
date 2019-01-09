@@ -77,7 +77,7 @@ dc exec -T database update-table.sh bag bag_ligplaats public afvalcontainers
 
 # restore kilogram weigh measurements (24h old)
 # TODO do this on live database?
-dc exec -T database update-table.sh kilogram kilogram_weigh_measurement public afvalcontainers
+# dc exec -T database update-table.sh kilogram kilogram_weigh_measurement public afvalcontainers
 
 # importeer buurt/stadseel
 dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/gebieden buurt_simple,stadsdeel 28992
@@ -102,9 +102,9 @@ dc run --rm importer python bammens/create_sites.py --sitefracties
 dc run --rm importer python bammens/buurt_count.py
 
 # Kilogram statisiek.
-dc run --rm importer python bammens/create_sites.py --kilostats
-dc run --rm importer python bammens/create_sites.py --buurtcontainercounts
-dc run --rm importer python bammens/create_sites.py --validate
+# dc run --rm importer python bammens/create_sites.py --kilostats
+# dc run --rm importer python bammens/create_sites.py --buurtcontainercounts
+# dc run --rm importer python bammens/create_sites.py --validate
 
 echo "creating database dump"
 dc exec -T database backup-db.sh afvalcontainers

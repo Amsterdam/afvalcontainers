@@ -28,114 +28,103 @@ from kilogram import views as kilo_views
 from enevo import views as enevo_views
 from sidcon import views as sidcon_views
 
+from afvalcontainers.routers import AfvalContainerAPIRootView
+from afvalcontainers.routers import SupliersAPIRootView
 
-class ContainersView(routers.APIRootView):
-    """
-    Garbadge Containers in the city are show here as list.
+from afvalcontainers.v1.routers import AfvalContainerAPIRootViewVersion1
 
-    It is possible to filter the list
-
-    Model Overview
-    ==================
-
-    Type ->  Container ->  Well ->  Site
-
-    A site is a collection of wells. Each well can contain
-    a container. The container and type in a well can change.
-
-    Daily Import Overview
-    =====================
-
-     1. Scrape Bammens API ~12.500 wells/containers
-     2. BGT merge ~8500 wells merged with BGT (8-2018)
-     3. Cleanup ,
-     4. Fills site endpoint for route planning/ dashboards
-     5. Publish API / Geo services
-
-    [github/amsterdam/afvalcontainers](https://github.com/Amsterdam/afvalcontainers)
-
-    [Author: s.preeker](https://github.com/spreeker/)
-    """
+from django.urls import path
 
 
-class ContainerRouter(routers.DefaultRouter):
-    APIRootView = ContainersView
+class MainRouter(routers.DefaultRouter):
+    APIRootView = AfvalContainerAPIRootView
 
 
-containers = ContainerRouter()
+class SuppliersRouter(routers.DefaultRouter):
+    APIRootView = SupliersAPIRootView
 
-containers.register(
+
+class V1Router(routers.DefaultRouter):
+    APIRootView = AfvalContainerAPIRootViewVersion1
+
+
+afvalroot = MainRouter()
+
+afval_v1 = V1Router()
+
+suppliers = SuppliersRouter()
+
+
+afval_v1.register(
     r"containers", api_views.ContainerView, base_name="container")
-containers.register(
+afval_v1.register(
     r"wells", api_views.WellView, base_name="well")
-containers.register(
+afval_v1.register(
     r"containertypes", api_views.TypeView, base_name="containertype")
 
-containers.register(
+afval_v1.register(
     r"sites", api_views.SiteView, base_name="site")
-containers.register(
+afval_v1.register(
     r"sitefracties", api_views.SiteFractieView, base_name="sitefractie")
 
 # LIVE KILOGRAM DATABASE UPDATES
-containers.register(
+suppliers.register(
     r"kilogram", kilo_views.KilogramView, base_name="kilogram")
 
-
 # stats views
-containers.register(
-    r'kilos/sites/weekly',
-    kilo_views.WeighDataSiteWeekView, base_name='stats-site-week')
+# supplies.register(
+#     r'kilos/sites/weekly',
+#     kilo_views.WeighDataSiteWeekView, base_name='stats-site-week')
+#
+# containers.register(
+#     r'kilos/sites/monthly',
+#     kilo_views.WeighDataSiteMonthView, base_name='stats-site-month')
+#
+# containers.register(
+#     r'kilos/neighborhood/weekly',
+#     kilo_views.WeighDataBuurtWeekView, base_name='stats-wijk-week')
+#
+# containers.register(
+#     r'kilos/neighborhood/monthly',
+#     kilo_views.WeighDataBuurtMonthView, base_name='stats-wijk-month')
 
-containers.register(
-    r'kilos/sites/monthly',
-    kilo_views.WeighDataSiteMonthView, base_name='stats-site-month')
 
-containers.register(
-    r'kilos/neighborhood/weekly',
-    kilo_views.WeighDataBuurtWeekView, base_name='stats-wijk-week')
-
-containers.register(
-    r'kilos/neighborhood/monthly',
-    kilo_views.WeighDataBuurtMonthView, base_name='stats-wijk-month')
-
-containers.register(
+suppliers.register(
     r'enevo/containers',
     enevo_views.ContainerView, base_name='enevocontainer')
 
-containers.register(
+suppliers.register(
     r'enevo/containertypes',
     enevo_views.ContainerTypeView, base_name='enevocontainertype')
 
-containers.register(
+suppliers.register(
     r'enevo/sites',
     enevo_views.SiteView, base_name='enevosite')
 
-containers.register(
+suppliers.register(
     r'enevo/sitecontenttypes',
     enevo_views.SiteContentTypeView, base_name='enevositecontenttype')
 
-containers.register(
+suppliers.register(
     r'enevo/containerslots',
     enevo_views.ContainerSlotView, base_name='enevocontainerslot')
 
-containers.register(
+suppliers.register(
     r'enevo/alerts',
     enevo_views.AlertView, base_name='enevoalert')
 
-containers.register(
+suppliers.register(
     r'enevo/contenttypes',
     enevo_views.ContentTypeView, base_name='enevocontenttype')
 # containers.register(r"stats", stats, base_name='stats')
-containers.register(
+suppliers.register(
     r'enevo/filllevels',
     enevo_views.FillLevelView, base_name='enevofilllevel')
 
-
-containers.register(
+suppliers.register(
     r'sidcon/filllevels',
     sidcon_views.SidconView, base_name='sidconfilllevel')
 
-urls = containers.urls
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -151,6 +140,7 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,),
 )
 
+urls = afvalroot.urls
 
 urlpatterns = [
     # url(r"^afval/stats/", include(stats.urls)),
