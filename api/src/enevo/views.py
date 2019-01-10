@@ -189,8 +189,6 @@ class FillLevelView(DatapuntViewSet):
         return queryset
 
 
-
-
 class ContentTypeView(DatapuntViewSet):
     queryset = (
         EnevoContentType.objects.all()

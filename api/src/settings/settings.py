@@ -3,12 +3,12 @@ import sys
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
-from afvalcontainers.settings_common import *  # noqa F403
-from afvalcontainers.settings_common import INSTALLED_APPS
-from afvalcontainers.settings_common import REST_FRAMEWORK  # noqa
+from settings.settings_common import *  # noqa F403
+from settings.settings_common import INSTALLED_APPS
+from settings.settings_common import REST_FRAMEWORK  # noqa
 
 
-from afvalcontainers.settings_databases import (
+from settings.settings_databases import (
     LocationKey,
     get_docker_host,
     get_database_key,

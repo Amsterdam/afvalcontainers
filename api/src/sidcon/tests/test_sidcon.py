@@ -14,8 +14,8 @@ from sidcon.tests import factories as sidconfactory
 class SidconActionTestCase(APITestCase):
 
     urls_counts = [
-        ("afval/sidcon/filllevels/latest", 2),
-        ("afval/sidcon/filllevels/today_full", 1),
+        ("afval/suppliers/sidcon/filllevels/latest", 2),
+        ("afval/suppliers/sidcon/filllevels/today_full", 1),
     ]
 
     def valid_response(self, url, response, content_type):

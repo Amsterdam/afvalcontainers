@@ -17,25 +17,26 @@ from sidcon.tests import factories as sidconfactory
 class BrowseDatasetsTestCase(APITestCase):
 
     datasets = [
-        "afval/containers",
-        "afval/wells",
-        "afval/containertypes",
-        "afval/sites",
+        "afval/v1/containers",
+        "afval/v1/wells",
+        "afval/v1/containertypes",
+        "afval/v1/sites",
 
-        "afval/kilogram",
-        "afval/kilos/neighborhood/weekly",
-        "afval/kilos/sites/weekly",
-        "afval/kilos/neighborhood/monthly",
-        "afval/kilos/sites/monthly",
+        # "afval/kilogram",
+        # "afval/kilos/neighborhood/weekly",
+        # "afval/kilos/sites/weekly",
+        # "afval/kilos/neighborhood/monthly",
+        # "afval/kilos/sites/monthly",
 
-        "afval/enevo/containers",
-        "afval/enevo/containertypes",
-        "afval/enevo/containerslots",
-        "afval/enevo/sites",
-        "afval/enevo/sitecontenttypes",
-        "afval/enevo/alerts",
+        "afval/suppliers/enevo/containers",
+        "afval/suppliers/enevo/containertypes",
+        "afval/suppliers/enevo/containerslots",
+        "afval/suppliers/enevo/sites",
+        "afval/suppliers/enevo/sitecontenttypes",
+        "afval/suppliers/enevo/alerts",
+        "afval/suppliers/enevo/filllevels",
 
-        "afval/sidcon/filllevels",
+        "afval/suppliers/sidcon/filllevels",
     ]
 
     def setUp(self):
@@ -83,6 +84,8 @@ class BrowseDatasetsTestCase(APITestCase):
         self.ec.valid = True
         self.ec.save()
 
+        self.e_fill_level = enevofactory.FillLevelFactory()
+
         self.sidcon1 = sidconfactory.SidconFillLevelFactory(
             valid=False,
             scraped_at=datetime.datetime.utcnow().replace(tzinfo=pytz.UTC)
@@ -106,12 +109,13 @@ class BrowseDatasetsTestCase(APITestCase):
     def valid_response(self, url, response, content_type):
         """Check common status/json."""
         self.assertEqual(
-            200, response.status_code, "Wrong response code for {}".format(url)
+            200, response.status_code,
+            "Wrong response code for {}".format(url),
         )
 
         self.assertEqual(
             f"{content_type}",
-            response["Content-Type"],
+            response.get("Content-Type"),
             "Wrong Content-Type for {}".format(url),
         )
 
@@ -159,6 +163,7 @@ class BrowseDatasetsTestCase(APITestCase):
     def test_lists_csv(self):
         for url in self.datasets:
             response = self.client.get("/{}/?format=csv".format(url))
+
             self.valid_response(url, response, 'text/csv; charset=utf-8')
 
             self.assertIn(
@@ -177,21 +182,21 @@ class BrowseDatasetsTestCase(APITestCase):
             )
 
     def test_site_filters(self):
-        url = "afval/sites"
+        url = "afval/v1/sites"
         response = self.client.get(f"/{url}/", {'short_id': self.s.short_id})
         self.valid_response(url, response, 'application/json')
         self.assertEqual(response.data['count'], 1)
         self.assertEqual(int(response.data['results'][0]['id']), self.s.id)
 
     def test_site_null_filter(self):
-        url = "afval/sites"
+        url = "afval/v1/sites"
         response = self.client.get(f"/{url}/", {'no_short_id': 1})
         self.valid_response(url, response, 'application/json')
         self.assertEqual(response.data['count'], 1)
         self.assertEqual(int(response.data['results'][0]['id']), self.snull.id)
 
     def test_enevo_container_in_bammens_filter_true(self):
-        url = "afval/enevo/containers"
+        url = "afval/suppliers/enevo/containers"
         response = self.client.get(f"/{url}/", {'in_bammens': True})
         self.valid_response(url, response, 'application/json')
         self.assertEqual(response.data['count'], 1)
@@ -202,7 +207,7 @@ class BrowseDatasetsTestCase(APITestCase):
         self.assertEqual(response.data['count'], 0)
 
     def test_enevo_container_in_bammens_filter_false(self):
-        url = "afval/enevo/containers"
+        url = "afval/suppliers/enevo/containers"
         response = self.client.get(f"/{url}/", {'in_bammens': True})
         self.valid_response(url, response, 'application/json')
         self.assertEqual(response.data['count'], 1)

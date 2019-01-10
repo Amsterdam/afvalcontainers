@@ -13,6 +13,7 @@ from enevo.models import EnevoContainerSlot
 from enevo.models import EnevoSiteContentType
 from enevo.models import EnevoAlert
 from enevo.models import EnevoContentType
+from enevo.models import EnevoFillLevel
 
 # Amsterdam.
 BBOX = [52.03560, 4.58565, 52.48769, 5.31360]
@@ -118,3 +119,20 @@ class AlertFactory(factory.DjangoModelFactory):
     area_name = fuzzy.FuzzyText(length=30)
     content_type_name = fuzzy.FuzzyText(length=30)
     start = fuzzy.FuzzyDateTime(start_dt=timezone.now())
+
+
+class FillLevelFactory(factory.DjangoModelFactory):
+
+    class Meta:
+        model = EnevoFillLevel
+
+    time = fuzzy.FuzzyDateTime(start_dt=timezone.now())
+    fill_level = fuzzy.FuzzyInteger(0, 100)
+
+    e_site = fuzzy.FuzzyInteger(0, 2000)
+    e_site_name = fuzzy.FuzzyText(length=100)
+    e_site_content_type = fuzzy.FuzzyInteger(0, 5)
+    content_type = fuzzy.FuzzyInteger(0, 5)
+    content_type_name = fuzzy.FuzzyText(length=4)
+    confidence = fuzzy.FuzzyInteger(0, 100)
+    # frozen
