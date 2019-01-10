@@ -103,7 +103,7 @@ local.properties
 # PDT-specific
 .buildpath
 
-# sbteclipse plugin 
+# sbteclipse plugin
 .target
 
 # TeXlipse plugin
@@ -199,3 +199,4 @@ docker/
 parkeervakken/
 
 .jenkins/backups
+*/settings/settings_acc.py

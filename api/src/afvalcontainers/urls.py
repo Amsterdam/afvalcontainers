@@ -152,8 +152,16 @@ urlpatterns = [
         name='schema-swagger-ui'),
     url(r'^afval/redoc/$',
         schema_view.with_ui('redoc', cache_timeout=None), name='schema-redoc'),
-    url(r"^afval/", include(urls)),
-    url(r"^status/", include("afvalcontainers.health.urls")),
+    url(r'^status/', include("afvalcontainers.health.urls")),
+
+    # supplier urls
+    url(r'^afval/suppliers/',
+        include((suppliers.urls, 'suppliers'), namespace='suppliers')),
+
+    # API Version 1
+    url(r'^afval/v1/', include((afval_v1.urls, 'v1'), namespace='v1')),
+
+    url(r'^afval/', include(urls)),
 
 ]
 

@@ -179,7 +179,8 @@ LOGGING = {
         },
 
     },
-    "root": {"level": "DEBUG", "handlers": ["console"]},
+    "root": {"level": "INFO", "handlers": ["console"]},
+
     "loggers": {
         "django.db": {
             "handlers": ["console"],
@@ -197,7 +198,7 @@ LOGGING = {
         },
         "index": {
             "handlers": ["console"],
-            "level": "DEBUG",
+            "level": "ERROR",
             "propagate": False
         },
         "search": {
