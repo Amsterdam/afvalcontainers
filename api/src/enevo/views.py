@@ -35,10 +35,10 @@ class ContainerFilter(FilterSet):
     class Meta(object):
         model = EnevoContainer
         fields = (
-            'site',
-            'site_content_type',
-            'container_slot',
-            'container_type',
+            'site_id',
+            'site_content_type_id',
+            'container_slot_id',
+            'container_type_id',
             'customer_key',
             'valid'
         )
@@ -51,9 +51,8 @@ class ContainerView(DatapuntViewSet):
     queryset = (
         EnevoContainer.objects.all()
         .order_by("id")
-        .select_related('site', 'site_content_type',
-                        'container_slot')
     )
+
     serializer_detail_class = ContainerDetailSerializer
     serializer_class = ContainerSerializer
 
@@ -96,7 +95,12 @@ class ContainerSlotView(DatapuntViewSet):
         OrderingFilter
     )
 
-    filter_fields = ['site', 'site_content_type', 'photo', 'container']
+    filter_fields = [
+        'site_id', 'site_content_type_id',
+        'photo',
+        # 'container'
+
+    ]
 
     ordering_fields = '__all__'
 
@@ -133,7 +137,7 @@ class SiteContentTypeView(DatapuntViewSet):
         OrderingFilter
     )
 
-    filter_fields = ['content_type', 'site']
+    filter_fields = ['content_type_id', 'site_id']
     ordering_fields = '__all__'
 
 

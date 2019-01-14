@@ -28,7 +28,7 @@ class ContainerTypeSerializer(serializers.ModelSerializer):
 
 
 class ContainerSlotSerializer(serializers.ModelSerializer):
-    containers = RelatedSummaryField()
+    # containers = RelatedSummaryField()
 
     class Meta:
         model = EnevoContainerSlot
@@ -36,10 +36,10 @@ class ContainerSlotSerializer(serializers.ModelSerializer):
 
 
 class SiteDetailSerializer(serializers.ModelSerializer):
-    containers = RelatedSummaryField()
-    container_slots = RelatedSummaryField()
-    site_content_types = RelatedSummaryField()
-    alerts = RelatedSummaryField()
+    # containers = RelatedSummaryField()
+    # container_slots = RelatedSummaryField()
+    # site_content_types = RelatedSummaryField()
+    # alerts = RelatedSummaryField()
 
     class Meta:
         model = EnevoSite
@@ -47,7 +47,7 @@ class SiteDetailSerializer(serializers.ModelSerializer):
 
 
 class SiteSerializer(serializers.ModelSerializer):
-    containers = RelatedSummaryField()
+    # containers = RelatedSummaryField()
 
     class Meta:
         model = EnevoSite
@@ -55,8 +55,8 @@ class SiteSerializer(serializers.ModelSerializer):
 
 
 class SiteContentTypeSerializer(serializers.ModelSerializer):
-    container_slots = RelatedSummaryField()
-    containers = RelatedSummaryField()
+    # container_slots = RelatedSummaryField()
+    # containers = RelatedSummaryField()
 
     class Meta:
         model = EnevoSiteContentType
@@ -100,7 +100,7 @@ class ContainerDetailSerializer(serializers.ModelSerializer):
 
 class ContainerSerializer(HALSerializer):
     _display = DisplayField()
-    container_type = InlineContainerTypeSerializer()
+    # container_type = InlineContainerTypeSerializer()
 
     class Meta:
         model = EnevoContainer
@@ -108,10 +108,10 @@ class ContainerSerializer(HALSerializer):
             '_links',
             '_display',
             'id',
-            'container_type',
-            'site',
-            'site_content_type',
-            'container_slot',
+            'container_type_id',
+            'site_id',
+            'site_content_type_id',
+            'container_slot_id',
             'geometrie',
             'geometrie_rd',
             'geo_accuracy',

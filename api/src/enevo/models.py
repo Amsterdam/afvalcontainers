@@ -20,26 +20,10 @@ class EnevoSite(models.Model):
 
 
 class EnevoContainer(models.Model):
-    container_type = models.ForeignKey(
-        "EnevoContainerType",
-        related_name="containers",
-        on_delete=models.DO_NOTHING,
-        null=True)
-    site = models.ForeignKey(
-        "EnevoSite",
-        related_name="containers",
-        on_delete=models.DO_NOTHING,
-        null=True)
-    site_content_type = models.ForeignKey(
-        "EnevoSiteContentType",
-        related_name="containers",
-        on_delete=models.DO_NOTHING,
-        null=True)
-    container_slot = models.ForeignKey(
-        "EnevoContainerSlot",
-        related_name="containers",
-        on_delete=models.DO_NOTHING,
-        null=True)
+    container_type_id = models.IntegerField(null=True)
+    site_id = models.IntegerField(null=True)
+    site_content_type_id = models.IntegerField(null=True)
+    container_slot_id = models.IntegerField(null=True)
 
     geometrie = models.PointField(name="geometrie", srid=4326, null=True)
     geometrie_rd = models.PointField(
@@ -52,23 +36,10 @@ class EnevoContainer(models.Model):
 
 class EnevoContainerSlot(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
-    content_type = models.ForeignKey(
-        "EnevoContentType",
-        related_name="container_slots",
-        on_delete=models.DO_NOTHING,
-        null=True)
-
+    content_type_id = models.IntegerField(null=True)
     container = models.IntegerField(blank=True, null=True)
-    site_content_type = models.ForeignKey(
-        "EnevoSiteContentType",
-        related_name="container_slots",
-        on_delete=models.DO_NOTHING,
-        null=True)
-    site = models.ForeignKey(
-        "EnevoSite",
-        related_name="container_slots",
-        on_delete=models.DO_NOTHING,
-        null=True)
+    site_content_type_id = models.IntegerField(null=True)
+    site_id = models.IntegerField(null=True)
     site_fk = models.IntegerField(null=True)
     site_content_type_fk = models.IntegerField(null=True)
     fill_level = models.IntegerField(blank=True, null=True)
@@ -91,18 +62,10 @@ class EnevoContainerType(models.Model):
 
 
 class EnevoSiteContentType(models.Model):
-    content_type = models.ForeignKey(
-        "EnevoContentType",
-        related_name="site_content_types",
-        on_delete=models.DO_NOTHING,
-        null=True)
+    content_type_id = models.IntegerField(null=True)
     content_type_name = models.CharField(max_length=100)
     category_name = models.CharField(max_length=100)
-    site = models.ForeignKey(
-        "EnevoSite",
-        related_name="site_content_types",
-        on_delete=models.DO_NOTHING,
-        null=True)
+    site_id = models.IntegerField(null=True)
     fill_level = models.IntegerField(blank=True, null=True)
     date_when_full = models.DateTimeField(blank=True, null=True)
     build_up_rate = models.FloatField(blank=True, null=True)

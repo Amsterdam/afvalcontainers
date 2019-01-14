@@ -60,13 +60,12 @@ HISTORICAL_ENDPOINTS = {
 
 ENDPOINT_URL = {
     "session": f"{API_URL}/session",
-    "containers": f"{API_URL}/containers/?limit=0",
-    "container_types": f"{API_URL}/containerTypes/?limit=0",
-    "container_slots": f"{API_URL}/containerSlots/?limit=0",
-    "content_types": f"{API_URL}/contentTypes/?limit=0",
-    "sites": f"{API_URL}/sites/?limit=0",
-    "site_content_types": f"{API_URL}/siteContentTypes/?limit=0",
-
+    "containers": f"{API_URL}/containers/",
+    "container_types": f"{API_URL}/containerTypes/",
+    "container_slots": f"{API_URL}/containerSlots/",
+    "content_types": f"{API_URL}/contentTypes/",
+    "sites": f"{API_URL}/sites/",
+    "site_content_types": f"{API_URL}/siteContentTypes/",
     "alerts": f"{API_URL}/alerts/",
     "fill_levels": f"{API_URL}/fillLevels/",
 }
@@ -138,20 +137,41 @@ def add_items_to_db(endpoint, raw_json_list):
 
 async def fetch(url, session, params=None):
 
+    assert not session.closed
+    assert params
+
+    log.debug('%s  %s', url, params)
     try:
+        await asyncio.sleep(0.01)
         response = await session.get(
             url,
-            compress=True,
+            compress=False,
             ssl=True,
-            chunked=True,
+            chunked=False,
             params=params,
         )
+        await asyncio.sleep(0.01)
         return response
 
     except (aiohttp.client_exceptions.ServerDisconnectedError):
         log.error("Server disconnect..")
         await asyncio.sleep(random.random() * 10)
         return None
+
+
+def normal_fetch(url, session, params=None):
+
+    assert params
+
+    log.debug('%s  %s', url, params)
+    response = session.get(
+        url,
+        # compress=False,
+        # ssl=True,
+        # chunked=False,
+        params=params,
+    )
+    return response
 
 
 def clear_current_table(endpoint):
@@ -198,12 +218,18 @@ async def fetch_endpoint(endpoint):
 
     # for endpoint get a list of items to pick up
     xtoken = get_session_token()
-    headers = {'X-token': xtoken}
+    headers = {
+        'X-token': xtoken,
+        # 'X-customer': '15220'
+    }
 
-    async with aiohttp.ClientSession(headers=headers) as session:
-        response = await fetch(url, session)
+    params = dict(cid=152202, limit=0)
 
-    json_body = await response.json()
+    with requests.Session() as session:
+        session.headers.update(headers)
+        response = normal_fetch(url, session, params=params)
+
+    json_body = response.json()
     itemname = ENDPOINT_KEY[endpoint]
 
     assert itemname in json_body.keys()

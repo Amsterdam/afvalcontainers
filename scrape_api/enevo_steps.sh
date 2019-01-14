@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 # The complete import process of enevo
@@ -22,7 +21,8 @@ python enevo/copy_to_django.py site_content_types
 python enevo/copy_to_django.py container_types
 python enevo/copy_to_django.py container_slots
 python enevo/copy_to_django.py containers
-python enevo/copy_to_django.py alerts
+
+# python enevo/copy_to_django.py alerts
 
 python enevo/copy_to_django.py container_slots --link_container_slots
 python enevo/copy_to_django.py containers --validate_containers
