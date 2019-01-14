@@ -17,7 +17,18 @@ if [ "$ENVIRONMENT" == "production" ]; then
   ENV="production"
 fi
 
-trap 'dc kill ; dc down ; dc rm -f' EXIT
+backup() {
+	# alway run backup so rest of process continues.
+	echo "Running backups"
+	dc exec -T database backup-db.sh afvalcontainers
+
+	echo "Store DB dump in objectstore for next step"
+	dc run --rm importer python -m objectstore.databasedumps /backups/database.dump db_enevo --upload-db
+	dc run --rm importer python -m objectstore.databasedumps /backups/database.dump db_enevo --days 20
+}
+
+
+trap 'backup; dc kill ; dc down ; dc rm -f' EXIT
 
 echo "Building / pull / cleanup images"
 dc down
@@ -33,9 +44,12 @@ dc run importer /app/deploy/docker-wait.sh
 dc run --rm importer python -m objectstore.databasedumps /data db_dumps --download-db
 dc exec -T database pg_restore --no-privileges --no-owner --if-exists -j 4 -c -C -d postgres -U afvalcontainers /data/database.$ENV
 
-
 # create enevo tables if not exists
 dc run --rm importer python enevo/models.py
+
+# since this data is not critical.
+# start backup so next steps continue.
+backup
 
 # Importeer enevo api endpoints
 dc run --rm importer python enevo/slurp.py content_types
@@ -57,11 +71,7 @@ dc run --rm importer python enevo/copy_to_django.py containers
 dc run --rm importer python enevo/copy_to_django.py container_slots --link_container_slots
 dc run --rm importer python enevo/copy_to_django.py containers --validate_containers
 
-echo "Running backups"
-dc exec -T database backup-db.sh afvalcontainers
-
-echo "Store DB dump in objectstore for next step"
-dc run --rm importer python -m objectstore.databasedumps /backups/database.dump db_enevo --upload-db
-dc run --rm importer python -m objectstore.databasedumps /backups/database.dump db_enevo --days 20
+# backup again if succesfull
+backup
 
 dc down -v
