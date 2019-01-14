@@ -120,7 +120,7 @@ def prepare_object(endpoint, item):
 
 def add_items_to_db(endpoint, raw_json_list):
     """Store json to database."""
-    log.debug(f"Storing {len(raw_json_list)} items")
+    # log.debug(f"Storing {len(raw_json_list)} items")
 
     if not raw_json_list:
         log.error("No data recieved")
@@ -138,7 +138,7 @@ def add_items_to_db(endpoint, raw_json_list):
 
     db_session.bulk_insert_mappings(db_model, objects)
     db_session.commit()
-    log.debug(f"Stored {len(raw_json_list)} items")
+    # log.debug(f"Stored {len(raw_json_list)} items")
 
 
 async def fetch(url, session, params=None):
@@ -187,14 +187,12 @@ def clear_current_table(endpoint):
     db_session.commit()
 
 
-async def store_results(endpoint):
+async def store_results(endpoint, buffer_size=5000):
 
     if endpoint not in HISTORICAL_ENDPOINTS.keys():
         clear_current_table(endpoint)
 
     raw_results = []
-
-    buffer_size = 5
 
     while True:
         await asyncio.sleep(0.01)
@@ -429,7 +427,7 @@ async def log_progress():
 async def fetch_historical_endpoint(endpoint):
     """Fill queue with urls to fetch."""
     worker_count = get_workers()
-    store_data = asyncio.ensure_future(store_results(endpoint))
+    store_data = asyncio.ensure_future(store_results(endpoint, buffer_size=20))
 
     now = datetime.datetime.now()
     # see where we left off, else start from 2014.

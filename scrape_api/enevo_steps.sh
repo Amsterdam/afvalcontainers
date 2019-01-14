@@ -11,7 +11,7 @@ python enevo/slurp.py container_slots
 python enevo/slurp.py containers
 python enevo/slurp.py sites
 python enevo/slurp.py site_content_types
-python enevo/slurp.py alerts
+# python enevo/slurp.py alerts
 # python enevo/slurp.py fill_levels
 
 
