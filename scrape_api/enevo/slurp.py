@@ -138,8 +138,6 @@ def add_items_to_db(endpoint, raw_json_list):
 
 async def fetch(url, session, params=None):
 
-    assert params
-
     try:
         response = await session.get(
             url,
