@@ -11,7 +11,7 @@ from enevo import convert_live_raw
 import db_helper
 import logging
 from settings import BASE_DIR
-from settings import TESTING
+import settings
 
 log = logging.getLogger(__name__)
 
@@ -25,7 +25,7 @@ session = []
 
 def setup_module():
     global transaction, connection, engine, session
-    TESTING["running"] = True
+    settings.TESTING["running"] = True
     db_helper.create_db()
     engine = db_helper.make_engine(section="test")
     connection = engine.connect()
@@ -44,14 +44,22 @@ def teardown_module():
     engine.dispose()
     connection.close()
     db_helper.drop_db()
-    TESTING["running"] = False
+    settings.TESTING["running"] = False
+
+
+class MockResponseAsync():
+    _json = None
+    status = 200
+
+    async def json(self):
+        return self._json
 
 
 class MockResponse():
     _json = None
     status = 200
 
-    async def json(self):
+    def json(self):
         return self._json
 
 
@@ -64,23 +72,24 @@ class TestDBWriting(unittest.TestCase):
         with open(FIX_DIR + "/enevo/fixtures/fill_levels.json") as fill_levels:
             fill_levels_json = json.loads(fill_levels.read())
 
-        mr = MockResponse()
+        mr = MockResponseAsync()
         mr._json = fill_levels_json
+
         # we retry failed urls, so extra side effects needed.
         fetch_mock.side_effect = 10 * [mr]
         get_token_mock.side_effect = 10 * ['test_token']
 
-        slurp.start_import(endpoint='fill_levels', make_engine=False)
+        slurp.start_import('fill_levels', make_engine=False)
         count = session.query(models.EnevoFillLevelRaw).count()
         self.assertEqual(count, 10)
 
-        # slurp.start_import(endpoint='fill_levels', make_engine=False)
+        slurp.start_import('fill_levels', make_engine=False)
         convert_live_raw.main(make_engine=False)
         count = session.query(models.EnevoFillLevel).count()
         self.assertEqual(count, 20)
 
     @asynctest.patch("enevo.slurp.get_session_token")
-    @asynctest.patch("enevo.slurp.fetch")
+    @asynctest.patch("enevo.slurp.normal_fetch")
     def test_import_containers(self, fetch_mock, get_token_mock):
         with open(FIX_DIR + "/enevo/fixtures/containers.json") as containers:
             containers_json = json.loads(containers.read())
@@ -90,19 +99,19 @@ class TestDBWriting(unittest.TestCase):
         fetch_mock.side_effect = [mr]
         get_token_mock.side_effect = ['test_token']
 
-        slurp.start_import(endpoint='containers', make_engine=False)
+        slurp.start_import('containers', make_engine=False)
         count = session.query(models.EnevoContainer).count()
         self.assertEqual(count, 2)
 
         fetch_mock.side_effect = [mr]
         get_token_mock.side_effect = ['test_token']
 
-        slurp.start_import(endpoint='containers', make_engine=False)
+        slurp.start_import('containers', make_engine=False)
         count = session.query(models.EnevoContainer).count()
         self.assertEqual(count, 2)
 
     @asynctest.patch("enevo.slurp.get_session_token")
-    @asynctest.patch("enevo.slurp.fetch")
+    @asynctest.patch("enevo.slurp.normal_fetch")
     def test_import_sites(self, fetch_mock, get_token_mock):
         with open(FIX_DIR + "/enevo/fixtures/sites.json") as sites:
             sites_json = json.loads(sites.read())
@@ -124,7 +133,7 @@ class TestDBWriting(unittest.TestCase):
         self.assertEqual(count, 2)
 
     # @asynctest.patch("enevo.slurp.get_session_token")
-    # @asynctest.patch("enevo.slurp.fetch")
+    # @asynctest.patch("enevo.slurp.normal_fetch")
     # def test_import_alerts(self, fetch_mock, get_token_mock):
     #     with open(FIX_DIR + "/enevo/fixtures/alerts.json") as alerts:
     #         alerts_json = json.loads(alerts.read())
@@ -146,7 +155,7 @@ class TestDBWriting(unittest.TestCase):
     #     self.assertEqual(count, 2)
 
     @asynctest.patch("enevo.slurp.get_session_token")
-    @asynctest.patch("enevo.slurp.fetch")
+    @asynctest.patch("enevo.slurp.normal_fetch")
     def test_import_container_types(self, fetch_mock, get_token_mock):
         with open(FIX_DIR + "/enevo/fixtures/container_types.json") as container_types:
             container_types_json = json.loads(container_types.read())
@@ -168,9 +177,10 @@ class TestDBWriting(unittest.TestCase):
         self.assertEqual(count, 2)
 
     @asynctest.patch("enevo.slurp.get_session_token")
-    @asynctest.patch("enevo.slurp.fetch")
+    @asynctest.patch("enevo.slurp.normal_fetch")
     def test_import_container_slots(self, fetch_mock, get_token_mock):
-        with open(FIX_DIR + "/enevo/fixtures/container_slots.json") as container_slots:
+        path = "/enevo/fixtures/container_slots.json"
+        with open(FIX_DIR + path) as container_slots:
             container_slots_json = json.loads(container_slots.read())
 
         mr = MockResponse()
@@ -190,9 +200,10 @@ class TestDBWriting(unittest.TestCase):
         self.assertEqual(count, 2)
 
     @asynctest.patch("enevo.slurp.get_session_token")
-    @asynctest.patch("enevo.slurp.fetch")
+    @asynctest.patch("enevo.slurp.normal_fetch")
     def test_import_site_content_types(self, fetch_mock, get_token_mock):
-        with open(FIX_DIR + "/enevo/fixtures/site_content_types.json") as site_content_types:
+        path = "/enevo/fixtures/site_content_types.json"
+        with open(FIX_DIR + path) as site_content_types:
             site_content_types_json = json.loads(site_content_types.read())
 
         mr = MockResponse()
@@ -212,9 +223,10 @@ class TestDBWriting(unittest.TestCase):
         self.assertEqual(count, 2)
 
     @asynctest.patch("enevo.slurp.get_session_token")
-    @asynctest.patch("enevo.slurp.fetch")
+    @asynctest.patch("enevo.slurp.normal_fetch")
     def test_import_content_types(self, fetch_mock, get_token_mock):
-        with open(FIX_DIR + "/enevo/fixtures/content_types.json") as content_types:
+        path = "/enevo/fixtures/content_types.json"
+        with open(FIX_DIR + path) as content_types:
             content_types_json = json.loads(content_types.read())
 
         mr = MockResponse()

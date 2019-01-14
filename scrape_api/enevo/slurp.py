@@ -31,8 +31,14 @@ assert api_config["password"], "Missing ENEVO_API_PASSWORD"
 
 WORKERS = 6
 
-if settings.TESTING['running']:
-    WORKERS = 1
+
+def get_workers():
+    if settings.TESTING['running']:
+        return 1
+
+    global WORKERS
+    return WORKERS
+
 
 RESULT_QUEUE = asyncio.Queue()
 URL_QUEUE = asyncio.Queue()
@@ -142,7 +148,6 @@ async def fetch(url, session, params=None):
 
     log.debug('%s  %s', url, params)
     try:
-        await asyncio.sleep(0.01)
         response = await session.get(
             url,
             compress=False,
@@ -150,7 +155,6 @@ async def fetch(url, session, params=None):
             chunked=False,
             params=params,
         )
-        await asyncio.sleep(0.01)
         return response
 
     except (aiohttp.client_exceptions.ServerDisconnectedError):
@@ -193,6 +197,7 @@ async def store_results(endpoint):
     buffer_size = 5
 
     while True:
+        await asyncio.sleep(0.01)
         value = await RESULT_QUEUE.get()
 
         if value == "terminate":
@@ -237,7 +242,6 @@ async def fetch_endpoint(endpoint):
     total = len(json_body[itemname])
     log.info("%s: size %s", endpoint, total)
     all_items = list(json_body[itemname])
-    # random.shuffle(all_items)
 
     for item in all_items:
         await RESULT_QUEUE.put(item)
@@ -387,8 +391,6 @@ async def load_day(session, endpoint, params):
 
             await RESULT_QUEUE.put(json_response)
 
-        await asyncio.sleep(0.01)
-
 
 async def do_request(work_id, endpoint):
     """Download all data available for endoint item parameters.
@@ -424,8 +426,9 @@ async def log_progress():
         await asyncio.sleep(10)
 
 
-async def fetch_historical_endpoint(endpoint, worker_count=WORKERS):
+async def fetch_historical_endpoint(endpoint):
     """Fill queue with urls to fetch."""
+    worker_count = get_workers()
     store_data = asyncio.ensure_future(store_results(endpoint))
 
     now = datetime.datetime.now()
@@ -465,7 +468,6 @@ async def fetch_historical_endpoint(endpoint, worker_count=WORKERS):
         await URL_QUEUE.put("terminate")
 
     await asyncio.gather(*workers)
-
     await RESULT_QUEUE.put("terminate")
     await asyncio.gather(store_data)
     # wait till they are done
@@ -514,6 +516,7 @@ async def main(endpoint, make_engine=True):
 
 def start_import(endpoint, make_engine=True):
     start = time.time()
+
     loop = asyncio.get_event_loop()
     loop.run_until_complete(
         main(endpoint, make_engine=make_engine))
