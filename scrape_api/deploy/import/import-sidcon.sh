@@ -11,14 +11,12 @@ export PYTHONPATH=/app/
 DIR=`dirname "$0"`
 
 dc() {
-	docker-compose -p sidcon${ENVIRONMENT} -f $DIR/docker-compose-kilo.yml $*
+	docker-compose -p sidconlive${ENVIRONMENT} -f $DIR/docker-compose-kilo.yml $*
 }
 
 trap 'dc kill ; dc down ; dc rm -f' EXIT
 
-dc rm -f
 dc pull
-dc build
 
 # create database tables if not exists.
 if [ "$DROP" = "yes" ]
@@ -33,5 +31,3 @@ dc run --rm importer python sidcon/slurp_sidcon.py --slurp
 # copy data into final table for serving to django
 
 dc run --rm importer python sidcon/slurp_sidcon.py --copy
-
-dc down -v
