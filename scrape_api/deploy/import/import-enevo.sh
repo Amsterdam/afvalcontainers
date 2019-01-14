@@ -28,7 +28,7 @@ backup() {
 }
 
 
-trap 'backup; dc kill ; dc down ; dc rm -f' EXIT
+trap 'dc down -v; dc rm -f' EXIT
 
 echo "Building / pull / cleanup images"
 dc down
@@ -77,4 +77,4 @@ dc run --rm importer python enevo/copy_to_django.py containers --validate_contai
 # backup again if succesfull
 backup
 
-dc down -v
+dc down -v || true
