@@ -60,7 +60,7 @@ def get_container_ids():
     environment = os.environ.get('ENVIRONMENT', 'acceptance')
     url = API_URLS[environment]
 
-    FULL_URL = f'{url}/afval/containers/'
+    FULL_URL = f'{url}/afval/v1/containers/'
     params = dict(
         fields='id_number',
         page_size=18000,

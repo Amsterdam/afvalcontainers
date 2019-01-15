@@ -1,10 +1,10 @@
 {
     "_links": {
         "self": {
-            "href": "https://api.data.amsterdam.nl/afval/containers/?fields=id_number&format=json"
+            "href": "https://api.data.amsterdam.nl/afval/v1/containers/?fields=id_number&format=json"
         },
         "next": {
-            "href": "https://api.data.amsterdam.nl/afval/containers/?fields=id_number&format=json&page=2"
+            "href": "https://api.data.amsterdam.nl/afval/v1/containers/?fields=id_number&format=json&page=2"
         },
         "previous": {
             "href": null
