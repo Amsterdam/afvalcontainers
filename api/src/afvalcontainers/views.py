@@ -150,10 +150,9 @@ class ContainerView(FlexFieldsMixin, DatapuntViewSet):
         active = 2 planned
 
 
-    [detailed list objects](https://api.data.amsterdam.nl/afval/containers/?detailed=1).
+    [detailed list objects /afval/v1/containers/?detailed=1](https://api.data.amsterdam.nl/afval/v1/containers/?detailed=1).
 
-    [example specific list fields](https://api.data.amsterdam.nl/afval/containers/?fields=id,well.site.active&expand=well.site)
-
+    [example specific list fields /afval/v1/containers/?fields=id,well.site.active&expand=well.site](https://api.data.amsterdam.nl/afval/v1/containers/?fields=id,well.site.active&expand=well.site)
 
     """  # noqa
 
@@ -415,10 +414,10 @@ class SiteFractieView(FlexFieldsMixin, DatapuntViewSet):
 
     example usage:
 
-    [https://api.data.amsterdam.nl/afval/sitefracties/?expand=site](http://127.0.0.1:8000/afval/sitefracties/?expand=site)
+    [https://api.data.amsterdam.nl/afval/v1/sitefracties/?expand=site](https://api.data.amsterdam.nl/afval/v1/sitefracties/?expand=site)
 
-    [https://api.data.amsterdam.nl/afval/sitefracties/?expand=site&fields=fractie,volume_m3,site.short_id](http://127.0.0.1:8000/afval/sitefracties/?expand=site&fields=fractie,volume_m3,site.short_id)
-    """ # noqa
+    [https://api.data.amsterdam.nl/afval/v1/sitefracties/?expand=site&fields=fractie,volume_m3,site.short_id](https://api.data.amsterdam.nl/afval/v1/sitefracties/?expand=site&fields=fractie,volume_m3,site.short_id)
+    """  # noqa
 
     permit_list_expands = ['site', ]
 

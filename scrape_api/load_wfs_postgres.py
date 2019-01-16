@@ -77,13 +77,15 @@ def load_wfs_layer_into_postgres(url_wfs, layer_name, srs, db, retry_count=3):
     srs = "EPSG:{}".format(srs)
 
     override = []
+    config = 'docker'
 
     if db == 'kilogram':
+        config = 'kilogram'
         override = settings.KILO_ENVIRONMENT_OVERRIDES
 
     pg_url = str(
         db_helper.make_conf(
-            "docker", environment_overrides=override))
+            config, environment_overrides=override))
 
     cmd = [
         'ogr2ogr',

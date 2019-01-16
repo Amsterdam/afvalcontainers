@@ -30,6 +30,17 @@ class AfvalContainerAPIRootView(routers.APIRootView):
 
     [github/amsterdam/afvalcontainers](https://github.com/Amsterdam/afvalcontainers)
 
+    Continues Import Overview
+    =========================
+
+    A few suppliers provide real-time data.
+
+    kilogram.nl for live weigh measurements.
+    sidcon for live feed  sidcon (rest) containers.
+    enevo live feed filling plastic containers.
+
+    All measurements will or are coupled to a site.
+
     [Author: s.preeker](https://github.com/spreeker/)
 
 

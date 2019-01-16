@@ -78,11 +78,11 @@ class SidconView(FlexFieldsMixin, DatapuntViewSet):
 
     show all available fields
 
-    [/afval/sidcon/filllevels/?detailed=1](https://api.data.amsterdam.nl/afval/sidcon/filllevels/?detailed=1)
+    [/afval/suppliers/sidcon/filllevels/?detailed=1](https://api.data.amsterdam.nl/afval/suppliers/sidcon/filllevels/?detailed=1)
 
     use fields parameter to filter fields
 
-    [/afval/sidcon/filllevels/?detailed=1&fields=scraped_at,valid](https://api.data.amsterdam.nl/afval/sidcon/filllevels/?detailed=1&fields=scraped_at,valid)
+    [/afval/suppliers/sidcon/filllevels/?detailed=1&fields=scraped_at,valid](https://api.data.amsterdam.nl/afval/suppliers/sidcon/filllevels/?detailed=1&fields=scraped_at,valid)
 
     *checkout the extra action views above*
     """
