@@ -18,6 +18,7 @@ graypy
 psycopg2-binary
 factory-boy
 drf_yasg
+flex
 swagger-spec-validator
 markdown
 pygments
