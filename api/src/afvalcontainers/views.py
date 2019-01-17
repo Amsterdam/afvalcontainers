@@ -323,6 +323,8 @@ class SiteFilter(FilterSet):
             "bgt_based": EXACT,
             "no_container": EXACT,
             "fractie": EXACT,
+            "straatnaam": EXACT,
+            "huisnummer": EXACT,
             "no_short_id": EXACT,
         }
 

@@ -180,7 +180,7 @@ SELECT
     CAST(data->>'site' as int) as site_id,
     CAST(data->>'siteContentType' as int) as site_content_type_id,
     CAST(data->>'containerSlot' as int) as container_slot_id,
-    CAST(data->>'customerKey' as varchar) as customer_key,
+    replace(CAST(data->>'customerKey' as varchar), ' ', '') as customer_key,
     ST_SetSRID(
         ST_POINT(
             CAST(data->'cellLocation'->>'longitude' as float),
@@ -410,13 +410,15 @@ if __name__ == "__main__":
         type=str,
         default="",
         choices=list(OPTIONS.keys()),
-        help="Provide Endpoint to scrape",
+        help="Provide Endpoint to copy",
         nargs=1,
     )
 
     inputparser.add_argument(
-        "--link_container_slots", action="store_true",
-        default=False, help="Link containerslots with sites and sitecontenttypes"
+        "--link_container_slots",
+        action="store_true",
+        default=False,
+        help="Link containerslots with sites and sitecontenttypes"
     )
 
     inputparser.add_argument(
