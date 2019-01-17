@@ -12,6 +12,7 @@ djangorestframework-csv
 djangorestframework-xml
 djangorestframework-gis
 drf-extensions
+drf-flex-fields
 drf_amsterdam
 graypy
 psycopg2-binary

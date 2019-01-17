@@ -149,7 +149,6 @@ class ContainerView(FlexFieldsMixin, DatapuntViewSet):
         active = 1 active
         active = 2 planned
 
-
     [detailed list objects /afval/v1/containers/?detailed=1](https://api.data.amsterdam.nl/afval/v1/containers/?detailed=1).
 
     [example specific list fields /afval/v1/containers/?fields=id,well.site.active&expand=well.site](https://api.data.amsterdam.nl/afval/v1/containers/?fields=id,well.site.active&expand=well.site)

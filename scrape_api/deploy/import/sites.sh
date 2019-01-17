@@ -101,10 +101,8 @@ dc run --rm importer python bammens/create_sites.py --sitefracties
 # get bbga data
 dc run --rm importer python bammens/buurt_count.py
 
-# Kilogram statisiek.
-# dc run --rm importer python bammens/create_sites.py --kilostats
-# dc run --rm importer python bammens/create_sites.py --buurtcontainercounts
-# dc run --rm importer python bammens/create_sites.py --validate
+# validation
+dc run --rm importer python bammens/create_sites.py --validate
 
 echo "creating database dump"
 dc exec -T database backup-db.sh afvalcontainers
