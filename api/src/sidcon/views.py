@@ -34,6 +34,7 @@ class SidconPager(HALCursorPagination):
     page_size = 100
     max_page_size = 5000
     ordering = "-id"
+    count_table = False
 
 
 class SidconFilter(FilterSet):

@@ -18,7 +18,7 @@ from django.conf import settings
 
 from datapunt_api.rest import DatapuntViewSet
 from datapunt_api import bbox
-from datapunt_api.pagination import HALPagination
+from datapunt_api.pagination import HALCursorPagination
 
 from kilogram.models import KilogramWeighMeasurement
 from kilogram.serializers import KilogramSerializer
@@ -35,13 +35,23 @@ from kilogram.serializers import BuurtFractieStatWeekSerializer
 from kilogram.serializers import BuurtFractieStatMonthSerializer
 
 
-class KiloPager(HALPagination):
+class KiloPager(HALCursorPagination):
     """Site objects are rather "heavy" so put limits on pagination."""
 
     page_size = 100
     max_page_size = 9000
+    ordering = "-id"
+    table_count = False
 
-#
+
+class KiloPagerWeigAt(HALCursorPagination):
+    """Site objects are rather "heavy" so put limits on pagination."""
+
+    page_size = 100
+    max_page_size = 9000
+    ordering = "-weigh_at"
+    table_count = False
+
 
 # def buurt_choices():
 #     options = Buurten.objects.values_list('vollcode', 'naam')
@@ -121,9 +131,12 @@ class KilogramView(DatapuntViewSet):
     serializer_class = KilogramSerializer
     serializer_detail_class = KilogramDetailSerializer
     bbox_filter_field = 'geometrie'
-    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filter_backends = (
+        DjangoFilterBackend,
+        # OrderingFilter
+    )
     filter_class = KilogramFilter
-    ordering_fields = '__all__'
+    pagination_class = KiloPagerWeigAt
 
     def get_queryset(self):
         """

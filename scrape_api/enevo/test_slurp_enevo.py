@@ -110,6 +110,9 @@ class TestDBWriting(unittest.TestCase):
         count = session.query(models.EnevoContainer).count()
         self.assertEqual(count, 2)
 
+        first = session.query(models.EnevoContainer).first()
+        self.assertEqual(first.customer_key, 'key1')
+
     @asynctest.patch("enevo.slurp.get_session_token")
     @asynctest.patch("enevo.slurp.normal_fetch")
     def test_import_sites(self, fetch_mock, get_token_mock):

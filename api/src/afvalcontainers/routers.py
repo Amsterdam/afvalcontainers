@@ -35,14 +35,13 @@ class AfvalContainerAPIRootView(routers.APIRootView):
 
     A few suppliers provide real-time data.
 
-    kilogram.nl for live weigh measurements.
-    sidcon for live feed  sidcon (rest) containers.
-    enevo live feed filling plastic containers.
+     1. kilogram.nl for live weigh measurements.
+     2. sidcon for live filling sidcon (rest) containers.
+     3. enevo live feed filling plastic containers.
 
-    All measurements will or are coupled to a site.
+    All measurements will / are coupled to a site_id / short_id.
 
     [Author: s.preeker](https://github.com/spreeker/)
-
 
     """
     def get_view_name(self):

@@ -4,6 +4,8 @@ from django_filters.rest_framework import FilterSet
 from django_filters.rest_framework import filters
 
 from datapunt_api.rest import DatapuntViewSet
+from datapunt_api.pagination import HALCursorPagination
+
 from django.conf import settings
 
 from enevo.models import EnevoContainer
@@ -156,6 +158,17 @@ class AlertView(DatapuntViewSet):
 
     filter_fields = ['content_type', 'site']
     ordering_fields = '__all__'
+
+
+class FillLevelPager(HALCursorPagination):
+    """Sidcon pagination configuration.
+
+    Fill-levels will be many. So we use cursor based pagination.
+    """
+    page_size = 300
+    max_page_size = 5000
+    ordering = "-id"
+    count_table = False
 
 
 class FillLevelView(DatapuntViewSet):

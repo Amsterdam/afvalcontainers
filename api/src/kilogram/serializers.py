@@ -46,6 +46,7 @@ class KilogramDetailSerializer(HALSerializer):
             'second_weight',
             'net_weight',
             'geometrie',
+            'valid',
         ]
 
 
