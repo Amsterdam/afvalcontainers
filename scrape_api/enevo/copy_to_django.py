@@ -4,6 +4,7 @@ import argparse
 import logging
 import db_helper
 
+session = []
 
 log = logging.getLogger(__name__)
 
@@ -261,7 +262,7 @@ def update_sitecontenttypes():
     session.commit()
 
 
-def update_containers():
+def update_containers(session=session):
     sql = INSERT_CONTAINERS
     session.execute("TRUNCATE TABLE enevo_enevocontainer CASCADE;")
     session.execute(sql)
