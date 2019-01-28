@@ -262,7 +262,7 @@ def update_sitecontenttypes():
     session.commit()
 
 
-def update_containers(session=session):
+def update_containers():
     sql = INSERT_CONTAINERS
     session.execute("TRUNCATE TABLE enevo_enevocontainer CASCADE;")
     session.execute(sql)
