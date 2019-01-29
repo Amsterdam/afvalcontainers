@@ -1,3 +1,4 @@
+alembic==1.0.6
 aiohttp==3.4.4
 async-timeout==3.0.1
 asynctest==0.12.2
