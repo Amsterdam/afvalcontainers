@@ -1,76 +1,196 @@
 {
     "_links": {
         "self": {
-            "href": "https://api.data.amsterdam.nl/afval/v1/containers/?fields=id_number&format=json"
+            "href": "https://acc.api.data.amsterdam.nl/afval/v1/containers/?expand=well,well.site&fields=id_number,well.site.short_id,well.id"
         },
         "next": {
-            "href": "https://api.data.amsterdam.nl/afval/v1/containers/?fields=id_number&format=json&page=2"
+            "href": "https://acc.api.data.amsterdam.nl/afval/v1/containers/?expand=well%2Cwell.site&fields=id_number%2Cwell.site.short_id%2Cwell.id&page=2"
         },
         "previous": {
             "href": null
         }
     },
-    "count": 12619,
+    "count": 12927,
     "results": [
         {
-            "id_number": "RE K 00313"
+            "id_number": "REF31790",
+            "well": {
+                "id": 3493,
+                "site": {
+                    "short_id": 131011
+                }
+            }
         },
         {
-            "id_number": "RE K 00309"
+            "id_number": "REF60451",
+            "well": {
+                "id": 3559,
+                "site": {
+                    "short_id": 131169
+                }
+            }
         },
         {
-            "id_number": "RE K 00298"
+            "id_number": "PAF60060",
+            "well": {
+                "id": 3565,
+                "site": {
+                    "short_id": 112543
+                }
+            }
         },
         {
-            "id_number": "RE K 00264"
+            "id_number": "REF60058",
+            "well": {
+                "id": 3567,
+                "site": {
+                    "short_id": 112543
+                }
+            }
         },
         {
-            "id_number": "REF31196"
+            "id_number": "REF31196",
+            "well": {
+                "id": 3887,
+                "site": {
+                    "short_id": 463422
+                }
+            }
         },
         {
-            "id_number": "PAF32018"
+            "id_number": "PAF32018",
+            "well": {
+                "id": 3889,
+                "site": {
+                    "short_id": 463422
+                }
+            }
         },
         {
-            "id_number": "REF60538"
+            "id_number": "REF60538",
+            "well": {
+                "id": 4021,
+                "site": {
+                    "short_id": 151634
+                }
+            }
         },
         {
-            "id_number": "PAF60317"
+            "id_number": "PAF60317",
+            "well": {
+                "id": 4045,
+                "site": {
+                    "short_id": 137512
+                }
+            }
         },
         {
-            "id_number": "REF60325"
+            "id_number": "REF60325",
+            "well": {
+                "id": 4047,
+                "site": {
+                    "short_id": 11548
+                }
+            }
         },
         {
-            "id_number": "REF31791"
+            "id_number": "REF31791",
+            "well": {
+                "id": 4051,
+                "site": {
+                    "short_id": 1314124
+                }
+            }
         },
         {
-            "id_number": "REF60725"
+            "id_number": "REF60725",
+            "well": {
+                "id": 4085,
+                "site": {
+                    "short_id": 13752
+                }
+            }
         },
         {
-            "id_number": "REF88577"
+            "id_number": "REF88577",
+            "well": {
+                "id": 26062,
+                "site": {
+                    "short_id": 481020
+                }
+            }
         },
         {
-            "id_number": "REF88579"
+            "id_number": "REF88579",
+            "well": {
+                "id": 27361,
+                "site": {
+                    "short_id": 496931
+                }
+            }
         },
         {
-            "id_number": "SR31448"
+            "id_number": "SR31448",
+            "well": {
+                "id": 27488,
+                "site": {
+                    "short_id": 450932
+                }
+            }
         },
         {
-            "id_number": "REF31420"
+            "id_number": "REF31420",
+            "well": {
+                "id": 4947,
+                "site": {
+                    "short_id": 4372169
+                }
+            }
         },
         {
-            "id_number": "REF31419"
+            "id_number": "REF31419",
+            "well": {
+                "id": 4949,
+                "site": {
+                    "short_id": 4372169
+                }
+            }
         },
         {
-            "id_number": "REF31049"
+            "id_number": "REF31049",
+            "well": {
+                "id": 74272,
+                "site": {
+                    "short_id": 4667175
+                }
+            }
         },
         {
-            "id_number": "REF31050"
+            "id_number": "REF31050",
+            "well": {
+                "id": 26677,
+                "site": {
+                    "short_id": 4667175
+                }
+            }
         },
         {
-            "id_number": "PAF32049"
+            "id_number": "PAF32049",
+            "well": {
+                "id": 26676,
+                "site": {
+                    "short_id": 4667175
+                }
+            }
         },
         {
-            "id_number": "Algemeneorder"
+            "id_number": "Algemeneorder",
+            "well": {
+                "id": 6271,
+                "site": {
+                    "short_id": 95512
+                }
+            }
         }
     ]
 }

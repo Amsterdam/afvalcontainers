@@ -6,6 +6,10 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 config_auth = configparser.ConfigParser()
 config_auth.read(os.path.join(BASE_DIR, "config.ini"))
 
+
+ALEMBIC = os.path.join(BASE_DIR, "alembic.ini")
+
+
 TESTING = {"running": False}
 
 # BAMMENS_API_USERNAME = os.getenv('BAMMENS_API_USERNAME')
