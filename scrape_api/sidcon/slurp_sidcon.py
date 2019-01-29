@@ -75,12 +75,14 @@ def fetch_api_containers():
             assert r.status_code == 200
             containers = r.json()
 
+            container_list.extend(containers['results'])
+
             if len(containers['results']) == page_size:
                 params['page'] += 1
             else:
                 break
 
-            container_list.extend(containers['results'])
+    assert container_list
 
     return container_list
 
@@ -99,6 +101,7 @@ def get_container_ids():
         if 'id_number' not in item:
             LOG.error(item.items())
             continue
+
         container_id = remove_white_space(item['id_number'])
 
         well = item.get('well')
@@ -218,9 +221,10 @@ def _store_single_container_states(snapshot):
             container_state['valid'] = False
             description = container_state['description']
             description = remove_white_space(description)
-            if description in ALL_ID_NUMBERS:
+            if description in ALL_ID_NUMBERS.keys():
                 container_state['valid'] = True
                 container_state['site_id'] = ALL_ID_NUMBERS[description]
+
             # remove white space from key.
             container_state['description'] = description
 
@@ -228,7 +232,6 @@ def _store_single_container_states(snapshot):
             grj = dict(scraped_at=scraped_at, **container_state)
             objects.append(grj)
 
-    # TODO join states with 'official' containers / sites
     db_session.bulk_insert_mappings(db_model, objects)
     db_session.commit()
 

@@ -109,4 +109,4 @@ class TestDBWriting(unittest.TestCase):
             .filter(db_model.valid.is_(True))
             .count()
         )
-        self.assertEqual(count, 4)
+        self.assertEqual(count, 5)
