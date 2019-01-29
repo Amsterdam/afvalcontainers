@@ -1,3 +1,4 @@
+alembic
 aiohttp
 async-timeout
 asynctest
