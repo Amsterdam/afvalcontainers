@@ -40,7 +40,7 @@ API_URLS = {
     'production': 'https://api.data.amsterdam.nl'
 }
 
-ALL_ID_NUMBERS = set()
+ALL_ID_NUMBERS = {}
 
 
 PATTERN = re.compile(r'\s+')
@@ -51,31 +51,70 @@ def remove_white_space(long_id_code):
     return long_id_code
 
 
+def fetch_api_containers():
+
+    environment = os.environ.get('ENVIRONMENT', 'acceptance')
+    url = API_URLS[environment]
+
+    container_list = []
+
+    page_size = 3000
+
+    params = dict(
+        fields='id_number,well.site.short_id',
+        expand='well.site',
+        page_size=page_size,
+        format='json',
+        page=1
+    )
+
+    FULL_URL = f'{url}/afval/v1/containers/'
+    while True:
+        with requests.Session() as s:
+            r = s.get(FULL_URL, params=params)
+            assert r.status_code == 200
+            containers = r.json()
+
+            if len(containers['results']) == page_size:
+                params['page'] += 1
+            else:
+                break
+
+            container_list.extend(containers['results'])
+
+    return container_list
+
+
 def get_container_ids():
     """Get container ids from afval api API.
 
     The fill-level historical data lives in its own KILOGRAM database
     so we cannot do a simple join. We just use our own API.
     """
-    environment = os.environ.get('ENVIRONMENT', 'acceptance')
-    url = API_URLS[environment]
+    all_containers = fetch_api_containers()
 
-    FULL_URL = f'{url}/afval/v1/containers/'
-    params = dict(
-        fields='id_number',
-        page_size=18000,
-        format='json'
-    )
+    for item in all_containers:
+        if not item:
+            continue
+        if 'id_number' not in item:
+            LOG.error(item.items())
+            continue
+        container_id = remove_white_space(item['id_number'])
 
-    with requests.Session() as s:
-        r = s.get(FULL_URL, params=params)
-        all_containers = r.json()
+        well = item.get('well')
 
-        LOG.error(type(r))
-        LOG.error(type(all_containers))
+        if not well:
+            LOG.error(item)
+            continue
 
-    for item in all_containers['results']:
-        ALL_ID_NUMBERS.add(remove_white_space(item['id_number']))
+        site = well.get('site', {})
+        if not site:
+            LOG.error(site)
+            continue
+
+        site_short_id = site.get('short_id')
+
+        ALL_ID_NUMBERS[container_id] = site_short_id
 
     LOG.info('Found %s ids', len(ALL_ID_NUMBERS))
 
@@ -181,6 +220,7 @@ def _store_single_container_states(snapshot):
             description = remove_white_space(description)
             if description in ALL_ID_NUMBERS:
                 container_state['valid'] = True
+                container_state['site_id'] = ALL_ID_NUMBERS[description]
             # remove white space from key.
             container_state['description'] = description
 

@@ -41,6 +41,7 @@ async def create_tables(args):
     LOG.warning("CREATING DEFINED TABLES")
     # recreate tables
     Base.metadata.create_all(engine)
+    db_helper.alembic_migrate(engine)
 
 
 class SidconRaw(Base):
@@ -120,7 +121,9 @@ class SidconFillLevel(Base):
     unsuccessfull_transaction_since_reset = Column(Integer)
     # "UnsuccessfulTransactionsSinceReset": null
 
-    # DP manual added (TODO)
+    # DP manual added
+    short_id = Column(Integer, index=True)  # short_id field
+
     # district = Column(String, index=True)
     # neighborhood = Column(String, index=True)
     # stadsdeel = Column(String(1), index=True)

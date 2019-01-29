@@ -1,6 +1,7 @@
 import os
 import logging
 from settings import config_auth
+from settings import ALEMBIC
 
 from sqlalchemy import create_engine
 
@@ -9,6 +10,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy_utils.functions import database_exists
 from sqlalchemy_utils.functions import create_database
 from sqlalchemy_utils.functions import drop_database
+
+from sqlalchemy import MetaData
 
 from sqlalchemy.engine.url import URL
 
@@ -75,3 +78,25 @@ def set_session(engine):
     # create a configured "session" object for tests
     session = Session()
     return session
+
+
+def alembic_migrate(engine):
+    # load the Alembic configuration and generate the
+    # version table, "stamping" it with the most recent rev:
+    from alembic.config import Config
+    from alembic import command
+    alembic_cfg = Config(ALEMBIC)
+
+    meta = MetaData()
+    meta.bind = engine
+    meta.reflect()
+
+    # create alembic start point of
+    # migrations when staring with empty models init script.
+    # if alembic table already exists. upgrade!
+    if 'alembic_version' not in meta.tables:
+        # allow for environment override of migration version
+        rev = os.getenv('ALEMBIC_REVISION', 'head')
+        command.stamp(alembic_cfg, rev)
+    # upgrade to head
+    command.upgrade(alembic_cfg, "head")
