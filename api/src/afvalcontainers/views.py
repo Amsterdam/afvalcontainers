@@ -1,4 +1,6 @@
 import re
+from django.db.models import Q
+from django.db.models.functions import Length
 
 from django_filters.rest_framework import FilterSet
 from django_filters.rest_framework import filters
@@ -62,6 +64,9 @@ class ContainerFilter(FilterSet):
     no_well = filters.BooleanFilter(method='no_well_filter', label='no_well')
     no_site = filters.BooleanFilter(method='no_site_filter', label='no_site')
 
+    invalid_id = filters.BooleanFilter(
+        method='no_good_id_number_filter', label='invalid_id_number')
+
     location = filters.CharFilter(
         method="locatie_filter", label='x,y,r')
 
@@ -118,6 +123,15 @@ class ContainerFilter(FilterSet):
 
     def no_site_filter(self, qs, name, value):
         return qs.filter(well__site=None)
+
+    def no_good_id_number_filter(self, qs, name, value):
+        qs = qs.annotate(id_len=Length('id_number')).filter(
+            Q(id_len__gt=10) |
+            Q(id_len__lt=4) |
+            Q(id_number=None) &
+            Q(active=True)
+        )
+        return qs
 
     def locatie_filter(self, qs, name, value):
         point, radius = bbox.parse_xyr(value)
