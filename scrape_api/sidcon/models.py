@@ -121,7 +121,7 @@ class SidconFillLevel(Base):
     unsuccessfull_transaction_since_reset = Column(Integer)
     # "UnsuccessfulTransactionsSinceReset": null
 
-    # DP manual added
+    # DP manual added AKA site_id
     short_id = Column(Integer, index=True)  # short_id field
 
     # district = Column(String, index=True)

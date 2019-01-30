@@ -96,7 +96,7 @@ def alembic_migrate(engine):
     # if alembic table already exists. upgrade!
     if 'alembic_version' not in meta.tables:
         # allow for environment override of migration version
-        rev = os.getenv('ALEMBIC_REVISION', 'f24')
+        rev = os.getenv('ALEMBIC_REVISION', "head")
         command.stamp(alembic_cfg, rev)
     # upgrade to head
     command.upgrade(alembic_cfg, "head")

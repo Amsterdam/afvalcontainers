@@ -191,6 +191,7 @@ class EnevoFillLevel(Base):
     content_type = Column(String, index=True)
     frozen = Column(Boolean, index=True)
     container_slot_name = Column(String, index=True)
+    site_id = Column(Integer, index=True)  # short_id site field
 
 
 DROP_TABLES = [
