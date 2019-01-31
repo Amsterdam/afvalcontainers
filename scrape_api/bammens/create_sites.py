@@ -537,6 +537,30 @@ def update_quality_in_extra_attributes():
         session.commit()
 
 
+DROP_BAG = """
+DROP table bag_verblijfsobject;
+DROP table bag_ligplaats;
+"""
+
+
+def drop_unrelevant_data():
+    """Clean all extra data no longer needed.
+
+    When import is done data not needed
+    in API is removed to keep backups small.
+    """
+
+    drop_sql = [
+        ('bag', UPDATE_WELL_IN_PAND),
+        ('bgt', "DROP SCHEMA bgt CASCADE"),
+    ]
+
+    for topic, sql_item in drop_sql:
+        log.info(sql_item)
+        session.execute(sql_item)
+        session.commit()
+
+
 VALIDATE_SQL = [
     ("""select count(*) from afvalcontainers_well
         where stadsdeel is null""", 0, 5),

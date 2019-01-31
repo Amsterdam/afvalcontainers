@@ -104,6 +104,9 @@ dc run --rm importer python bammens/buurt_count.py
 # validation
 dc run --rm importer python bammens/create_sites.py --validate
 
+# crop the database from no longer needed data
+dc run --rm importer python bammens/create_sites.py --cleanextra
+
 echo "creating database dump"
 dc exec -T database backup-db.sh afvalcontainers
 
