@@ -18,6 +18,8 @@ class EnevoSite(models.Model):
     photo = models.NullBooleanField()
     last_modified = models.DateTimeField()
 
+    site_id = models.IntegerField(db_index=True, null=True)
+
 
 class EnevoContainer(models.Model):
     container_type_id = models.IntegerField(null=True)

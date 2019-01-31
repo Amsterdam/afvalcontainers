@@ -41,7 +41,7 @@ class KiloPager(HALCursorPagination):
     page_size = 100
     max_page_size = 9000
     ordering = "-id"
-    table_count = False
+    count_table = False
 
 
 class KiloPagerWeigAt(HALCursorPagination):
@@ -50,7 +50,7 @@ class KiloPagerWeigAt(HALCursorPagination):
     page_size = 100
     max_page_size = 9000
     ordering = "-weigh_at"
-    table_count = False
+    count_table = False
 
 
 # def buurt_choices():

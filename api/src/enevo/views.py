@@ -171,14 +171,23 @@ class FillLevelPager(HALCursorPagination):
     count_table = False
 
 
+class EnevoPager(HALCursorPagination):
+    """Site objects are rather "heavy" so put limits on pagination."""
+
+    page_size = 100
+    max_page_size = 9000
+    ordering = "-time"
+    count_table = False
+
+
 class FillLevelView(DatapuntViewSet):
 
+    pagination_class = EnevoPager
     serializer_detail_class = FillLevelSerializer
     serializer_class = FillLevelSerializer
 
     filter_backends = (
         DjangoFilterBackend,
-        OrderingFilter
     )
 
     filter_fields = [
@@ -189,8 +198,6 @@ class FillLevelView(DatapuntViewSet):
         'frozen',
         'time',
     ]
-
-    ordering_fields = '__all__'
 
     def get_queryset(self):
         """

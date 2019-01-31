@@ -561,7 +561,7 @@ VALIDATE_SQL = [
 ]
 
 
-def main(args):
+def main(args):  # noqa
     if args.merge_bgt:
         collect_bgt_for_wells()
     if args.validate:
@@ -580,11 +580,11 @@ def main(args):
         site_fracties()
     if args.buurtcontainercounts:
         buurt_container_counts()
+    if args.cleanextra:
+        drop_unrelevant_data()
 
 
 if __name__ == "__main__":
-    """
-    """
     desc = "Merge wells with BGT and create sites"
     inputparser = argparse.ArgumentParser(desc)
 
@@ -659,6 +659,13 @@ if __name__ == "__main__":
         default=False,
         action="store_true",
         help="create weekly/monthly kilogram.nl stats for site",
+    )
+
+    inputparser.add_argument(
+        "--cleanextra",
+        default=False,
+        action="store_true",
+        help="Clear database of BGT / BAG",
     )
 
     inputparser.add_argument(
