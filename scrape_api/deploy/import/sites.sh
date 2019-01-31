@@ -49,31 +49,36 @@ dc exec -T database pg_restore --no-privileges --no-owner --if-exists -j 4 -c -C
 # Sometimes the migrations could be behind.. since we could load older data
 dc run --rm api python manage.py migrate
 
+update_table() {
+	# add your DP username behind this command to allow local development.
+	dc exec -T database update-table.sh $*
+}
+
 # load BGT objects of everything related to containers on the ground.
-dc exec -T database update-table.sh basiskaart BGTPLUS_BAK_afval_apart_plaats bgt afvalcontainers
+update_table basiskaart BGTPLUS_BAK_afval_apart_plaats bgt afvalcontainers
 
-dc exec -T database update-table.sh basiskaart BGT_OWGL_verkeerseiland bgt afvalcontainers
-dc exec -T database update-table.sh basiskaart BGT_OWGL_berm bgt afvalcontainers
-dc exec -T database update-table.sh basiskaart BGT_OTRN_open_verharding bgt afvalcontainers
-dc exec -T database update-table.sh basiskaart BGT_OTRN_transitie bgt afvalcontainers
-dc exec -T database update-table.sh basiskaart BGT_WGL_fietspad bgt afvalcontainers
-dc exec -T database update-table.sh basiskaart BGT_WGL_voetgangersgebied bgt afvalcontainers
-dc exec -T database update-table.sh basiskaart BGT_WGL_voetpad bgt afvalcontainers
-
-dc exec -T database update-table.sh basiskaart BGT_WGL_parkeervlak bgt afvalcontainers
-dc exec -T database update-table.sh basiskaart BGT_WGL_rijbaan_lokale_weg bgt afvalcontainers
-dc exec -T database update-table.sh basiskaart BGT_WGL_rijbaan_regionale_weg bgt afvalcontainers
-dc exec -T database update-table.sh basiskaart BGT_WGL_woonerf bgt afvalcontainers
-
-dc exec -T database update-table.sh basiskaart BGT_BTRN_groenvoorziening bgt afvalcontainers
-dc exec -T database update-table.sh basiskaart BGT_OTRN_onverhard bgt afvalcontainers
-dc exec -T database update-table.sh basiskaart BGT_OTRN_erf bgt afvalcontainers
+update_table basiskaart BGT_OWGL_verkeerseiland bgt afvalcontainers
+update_table basiskaart BGT_OWGL_berm bgt afvalcontainers
+update_table basiskaart BGT_OTRN_open_verharding bgt afvalcontainers
+update_table basiskaart BGT_OTRN_transitie bgt afvalcontainers
+update_table basiskaart BGT_WGL_fietspad bgt afvalcontainers
+update_table basiskaart BGT_WGL_voetgangersgebied bgt afvalcontainers
+update_table basiskaart BGT_WGL_voetpad bgt afvalcontainers
+update_table
+update_table basiskaart BGT_WGL_parkeervlak bgt afvalcontainers
+update_table basiskaart BGT_WGL_rijbaan_lokale_weg bgt afvalcontainers
+update_table basiskaart BGT_WGL_rijbaan_regionale_weg bgt afvalcontainers
+update_table basiskaart BGT_WGL_woonerf bgt afvalcontainers
+update_table
+update_table basiskaart BGT_BTRN_groenvoorziening bgt afvalcontainers
+update_table basiskaart BGT_OTRN_onverhard bgt afvalcontainers
+update_table basiskaart BGT_OTRN_erf bgt afvalcontainers
 
 # get verblijfsobjecten/nummeraanduidingen.
 # dc exec -T database update-table.sh bag bag_nummeraanduiding public afvalcontainers
-dc exec -T database update-table.sh bag bag_verblijfsobject public afvalcontainers
-dc exec -T database update-table.sh bag bag_pand public afvalcontainers
-dc exec -T database update-table.sh bag bag_ligplaats public afvalcontainers
+update_table bag bag_verblijfsobject public afvalcontainers
+update_table bag bag_pand public afvalcontainers
+update_table bag bag_ligplaats public afvalcontainers
 
 # restore kilogram weigh measurements (24h old)
 # TODO do this on live database?
