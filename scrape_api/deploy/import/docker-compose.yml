@@ -9,6 +9,7 @@ services:
     volumes:
       - ./backups:/tmp/backups
       - afvalcontainers_import_cache:/data
+      - ~/.ssh/datapunt.key:/root/.ssh/datapunt.key
 
   api:
     image: build.datapunt.amsterdam.nl:5000/afvalcontainers:${ENVIRONMENT}
