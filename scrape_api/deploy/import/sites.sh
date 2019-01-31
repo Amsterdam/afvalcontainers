@@ -64,12 +64,12 @@ update_table basiskaart BGT_OTRN_transitie bgt afvalcontainers
 update_table basiskaart BGT_WGL_fietspad bgt afvalcontainers
 update_table basiskaart BGT_WGL_voetgangersgebied bgt afvalcontainers
 update_table basiskaart BGT_WGL_voetpad bgt afvalcontainers
-update_table
+
 update_table basiskaart BGT_WGL_parkeervlak bgt afvalcontainers
 update_table basiskaart BGT_WGL_rijbaan_lokale_weg bgt afvalcontainers
 update_table basiskaart BGT_WGL_rijbaan_regionale_weg bgt afvalcontainers
 update_table basiskaart BGT_WGL_woonerf bgt afvalcontainers
-update_table
+
 update_table basiskaart BGT_BTRN_groenvoorziening bgt afvalcontainers
 update_table basiskaart BGT_OTRN_onverhard bgt afvalcontainers
 update_table basiskaart BGT_OTRN_erf bgt afvalcontainers
