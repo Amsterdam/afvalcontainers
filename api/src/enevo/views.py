@@ -107,6 +107,25 @@ class ContainerSlotView(DatapuntViewSet):
     ordering_fields = '__all__'
 
 
+FILTERS = ['exact', 'lt', 'gt']
+
+
+class SiteFilter(FilterSet):
+    no_site = filters.BooleanFilter(
+        method='in_site_filter', label='in_bammens'
+    )
+
+    class Meta(object):
+        model = EnevoSite
+        fields = {
+            'site_id': ['exact'],
+            'no_site': ['exact'],
+        }
+
+    def in_site_filter(self, qs, name, value):
+        return qs.filter(site_id__isnull=not(value))
+
+
 class SiteView(DatapuntViewSet):
 
     queryset = (
@@ -122,7 +141,7 @@ class SiteView(DatapuntViewSet):
         OrderingFilter
     )
 
-    filter_fields = ['photo']
+    filter_class = SiteFilter
 
     ordering_fields = '__all__'
 
