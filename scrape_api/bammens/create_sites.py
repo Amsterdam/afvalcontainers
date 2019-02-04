@@ -537,9 +537,11 @@ def update_quality_in_extra_attributes():
         session.commit()
 
 
-DROP_BAG = """
-DROP table bag_verblijfsobject;
-DROP table bag_ligplaats;
+DROP_OLD_TABLES = """
+DROP table if exists bag_verblijfsobject;
+DROP table if exists bag_ligplaats;
+DROP table if exists bag_standplaats;
+DROP table if exists bgt_clusters;
 """
 
 
@@ -551,7 +553,7 @@ def drop_unrelevant_data():
     """
 
     drop_sql = [
-        ('bag', UPDATE_WELL_IN_PAND),
+        ('bag', DROP_BAG),
         ('bgt', "DROP SCHEMA bgt CASCADE"),
     ]
 
