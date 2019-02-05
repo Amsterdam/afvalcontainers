@@ -553,7 +553,7 @@ def drop_unrelevant_data():
     """
 
     drop_sql = [
-        ('bag', DROP_BAG),
+        ('bag', DROP_OLD_TABLES),
         ('bgt', "DROP SCHEMA bgt CASCADE"),
     ]
 
