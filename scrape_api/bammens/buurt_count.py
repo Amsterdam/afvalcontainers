@@ -1,9 +1,39 @@
+import logging
 import datetime
 import db_helper
 import argparse
 import requests
+from settings import KILO_ENVIRONMENT_OVERRIDES
 
-from bammens.models import BuurtBewonerCounts
+from sqlalchemy.schema import Sequence
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+
+
+logging.basicConfig(level=logging.DEBUG)
+LOG = logging.getLogger(__name__)
+
+# Helper models to copy relevant data in.
+
+Base = declarative_base()
+
+
+class BuurtBewonerCounts(Base):
+    """BBGA BEVOLKINGTOTAAL API data."""
+
+    __tablename__ = f"buurt_counts"
+    id = Column(Integer, Sequence("grl_seq"), primary_key=True)
+    year = Column(Integer, index=True)
+    buurt_code = Column(String(4), index=True)
+    inhabitants = Column(Integer, index=True)
+
+
+def reset_table(engine):
+    # resets everything
+    LOG.warning("RESTE buurt_count TABLES")
+    Base.metadata.drop_all(engine)
+    # recreate tables
+    Base.metadata.create_all(engine)
 
 
 def _store_raw_buurt_data(raw_response: dict):
@@ -51,7 +81,8 @@ def store_bbga_buurten():
         _store_raw_buurt_data(raw_data)
 
 
-def main(args):
+def main(args, engine, session):
+    reset_table(engine)
     store_bbga_buurten()
 
 
@@ -59,7 +90,7 @@ if __name__ == "__main__":
     desc = "Collect Buurt Inhabitants data from BBGA"
     inputparser = argparse.ArgumentParser(desc)
     args = inputparser.parse_args()
-    engine = db_helper.make_engine()
+    engine = db_helper.make_engine(environment=KILO_ENVIRONMENT_OVERRIDES)
     session = db_helper.set_session(engine)
-    main(args)
+    main(args, engine, session)
     session.close()
