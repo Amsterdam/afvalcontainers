@@ -1,5 +1,6 @@
 import os
 import configparser
+from sqlalchemy.ext.declarative import declarative_base
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -9,6 +10,7 @@ config_auth.read(os.path.join(BASE_DIR, "config.ini"))
 
 ALEMBIC = os.path.join(BASE_DIR, "alembic.ini")
 
+Base = declarative_base()
 
 TESTING = {"running": False}
 

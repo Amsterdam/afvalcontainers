@@ -4,19 +4,20 @@ import asyncio
 
 from sqlalchemy import Column, Integer, String, TIMESTAMP, Boolean
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.schema import Sequence
 from sqlalchemy import MetaData
 from geoalchemy2 import Geometry  # noqa
 
 from settings import KILO_ENVIRONMENT_OVERRIDES
+from settings import Base
 
 import db_helper
 
 logging.basicConfig(level=logging.DEBUG)
 LOG = logging.getLogger(__name__)
 
-Base = declarative_base()
+# Base = declarative_base()
 
 IMPORT_PREFIX = ''
 
@@ -66,7 +67,7 @@ class EnevoContainer(Base):
     """Raw Enevo container data."""
 
     __tablename__ = f"enevo_container_raw"
-    id = Column(Integer, Sequence("grl_seq"), primary_key=True)
+    id = Column(Integer, primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
     data = Column(JSONB)
 
@@ -75,7 +76,7 @@ class EnevoContainerType(Base):
     """Raw Enevo ContainerType data."""
 
     __tablename__ = f"enevo_containertype_raw"
-    id = Column(Integer, Sequence("grl_seq"), primary_key=True)
+    id = Column(Integer, primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
     data = Column(JSONB)
 
@@ -84,7 +85,7 @@ class EnevoContainerSlot(Base):
     """Raw Enevo ContainerSlot data."""
 
     __tablename__ = f"enevo_containerslot_raw"
-    id = Column(Integer, Sequence("grl_seq"), primary_key=True)
+    id = Column(Integer, primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
     data = Column(JSONB)
 
@@ -93,7 +94,7 @@ class EnevoContentType(Base):
     """Raw Enevo ContentType data."""
 
     __tablename__ = f"enevo_contenttype_raw"
-    id = Column(Integer, Sequence("grl_seq"), primary_key=True)
+    id = Column(Integer, primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
     data = Column(JSONB)
 
@@ -102,7 +103,7 @@ class EnevoSite(Base):
     """Raw Enevo Sites data."""
 
     __tablename__ = f"enevo_site_raw"
-    id = Column(Integer, Sequence("grl_seq"), primary_key=True)
+    id = Column(Integer, primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
     data = Column(JSONB)
 
@@ -111,7 +112,7 @@ class EnevoSiteContentType(Base):
     """Raw Enevo SiteContentType data."""
 
     __tablename__ = f"enevo_sitecontenttype_raw"
-    id = Column(Integer, Sequence("grl_seq"), primary_key=True)
+    id = Column(Integer, primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
     data = Column(JSONB)
 
@@ -120,7 +121,7 @@ class EnevoDevice(Base):
     """Raw Enevo Device data."""
 
     __tablename__ = f"enevo_device_raw"
-    id = Column(Integer, Sequence("grl_seq"), primary_key=True)
+    id = Column(Integer, primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
     data = Column(JSONB)
 
@@ -129,7 +130,7 @@ class EnevoServiceList(Base):
     """Raw Enevo ServiceList data."""
 
     __tablename__ = f"enevo_servicelist_raw"
-    id = Column(Integer, Sequence("grl_seq"), primary_key=True)
+    id = Column(Integer, primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
     data = Column(JSONB)
 
@@ -138,7 +139,7 @@ class EnevoServiceEvent(Base):
     """Raw Enevo ServiceEvent data."""
 
     __tablename__ = f"enevo_serviceevent_raw"
-    id = Column(Integer, Sequence("grl_seq"), primary_key=True)
+    id = Column(Integer, primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
     data = Column(JSONB)
 
@@ -148,9 +149,8 @@ class EnevoAlertRaw(Base):
 
     with history
     """
-
     __tablename__ = f"enevo_alert_raw"
-    id = Column(Integer, Sequence("alert_seq"), primary_key=True)
+    id = Column(Integer, primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
     time = Column(TIMESTAMP, index=True)
     data = Column(JSONB)

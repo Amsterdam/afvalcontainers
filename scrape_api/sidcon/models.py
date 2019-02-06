@@ -5,8 +5,8 @@ import asyncio
 from sqlalchemy import Column, Integer, Float, String, TIMESTAMP, Boolean
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.schema import Sequence
 from geoalchemy2 import Geometry
+from settings import Base
 
 # from aiopg.sa import create_engine as aiopg_engine
 import db_helper
@@ -14,8 +14,6 @@ from settings import KILO_ENVIRONMENT_OVERRIDES
 
 # logging.basicConfig(level=logging.DEBUG)
 LOG = logging.getLogger(__name__)
-
-Base = declarative_base()
 
 
 SIDCON_TABLES = [
@@ -48,7 +46,7 @@ class SidconRaw(Base):
     """Raw sidcon API data."""
 
     __tablename__ = f"sidcon_container_status_raw"
-    id = Column(Integer, Sequence("grl_seq"), primary_key=True)
+    id = Column(Integer, primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
     data = Column(JSONB)
 
@@ -61,7 +59,7 @@ class SidconFillLevel(Base):
 
     __tablename__ = f"sidcon_container_states"
 
-    id = Column(Integer, Sequence("grl_seq"), primary_key=True)  # Seq
+    id = Column(Integer, primary_key=True)  # Seq
     scraped_at = Column(TIMESTAMP, index=True)
     geometrie = Column(Geometry('POINT', srid=4326), index=True)
     valid = Column(Boolean)
