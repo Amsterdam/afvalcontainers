@@ -22,7 +22,7 @@ trap 'dc kill ; dc down -v ; dc rm -f' EXIT
 echo "Building / pull / cleanup images"
 dc rm -f
 dc build
-# dc pull
+dc pull
 
 # get latest bbga data
 dc run --rm importer python bammens/buurt_count.py

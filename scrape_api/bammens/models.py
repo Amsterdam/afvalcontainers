@@ -128,16 +128,6 @@ class ContainerType(Base):
     data = Column(JSONB)
 
 
-class BuurtBewonerCounts(Base):
-    """BBGA BEVOLKINGTOTAAL API data."""
-
-    __tablename__ = f"buurt_counts"
-    id = Column(Integer, Sequence("grl_seq"), primary_key=True)
-    year = Column(Integer, index=True)
-    buurt_code = Column(String(4), index=True)
-    inhabitants = Column(Integer, index=True)
-
-
 ENDPOINT_MODEL = {
     "container_types": ContainerType,
     "containers": Container,

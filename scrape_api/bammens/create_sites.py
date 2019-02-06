@@ -542,6 +542,9 @@ DROP table if exists bag_verblijfsobject;
 DROP table if exists bag_ligplaats;
 DROP table if exists bag_standplaats;
 DROP table if exists bgt_clusters;
+DROP table if exists well_nobgt_clusters;
+DROP table if exists well_coordinaten;
+DROP table if exists well_bgt;
 """
 
 
