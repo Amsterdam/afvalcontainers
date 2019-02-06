@@ -47,6 +47,7 @@ class SidconRaw(Base):
     """Raw sidcon API data."""
 
     __tablename__ = f"sidcon_container_status_raw"
+    __table_args__ = {'extend_existing': True}
     id = Column(Integer, primary_key=True)
     scraped_at = Column(TIMESTAMP, index=True)
     data = Column(JSONB)
@@ -59,10 +60,12 @@ class SidconFillLevel(Base):
     """
 
     __tablename__ = f"sidcon_container_states"
+    __table_args__ = {'extend_existing': True}
 
     id = Column(
         Integer,
-        Sequence('sidcon_container_states_sequence'), primary_key=True)  # Seq
+        Sequence('sidcon_container_states_sequence'),
+        primary_key=True)  # Seq
 
     scraped_at = Column(TIMESTAMP, index=True)
     geometrie = Column(Geometry('POINT', srid=4326), index=True)
