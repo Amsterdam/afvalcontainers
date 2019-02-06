@@ -5,6 +5,7 @@ import asyncio
 from sqlalchemy import Column, Integer, Float, String, TIMESTAMP, Boolean
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.schema import Sequence
 from geoalchemy2 import Geometry
 from settings import Base
 
@@ -59,7 +60,10 @@ class SidconFillLevel(Base):
 
     __tablename__ = f"sidcon_container_states"
 
-    id = Column(Integer, primary_key=True)  # Seq
+    id = Column(
+        Integer,
+        Sequence('sidcon_container_states_sequence'), primary_key=True)  # Seq
+
     scraped_at = Column(TIMESTAMP, index=True)
     geometrie = Column(Geometry('POINT', srid=4326), index=True)
     valid = Column(Boolean)

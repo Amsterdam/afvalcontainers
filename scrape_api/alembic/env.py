@@ -7,8 +7,10 @@ from sqlalchemy import pool  # noqa
 
 from alembic import context
 
-from enevo.models import Base
-# from sidcon.models import Base
+from enevo import models as enevo_models  # noqa
+from sidcon import models as sidcon_models # noqa
+
+from settings import Base
 
 import db_helper
 
