@@ -30,7 +30,7 @@ FROM
     enevo_contenttype_raw;
 """  # noqa
 
-INSERT_SITES = """
+INSERT_ENEVO_SITES = """
 INSERT INTO enevo_enevosite (
     id,
     type,
@@ -70,6 +70,29 @@ SELECT
 FROM
     enevo_site_raw;
 """  # noqa
+
+
+UPDATE_ENEVO_SITE_ID = """
+UPDATE enevo_enevosite est SET
+    site_id = match_site.short_id
+FROM (
+    SELECT
+        sitex.distance_enevo,
+        sitex.short_id,
+        es.id
+    FROM enevo_enevosite es
+    CROSS JOIN LATERAL (
+        SELECT
+            *,
+            st_distance(s.geometrie, es.geometrie_rd)::int as distance_enevo
+        FROM afvalcontainers_site s
+        ORDER BY s.geometrie <-> es.geometrie_rd
+        LIMIT 1
+    ) AS sitex
+) AS match_site
+WHERE match_site.id = est.id
+AND match_site.distance_enevo < 30
+"""
 
 
 INSERT_SITECONTENTTYPES = """
@@ -249,8 +272,10 @@ def update_containertypes():
 
 
 def update_sites():
-    sql = INSERT_SITES
+    sql = INSERT_ENEVO_SITES
     session.execute("TRUNCATE TABLE enevo_enevosite CASCADE;")
+    session.execute(sql)
+    sql = UPDATE_ENEVO_SITE_ID
     session.execute(sql)
     session.commit()
 
