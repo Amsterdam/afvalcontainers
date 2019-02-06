@@ -29,6 +29,8 @@ dc run --rm importer python bammens/buurt_count.py
 
 # Importeer buurt/stadseel
 dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/gebieden buurt_simple,buurtcombinatie,gebiedsgerichtwerken,stadsdeel 28992 --db kilogram
+
+# Importeer wfs, wells,containers,sites
 dc run --rm importer python load_wfs_postgres.py https://map.data.amsterdam.nl/maps/afval container_coordinaten,well_coordinaten,site_circle,enevo_site_points 28992 --db kilogram
 
 # Kilogram statisiek.

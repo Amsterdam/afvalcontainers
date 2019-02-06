@@ -209,7 +209,7 @@ LIVE_TABLES = [
     EnevoFillLevel,
     EnevoFillLevelRaw,
     # EnevoAlert
-    EnevoAlertRaw
+    EnevoAlertRaw,
 ]
 
 

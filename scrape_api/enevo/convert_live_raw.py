@@ -5,12 +5,15 @@ data safe and sound.  This enables us to convert the raw data in usable data
 records and merge usable information with it. And as a BONUS we can do it again
 later in the future since the raw original data is safely stored.
 
-TODO add datapunt site / enevo site information to the records
+A daily maintenance taks stores the wfs / wms of
+sites, wells and containers and enevo_sites in the kilogram database
+we can link enevo records with site information with it.
 """
 
 import logging
 import argparse
 import datetime
+import settings
 
 import db_helper
 from enevo import models
@@ -38,6 +41,41 @@ log.setLevel(logging.DEBUG)
 """
 
 
+UPDATE_SITE_ID_SQL = """
+UPDATE enevo_filllevel fl SET
+    site_id = site_match.short_id
+FROM (
+    SELECT
+        sitex.distance_enevo,
+        sitex.short_id,
+        f.e_site_name,
+        f.id as fill_id
+    FROM enevo_filllevel f, enevo_site_points es
+    CROSS JOIN LATERAL (
+        SELECT
+            *,
+            st_distance(s.wkb_geometry, es.wkb_geometry)::int as distance_enevo
+        FROM site_circle s
+        ORDER BY s.wkb_geometry <-> es.wkb_geometry
+        LIMIT 1
+        ) AS sitex
+    WHERE f.e_site_name = es."name"
+) site_match
+WHERE site_match.distance_enevo < 30
+AND fl.site_id is null
+AND fl.id = fill_id
+"""
+
+
+def update_site_ids():
+    """Add site_id to enevo fill level data"""
+    if settings.TESTING:
+        return
+    db_session = db_helper.session
+    db_session.execute(UPDATE_SITE_ID_SQL)
+    db_session.commit()
+
+
 def extract_one_raw_record(raw_record):
 
     rows = 0
@@ -60,6 +98,7 @@ def extract_one_raw_record(raw_record):
             e_site=record['site'],
             e_site_name=record['siteName'],
             container_slot_name=record.get('containerSlotName'),
+            # site id is done later
         )
 
         new_records.append(new)
@@ -130,6 +169,10 @@ def main(make_engine=True):
         db_helper.set_session(engine)
 
     extract_measurements()
+    # using wfs services  which are loaded in the maintenance
+    # jenkins job. we merge enevo fill levels with datapunt afval sites.
+    # based on distance.
+    update_site_ids()
 
 
 if __name__ == "__main__":
