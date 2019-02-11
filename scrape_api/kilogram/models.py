@@ -40,13 +40,16 @@ async def create_tables(args):
     LOG.warning("CREATING DEFINED TABLES")
     # recreate tables
     Base.metadata.create_all(engine)
+    db_helper.alembic_migrate(engine)
 
 
 class KilogramRaw(Base):
     """Raw kilogram.nl API data."""
 
     __tablename__ = f"kilogram_weigh_raw"
-    id = Column(Integer, Sequence("grl_seq"), primary_key=True)
+    id = Column(
+        Integer, Sequence("kilogram_weigh_raw_seqence"),
+        primary_key=True)
     system_id = Column(Integer, index=True)
     weigh_at = Column(TIMESTAMP, index=True)
     scraped_at = Column(TIMESTAMP, index=True)
@@ -60,7 +63,11 @@ class KilogramMeasurement(Base):
     """
 
     __tablename__ = f"kilogram_weigh_measurement"
-    id = Column(Integer, Sequence("grl_seq"), primary_key=True)  # Seq
+    id = Column(
+        Integer,
+        Sequence("kilogram_weigh_measurement_sequence"),
+        primary_key=True)  # Seq
+
     seq_id = Column(Integer, index=True)
     system_id = Column(Integer, index=True)
     weigh_at = Column(TIMESTAMP, index=True)

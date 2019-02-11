@@ -21,11 +21,14 @@ def fix_table(connection, table):
     data = connection.execute(has_default).fetchall()
     LOG.error(data)
 
-    if data[0][1] is not None:
+    new_seq_name = f"{table}_sequence"
+
+    curr_seq = data[0][1]
+
+    if curr_seq and f"'{new_seq_name}'" in data[0][1]:
+        LOG.info(data[0][1])
         LOG.info("No fix needed")
         return
-
-    new_seq_name = f"{table}_sequence"
 
     new_sequence = f"""
     create sequence if not exists {new_seq_name}
