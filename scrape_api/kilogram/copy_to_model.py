@@ -278,6 +278,7 @@ def extract_one_resultset(fields, records, system_id=None):
 
 
 def extract_measurements():
+    # TODO loop over vehicles/system_id. not over all results.
     session = db_helper.session
     measurements = models.KilogramMeasurement
     api_source = models.KilogramRaw
@@ -295,7 +296,7 @@ def extract_measurements():
         fields = api_data['Fields']
         records = api_data['Records']
 
-        # find date of latest measurement
+        # find date of latest measurement for system
         m = (
             session.query(measurements)
             .filter(measurements.system_id == system_id)
