@@ -48,7 +48,7 @@ class KilogramRaw(Base):
 
     __tablename__ = f"kilogram_weigh_raw"
     id = Column(
-        Integer, Sequence("kilogram_weigh_raw_seqence"),
+        Integer, Sequence("kilogram_weigh_raw_sequence"),
         primary_key=True)
     system_id = Column(Integer, index=True)
     weigh_at = Column(TIMESTAMP, index=True)
