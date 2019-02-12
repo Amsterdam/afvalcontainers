@@ -33,7 +33,7 @@ class AfvalContainerAPIRootView(routers.APIRootView):
     Continues Import Overview
     =========================
 
-    A few suppliers provide real-time data.
+    A few /suppliers provide real-time data.
 
      1. kilogram.nl for live weigh measurements.
      2. sidcon for live filling sidcon (rest) containers.
@@ -45,7 +45,7 @@ class AfvalContainerAPIRootView(routers.APIRootView):
 
     """
     def get_view_name(self):
-        return 'AfvalContainers API'
+        return 'Afvalcontainers API'
 
     def get(self, request, *args, **kwargs):
         response = super().get(request, *args, **kwargs)
