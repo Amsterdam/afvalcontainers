@@ -214,6 +214,7 @@ class FillLevelView(DatapuntViewSet):
         'content_type_name',
         'e_site',
         'e_site_name',
+        'site_id',
         'frozen',
         'time',
     ]

@@ -61,4 +61,4 @@ class SidconFillLevel(models.Model):
     # first_weight = models.IntegerField(blank=True, null=True)
     # second_weight = models.IntegerField(blank=True, null=True)
     # net_weight = models.IntegerField(blank=True, null=True)
-    # site_id = models.IntegerField(blank=True, null=True)
+    short_id = models.IntegerField(blank=True, null=True)

@@ -28,6 +28,7 @@ class Migration(migrations.Migration):
                 ('content_type_name', models.CharField(max_length=100)),
                 ('confidence', models.IntegerField()),
                 ('frozen', models.NullBooleanField()),
+                ('site_id', models.IntegerField(null=True)),
             ],
             options={
                 'db_table': 'enevo_filllevel',

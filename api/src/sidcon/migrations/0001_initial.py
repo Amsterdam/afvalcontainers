@@ -49,6 +49,7 @@ class Migration(migrations.Migration):
                 ('status_trigger_name', models.CharField(blank=True, max_length=100, null=True)),
                 ('status_configuration', models.CharField(blank=True, max_length=50, null=True)),
                 ('fraction', models.CharField(blank=True, max_length=50, null=True)),
+                ('short_id', models.IntegerField(blank=True, null=True)),
             ],
             options={
                 'db_table': 'sidcon_container_states',

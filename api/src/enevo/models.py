@@ -121,6 +121,7 @@ class EnevoFillLevel(models.Model):
     content_type_name = models.CharField(max_length=100)
     confidence = models.IntegerField()
     frozen = models.NullBooleanField()
+    site_id = models.IntegerField()
 
     class Meta:
         managed = settings.TESTING

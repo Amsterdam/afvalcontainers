@@ -43,6 +43,9 @@ class SidconFilter(FilterSet):
     container_id = filters.CharFilter(
         method='container_filter', label='container id')
 
+    site_id = filters.CharFilter(
+        method='site_filter', label='short site id')
+
     days_back = filters.NumberFilter(
         method='delta_day_filter', label='days back')
 
@@ -56,10 +59,15 @@ class SidconFilter(FilterSet):
             "container_id": ['exact'],
             "days_back": ['exact'],
             "valid": ['exact'],
+            "short_id": ['exact'],
+            "site_id": ['exact'],
         }
 
     def container_filter(self, qs, name, value):
         return qs.filter(description=value)
+
+    def site_filter(self, qs, name, value):
+        return qs.filter(site_id=value)
 
     def delta_day_filter(self, qs, name, value):
         today = datetime.datetime.now()
