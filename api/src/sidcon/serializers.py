@@ -17,6 +17,7 @@ class SidconSerializer(FlexFieldsModelSerializer):
             'communication_date_time',
             'id',
             'container_id',
+            'short_id',
         ]
 
 
