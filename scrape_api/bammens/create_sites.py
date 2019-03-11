@@ -2,9 +2,11 @@
 
 Sites are collection of wells containing containers.
 
--They change every day in container content.
--New wells are added / removed daily.
--A short ID is used for coupling sites with kilogram measurements.
+- They change every day in container content.
+- New wells are added / removed daily.
+- A short ID is used for coupling sites with kilogram measurements.
+
+A short id is streetcode + housenumer + counter.
 
 The clustering of wells into sites is a rather complex issue.
 

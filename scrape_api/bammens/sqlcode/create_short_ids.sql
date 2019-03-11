@@ -132,7 +132,7 @@ from (
 select
     row_number() over (partition by opr.display, s.huisnummer order by s.id) as rown,
     concat(
-        right(opr.id, 4),
+        right(opr.id, 5),
         huisnummer
     ) as short_id,
     s.id as site_id,
