@@ -2,6 +2,8 @@
 
 # for local development fill in your user name and load
 # your datapunt ssh key in the docker-compose.
+#
+# This data is needed to create sites.
 
 set -e
 set -u

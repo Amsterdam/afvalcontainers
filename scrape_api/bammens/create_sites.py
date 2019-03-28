@@ -281,6 +281,22 @@ def delete_sites():
     session.commit()
 
 
+DELETE_SITE_WITH_NO_CONTAINERS = """
+DELETE FROM "afvalcontainers_site"
+WHERE "afvalcontainers_site"."id" IN (
+    SELECT s.id FROM afvalcontainers_site s
+    LEFT OUTER JOIN afvalcontainers_well w ON w.site_id = s.id
+    WHERE w.id IS NULL;
+)
+"""
+
+
+def delete_empty_sites():
+    log.info('Delete sites which do not container containers')
+    session.execute(DELETE_SITE_WITH_NO_CONTAINERS)
+    session.commit()
+
+
 def fill_rd_geometry():
     """If well have geometrie and no rd geometry add it."""
     session.execute(TRANSFORM_28992)
@@ -495,6 +511,9 @@ def create_site_clusters():
     log.info('Create sites with leftover wells')
     execute_sqlfile('sqlcode/create_well_cluster.sql')
     execute_sqlfile('sqlcode/create_sites_from_well_clusters.sql')
+
+    # Delete BGT sites with no containers.
+    # delete_empty_sites()
 
     # merge overlapping sites
     execute_sqlfile('sqlcode/merge_overlapping_sites.sql')
