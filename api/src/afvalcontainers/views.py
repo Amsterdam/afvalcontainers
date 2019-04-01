@@ -5,6 +5,7 @@ from django.db.models.functions import Length
 from django_filters.rest_framework import FilterSet
 from django_filters.rest_framework import filters
 from rest_framework.filters import OrderingFilter
+from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.serializers import ValidationError
 from django.contrib.gis.geos import Polygon
@@ -44,7 +45,14 @@ PATTERN = re.compile(r'\s+')
 
 def buurt_choices():
     options = Buurten.objects.values_list('vollcode', 'naam')
-    return [(c, '%s (%s)' % (n, c)) for c, n in options]
+    return sorted([(c, '%s (%s)' % (n, c)) for c, n in options])
+
+
+def container_types():
+    options = ContainerType.objects.values_list('name')
+    bla = sorted([(n[0], n[0]) for n in options])
+    print(bla)
+    return bla
 
 
 def remove_white_space(long_id_code):
@@ -284,8 +292,13 @@ class TypeView(DatapuntViewSet):
     )
     serializer_detail_class = TypeSerializer
     serializer_class = TypeSerializer
-    filter_backends = (DjangoFilterBackend, OrderingFilter)
-    filter_fields = ['volume', 'name']
+    filter_backends = (
+        DjangoFilterBackend, OrderingFilter,
+        SearchFilter,
+
+    )
+    filter_fields = ['volume', 'name', 'weight']
+    search_fields = ('name',)
 
     ordering_fields = '__all__'
 
@@ -309,6 +322,11 @@ class SiteFilter(FilterSet):
     stadsdeel = filters.ChoiceFilter(choices=settings.STADSDELEN)
     buurt_code = filters.ChoiceFilter(choices=buurt_choices)
 
+    container_type = filters.ChoiceFilter(
+        choices=container_types, label='Containertype',
+        method='container_type_filter'
+    )
+
     fractie = filters.ChoiceFilter(
         method='fractie_filter',
         choices=settings.WASTE_CHOICES, label="Fractie")
@@ -331,6 +349,8 @@ class SiteFilter(FilterSet):
             # "buurt_code",
             "stadsdeel": EXACT,
             "wells__containers__container_type__volume": FILTERS,
+            "container_type": EXACT,
+            "wells__containers__container_type__weight": FILTERS,
             "wells": EXACT,
             "in_bbox": EXACT,
             "location": EXACT,
@@ -367,6 +387,10 @@ class SiteFilter(FilterSet):
     def fractie_filter(self, qs, name, value):
         """Filter on fractie."""
         return qs.filter(wells__containers__waste_name=value).distinct()
+
+    def container_type_filter(self, qs, name, value):
+        return qs.filter(
+            wells__containers__container_type__name=value).distinct()
 
 
 class SitePager(HALPagination):
