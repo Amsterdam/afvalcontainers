@@ -513,7 +513,7 @@ def create_site_clusters():
     execute_sqlfile('sqlcode/create_sites_from_well_clusters.sql')
 
     # Delete BGT sites with no containers.
-    # delete_empty_sites()
+    delete_empty_sites()
 
     # merge overlapping sites
     execute_sqlfile('sqlcode/merge_overlapping_sites.sql')

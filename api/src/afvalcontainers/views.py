@@ -173,6 +173,9 @@ class ContainerView(FlexFieldsMixin, DatapuntViewSet):
 
     [detailed list objects /afval/v1/containers/?detailed=1](https://api.data.amsterdam.nl/afval/v1/containers/?detailed=1).
 
+    Download everything as csv:
+    [detailed list objects /afval/v1/containers/?detailed=1](https://api.data.amsterdam.nl/afval/v1/containers/?detailed=1&format=csv&page_size=15000).
+
     [example specific list fields /afval/v1/containers/?fields=id,well.site.active&expand=well.site](https://api.data.amsterdam.nl/afval/v1/containers/?fields=id,well.site.active&expand=well.site)
 
     """  # noqa
