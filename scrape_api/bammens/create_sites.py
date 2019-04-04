@@ -286,8 +286,8 @@ DELETE FROM "afvalcontainers_site"
 WHERE "afvalcontainers_site"."id" IN (
     SELECT s.id FROM afvalcontainers_site s
     LEFT OUTER JOIN afvalcontainers_well w ON w.site_id = s.id
-    WHERE w.id IS NULL;
-)
+    WHERE w.id IS NULL
+);
 """
 
 
