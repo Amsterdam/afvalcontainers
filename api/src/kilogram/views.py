@@ -109,7 +109,7 @@ class KilogramFilter(FilterSet):
     def locatie_filter(self, qs, name, value):
         point, radius = bbox.parse_xyr(value)
         return qs.filter(
-            well__geometrie__dwithin=(point, radius))
+            geometrie__dwithin=(point, radius))
 
     def detailed_filter(self, qs, name, valie):
         return qs

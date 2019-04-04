@@ -18,7 +18,7 @@ djangorestframework==3.9.0
 djangorestframework-csv==2.1.0
 djangorestframework-gis==0.14
 djangorestframework-xml==1.4.0
-drf-amsterdam==0.2.4
+drf-amsterdam==0.3.2
 drf-extensions==0.4.0
 drf-yasg==1.12.1
 drf-flex-fields==0.3.4

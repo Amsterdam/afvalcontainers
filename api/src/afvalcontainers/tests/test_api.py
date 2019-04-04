@@ -203,3 +203,11 @@ class BrowseDatasetsTestCase(APITestCase):
 
         self.valid_response(url, response, 'application/json')
         self.assertEqual(response.data['count'], 3)
+
+    def test_kilogram_filter(self):
+        url = "suppliers/kilogram/"
+        response = self.client.get(
+            f"/{url}/", {
+                'location': "4.993437887259929,52.356636851660916,5"
+            })
+        self.valid_response(url, response, 'application/json')
