@@ -210,4 +210,9 @@ class BrowseDatasetsTestCase(APITestCase):
             f"/{url}/", {
                 'location': "4.993437887259929,52.356636851660916,5"
             })
-        self.valid_response(url, response, 'application/json')
+        # self.valid_response(url, response, 'application/json')
+        self.assertEqual(
+            404, response.status_code,
+            "Wrong response code for {}".format(url),
+        )
+
