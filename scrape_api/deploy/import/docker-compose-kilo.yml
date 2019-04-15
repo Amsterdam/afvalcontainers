@@ -1,7 +1,7 @@
 version: '3.0'
 services:
   importer:
-    image: build.datapunt.amsterdam.nl:5000/afvalcontainers_importer:${ENVIRONMENT}
+    image: repo.data.amsterdam.nl/afvalcontainers_importer:${ENVIRONMENT}
     # build: ../../
     environment:
       ENVIRONMENT:

@@ -2,23 +2,22 @@
 
 def tryStep(String message, Closure block, Closure tearDown = null) {
     try {
-        block();
+        block()
     }
     catch (Throwable t) {
-        slackSend message: "${env.JOB_NAME}: ${message} failure ${env.BUILD_URL}", channel: '#junk-kanaal', color: 'danger'
+        slackSend message: "${env.JOB_NAME}: ${message} failure ${env.BUILD_URL}", channel: '#ci-channel', color: 'danger'
 
-        throw t;
+        throw t
     }
     finally {
         if (tearDown) {
-            tearDown();
+            tearDown()
         }
     }
 }
 
 
 node {
-
     stage("Checkout") {
         checkout scm
     }
@@ -32,16 +31,17 @@ node {
 
     stage("Build dockers") {
         tryStep "build", {
-            def importer = docker.build("build.datapunt.amsterdam.nl:5000/afvalcontainers_importer:${env.BUILD_NUMBER}", "scrape_api")
+            docker.withRegistry('https://repo.data.amsterdam.nl','docker-registry') {
+            def importer = docker.build("datapunt/afvalcontainers_importer:${env.BUILD_NUMBER}", "--build-arg http_proxy=${JENKINS_HTTP_PROXY_STRING} --build-arg https_proxy=${JENKINS_HTTP_PROXY_STRING} scrape_api")
                 importer.push()
                 importer.push("acceptance")
-
-            def api = docker.build("build.datapunt.amsterdam.nl:5000/afvalcontainers:${env.BUILD_NUMBER}", "api")
+            def api = docker.build("datapunt/afvalcontainers:${env.BUILD_NUMBER}", "--build-arg http_proxy=${JENKINS_HTTP_PROXY_STRING} --build-arg https_proxy=${JENKINS_HTTP_PROXY_STRING} "api")
                 api.push()
                 api.push("acceptance")
         }
     }
 }
+
 
 String BRANCH = "${env.BRANCH_NAME}"
 
@@ -50,9 +50,11 @@ if (BRANCH == "master") {
     node {
         stage('Push acceptance image') {
             tryStep "image tagging", {
-                def image = docker.image("build.datapunt.amsterdam.nl:5000/afvalcontainers:${env.BUILD_NUMBER}")
-                image.pull()
-                image.push("acceptance")
+                docker.withRegistry('https://repo.data.amsterdam.nl','docker-registry') {
+                    def image = docker.image("datapunt/afvalcontainers:${env.BUILD_NUMBER}")
+                    image.pull()
+                    image.push("acceptance")
+                }
             }
         }
     }
@@ -70,15 +72,16 @@ if (BRANCH == "master") {
     }
 
     stage('Waiting for approval') {
-        slackSend channel: '#junk-kanaal', color: 'warning', message: 'Afval Container API Waiting for Production Release - please confirm'
+        slackSend channel: '#ci-channel', color: 'warning', message: 'Afval Container API Waiting for Production Release - please confirm'
         input "Deploy to Production?"
     }
 
     node {
         stage('Push production image') {
             tryStep "image tagging", {
-                def api = docker.image("build.datapunt.amsterdam.nl:5000/afvalcontainers:${env.BUILD_NUMBER}")
-                def importer = docker.image("build.datapunt.amsterdam.nl:5000/afvalcontainers_importer:${env.BUILD_NUMBER}")
+                docker.withRegistry('https://repo.data.amsterdam.nl','docker-registry') {
+                def api = docker.image("datapunt/afvalcontainers:${env.BUILD_NUMBER}")
+                def importer = docker.image("datapunt/afvalcontainers_importer:${env.BUILD_NUMBER}")
 
                 importer.push("production")
                 importer.push("latest")
@@ -94,8 +97,8 @@ if (BRANCH == "master") {
             tryStep "deployment", {
                 build job: 'Subtask_Openstack_Playbook',
                 parameters: [
-                        [$class: 'StringParameterValue', name: 'INVENTORY', value: 'production'],
-                        [$class: 'StringParameterValue', name: 'PLAYBOOK', value: 'deploy-afvalcontainers.yml'],
+                    [$class: 'StringParameterValue', name: 'INVENTORY', value: 'production'],
+                    [$class: 'StringParameterValue', name: 'PLAYBOOK', value: 'deploy-afvalcontainers.yml'],
                 ]
             }
         }

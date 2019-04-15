@@ -1,7 +1,7 @@
 version: '3.0'
 services:
   database:
-    image: amsterdam/postgres
+    image: amsterdam/postgres11
     environment:
       POSTGRES_PASSWORD: insecure
       POSTGRES_USER: afvalcontainers
@@ -12,7 +12,7 @@ services:
       - ~/.ssh/datapunt.key:/root/.ssh/datapunt.key
 
   api:
-    image: build.datapunt.amsterdam.nl:5000/afvalcontainers:${ENVIRONMENT}
+    image: repo.data.amsterdam.nl/afvalcontainers:${ENVIRONMENT}
     links:
       - database
     environment:
@@ -21,7 +21,7 @@ services:
       DATABASE_USER: afvalcontainers
 
   importer:
-    image: build.datapunt.amsterdam.nl:5000/afvalcontainers_importer:${ENVIRONMENT}
+    image: repo.data.amsterdam.nl/afvalcontainers_importer:${ENVIRONMENT}
     # build: ../..
     links:
       - database
