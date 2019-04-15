@@ -38,6 +38,7 @@ node {
             def api = docker.build("datapunt/afvalcontainers:${env.BUILD_NUMBER}", "--build-arg http_proxy=${JENKINS_HTTP_PROXY_STRING} --build-arg https_proxy=${JENKINS_HTTP_PROXY_STRING} "api")
                 api.push()
                 api.push("acceptance")
+            }
         }
     }
 }
