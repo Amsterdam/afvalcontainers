@@ -32,10 +32,10 @@ node {
     stage("Build dockers") {
         tryStep "build", {
             docker.withRegistry('https://repo.data.amsterdam.nl','docker-registry') {
-            def importer = docker.build("datapunt/afvalcontainers_importer:${env.BUILD_NUMBER}", "--build-arg http_proxy=${JENKINS_HTTP_PROXY_STRING} --build-arg https_proxy=${JENKINS_HTTP_PROXY_STRING} scrape_api")
+            def importer = docker.build("datapunt/afvalcontainers_importer:${env.BUILD_NUMBER}", scrape_api")
                 importer.push()
                 importer.push("acceptance")
-            def api = docker.build("datapunt/afvalcontainers:${env.BUILD_NUMBER}", "--build-arg http_proxy=${JENKINS_HTTP_PROXY_STRING} --build-arg https_proxy=${JENKINS_HTTP_PROXY_STRING} api")
+            def api = docker.build("datapunt/afvalcontainers:${env.BUILD_NUMBER}", api")
                 api.push()
                 api.push("acceptance")
             }
