@@ -15,7 +15,7 @@ from settings import KILO_ENVIRONMENT_OVERRIDES
 import db_helper
 from kilogram import models
 
-log = logging.getLogger("slurp_bammens")
+log = logging.getLogger("slurp_kilogram")
 log.setLevel(logging.DEBUG)
 logging.getLogger("urllib3").setLevel(logging.DEBUG)
 
@@ -217,24 +217,6 @@ async def load_system_weigh_data(session, system_id):
         body = {
             'request': 'getWeighData',
             'Systems': [int(system_id)],
-            'Fields': [
-                "SystemId",
-                "Seq",
-                "Date",
-                "Time",
-                "CustId",
-                "NoOfCont",
-                "ContIds",
-                "TotalVolume",
-                "District",
-                "Neighborhood",
-                "FractionId",
-                "FirstWeight",
-                "SecondWeight",
-                "NettWeight",
-                "Latitude",
-                "Longitude"
-            ],
             'Limit': 1000
         }
 
@@ -253,6 +235,7 @@ async def load_system_weigh_data(session, system_id):
 
         if not records:
             # no records returned we are done.
+            log.debug("No records returned")
             return
 
         await RESULT_QUEUE.put(json_response)
