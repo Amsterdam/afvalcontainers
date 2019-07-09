@@ -29,7 +29,7 @@ api_config = {
 
 WORKERS = 4
 STATUS = {"done": False}
-ENDPOINT = "amsterdam/api.php"
+ENDPOINT = "adam/api.php"
 API_ENDPOINT = f'{API_URL}/{ENDPOINT}'
 URL_QUEUE = asyncio.Queue()
 RESULT_QUEUE = asyncio.Queue()
