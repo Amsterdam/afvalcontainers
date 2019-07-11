@@ -124,7 +124,7 @@ def validate_fractie(measurement, idx):
     fractie = 'Rest'
 
     if idx.fractie:
-        fractie = idx.fractie
+        fractie = measurement[idx.fractie]
 
     fractie = FRACTIE_MAPPING.get(fractie, fractie)
 
@@ -251,16 +251,16 @@ def extract_one_resultset(fields, records, system_id=None):
             'seq_id': measurement[idx._id],
             'weigh_at': weigh_at,
             'system_id': measurement[idx.system_id],
-  #          'container_ids': measurement[idx.container_ids],
-   #         'container_count': measurement[idx.container_count],
+            'container_ids': measurement[idx.container_ids],
+            'container_count': measurement[idx.container_count],
             'fractie': fractie,
             'first_weight': first_weight,
             'fill_level': fill_level,
             'fill_chance': fill_chance,
             'second_weight': second_weight,
             'net_weight': net_weight,
-#            'district': measurement[idx.district],
- #           'neighborhood': measurement[idx.neighborhood],
+            'district': measurement[idx.district],
+            'neighborhood': measurement[idx.neighborhood],
             'location': location,
             'site_id': site_id,
             'valid': valid,
