@@ -18,7 +18,8 @@ LOG = logging.getLogger(__name__)
 Base = declarative_base()
 
 KILOGRAM_TABLES = [
-    "kilogram_weigh_raw",
+    # Never drop the raw model
+    #  "kilogram_weigh_raw",
     "kilogram_weigh_measurement",
 ]
 
