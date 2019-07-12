@@ -30,10 +30,12 @@ async def create_tables(args):
     session = db_helper.set_session(engine)
 
     if args.drop:
-        # resets everything
-        LOG.warning("DROPPING ALL DEFINED TABLES")
-        for table in KILOGRAM_TABLES:
-            session.execute(f"DROP table if exists {table};")
+        # resets the target table
+        LOG.warning("DROPPING TARGET TABLE")
+        
+        #for table in KILOGRAM_TABLES:
+        session.execute(f"DROP table if exists kilogram_weigh_measurement;")
+        
         session.commit()
         # Base.metadata.drop_all(engine)
 
