@@ -29,7 +29,7 @@ logging.getLogger("urllib3").setLevel(logging.ERROR)
 
 ENVIRONMENT = os.getenv("ENVIRONMENT", "acceptance")
 
-WORKERS = 3
+WORKERS = int(float(os.getenv("BAMMENS_WORKERS", 1)))
 
 STATUS = {"done": False}
 
