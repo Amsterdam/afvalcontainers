@@ -2,26 +2,20 @@
 Save external bammens API container sources
 """
 
-import aiohttp
+import argparse
+import asyncio
+import datetime
+import logging
+import os
+import os.path
 import random
 import time
 
+import aiohttp
 # import aiopg
 from aiohttp import ClientSession
-import asyncio
-
-import datetime
-import os
-
-from bammens import models
-
-import logging
-import argparse
+from bammens import login, models
 from settings import API_BAMMENS_URL as API_URL
-import os.path
-
-
-from bammens import login
 
 log = logging.getLogger("slurp_bammens")
 log.setLevel(logging.INFO)
@@ -44,27 +38,21 @@ ENDPOINT_URL = {
     "containers": f"{API_URL}/api/containers",
 }
 
-
 api_config = {
     "password": os.getenv("BAMMENS_API_PASSWORD", ""),
-    "hosts": {"production": "https://bammens.nl/api/"},
+    "hosts": {
+        "production": "https://bammens.nl/api/"
+    },
     # 'port': 3001,
     "username": os.getenv("BAMMENS_API_USERNAME", ""),
 }
-
 
 AUTH = (api_config["username"], api_config.get("password"))
 
 
 async def fetch(url, session, params=None, auth=None):
-    try:
-        response = await session.get(url, ssl=True)
-        return response
-
-    except (aiohttp.client_exceptions.ServerDisconnectedError):
-        log.error("Server disconnect..")
-        asyncio.sleep(random.random() * 10)
-        return None
+    response = await session.get(url, ssl=True, timeout=60)
+    return response
 
 
 async def get_the_json(session, endpoint, _id=None) -> list:
@@ -81,14 +69,28 @@ async def get_the_json(session, endpoint, _id=None) -> list:
     if _id:
         url = f"{url}/{_id}.json"
 
-    retry = 5
-
+    max_retries = 5
+    retry = 0
     retry_codes = [500, 502, 503, 504]
 
-    while retry > 0:
+    while retry < max_retries:
         json = None
-        retry -= 1
-        response = await fetch(url, session)
+        retry += 1
+
+        try:
+            response = await fetch(url, session)
+
+        # Retry on timeout
+        except (
+            asyncio.TimeoutError,
+            aiohttp.client_exceptions.ServerDisconnectedError
+        ) as e:
+            print(e)
+            log.error(e)
+            sleep = retry * 2
+            log.info(f'sleeping {sleep} seconds because of an error')
+            await asyncio.sleep(sleep)
+            continue
 
         if response is None:
             log.error("RESPONSE NONE %s %s", url, params)
@@ -252,7 +254,6 @@ async def run_workers(endpoint, workers=WORKERS):
     # start job of puting data into database
     store_data = asyncio.ensure_future(store_results(endpoint))
     # for endpoint get a list of items to pick up
-
     async with ClientSession() as session:
         await login.set_login_cookies(session)
         total = await fill_url_queue(session, endpoint)
@@ -262,8 +263,8 @@ async def run_workers(endpoint, workers=WORKERS):
     log.info("Starting %d workers %s", workers, endpoint)
 
     workers = [
-        asyncio.ensure_future(do_request(i, endpoint))
-        for i in range(workers)]
+        asyncio.ensure_future(do_request(i, endpoint)) for i in range(workers)
+    ]
 
     # Terminate instructions for all workers
     for _ in range(len(workers)):
@@ -292,7 +293,8 @@ def start_import(endpoint, workers=WORKERS, make_engine=True):
     start = time.time()
     loop = asyncio.get_event_loop()
     loop.run_until_complete(
-        main(endpoint, workers=workers, make_engine=make_engine))
+        main(endpoint, workers=workers, make_engine=make_engine)
+    )
     log.info("Took: %s", time.time() - start)
 
 

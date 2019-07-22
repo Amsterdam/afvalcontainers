@@ -31,11 +31,11 @@ node {
 
     stage("Build dockers") {
         tryStep "build", {
-            docker.withRegistry('https://repo.data.amsterdam.nl','docker-registry') {
-            def importer = docker.build("datapunt/afvalcontainers_importer:${env.BUILD_NUMBER}", "scrape_api")
+            docker.withRegistry('build.datapunt.amsterdam.nl:5000','docker-registry') {
+            def importer = docker.build("afvalcontainers_importer:${env.BUILD_NUMBER}", "scrape_api")
                 importer.push()
                 importer.push("acceptance")
-            def api = docker.build("datapunt/afvalcontainers:${env.BUILD_NUMBER}", "api")
+            def api = docker.build("afvalcontainers_importer:${env.BUILD_NUMBER}", "api")
                 api.push()
                 api.push("acceptance")
             }
@@ -51,8 +51,8 @@ if (BRANCH == "master") {
     node {
         stage('Push acceptance image') {
             tryStep "image tagging", {
-                docker.withRegistry('https://repo.data.amsterdam.nl','docker-registry') {
-                    def image = docker.image("datapunt/afvalcontainers:${env.BUILD_NUMBER}")
+                docker.withRegistry('build.datapunt.amsterdam.nl:5000','docker-registry') {
+                    def image = docker.image("afvalcontainers_importer:${env.BUILD_NUMBER}")
                     image.pull()
                     image.push("acceptance")
                 }
@@ -80,9 +80,9 @@ if (BRANCH == "master") {
     node {
         stage('Push production image') {
             tryStep "image tagging", {
-                docker.withRegistry('https://repo.data.amsterdam.nl','docker-registry') {
-                def api = docker.image("datapunt/afvalcontainers:${env.BUILD_NUMBER}")
-                def importer = docker.image("datapunt/afvalcontainers_importer:${env.BUILD_NUMBER}")
+                docker.withRegistry('build.datapunt.amsterdam.nl:5000','docker-registry') {
+                def api = docker.image("afvalcontainers_importer:${env.BUILD_NUMBER}")
+                def importer = docker.image("afvalcontainers_importer:${env.BUILD_NUMBER}")
 
                 importer.push("production")
                 importer.push("latest")
