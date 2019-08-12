@@ -34,10 +34,10 @@ node {
             docker.withRegistry('https://repo.data.amsterdam.nl','docker-registry') {
             def importer = docker.build("datapunt/afvalcontainers_importer:${env.BUILD_NUMBER}", "scrape_api")
                 importer.push()
-                importer.push("acceptance")
+                importer.push(BRANCH)
             def api = docker.build("datapunt/afvalcontainers:${env.BUILD_NUMBER}", "api")
                 api.push()
-                api.push("acceptance")
+                api.push(BRANCH)
             }
         }
     }
