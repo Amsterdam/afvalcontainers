@@ -1,5 +1,7 @@
 #!groovy
 
+String BRANCH = "${env.BRANCH_NAME}"
+
 def tryStep(String message, Closure block, Closure tearDown = null) {
     try {
         block()
@@ -44,7 +46,6 @@ node {
 }
 
 
-String BRANCH = "${env.BRANCH_NAME}"
 
 if (BRANCH == "master") {
 
