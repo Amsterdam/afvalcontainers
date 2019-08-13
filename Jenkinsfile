@@ -54,9 +54,10 @@ if (BRANCH == "master") {
         stage('Push acceptance image') {
             tryStep "image tagging", {
                 docker.withRegistry('https://repo.data.amsterdam.nl','docker-registry') {
-                    def image = docker.image("datapunt/afvalcontainers:${env.BUILD_NUMBER}")
-                    image.pull()
-                    image.push("acceptance")
+                    def api = docker.image("datapunt/afvalcontainers:${env.BUILD_NUMBER}")
+                    def importer = docker.image("datapunt/afvalcontainers_importer:${env.BUILD_NUMBER}")
+                    importer.push("acceptance")
+                    api.push("acceptance")
                 }
             }
         }
@@ -83,14 +84,15 @@ if (BRANCH == "master") {
         stage('Push production image') {
             tryStep "image tagging", {
                 docker.withRegistry('https://repo.data.amsterdam.nl','docker-registry') {
-                def api = docker.image("datapunt/afvalcontainers:${env.BUILD_NUMBER}")
-                def importer = docker.image("datapunt/afvalcontainers_importer:${env.BUILD_NUMBER}")
+                    def api = docker.image("datapunt/afvalcontainers:${env.BUILD_NUMBER}")
+                    def importer = docker.image("datapunt/afvalcontainers_importer:${env.BUILD_NUMBER}")
 
-                importer.push("production")
-                importer.push("latest")
+                    importer.push("production")
+                    importer.push("latest")
 
-                api.push("production")
-                api.push("latest")
+                    api.push("production")
+                    api.push("latest")
+                }
             }
         }
     }
@@ -106,5 +108,4 @@ if (BRANCH == "master") {
             }
         }
     }
-}
 }
