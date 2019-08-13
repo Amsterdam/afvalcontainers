@@ -1,8 +1,6 @@
 #!groovy
 
 String BRANCH = env.BRANCH_NAME
-String PROJECT = env.JOB_NAME.replace('/', '-')
-String VERSION = env.BRANCH_NAME.replace('/', '-')
 
 def tryStep(String message, Closure block, Closure tearDown = null) {
     try {
@@ -38,10 +36,8 @@ node {
             docker.withRegistry('https://repo.data.amsterdam.nl','docker-registry') {
             def importer = docker.build("datapunt/afvalcontainers_importer:${env.BUILD_NUMBER}", "scrape_api")
                 importer.push()
-                importer.push(VERSION)
             def api = docker.build("datapunt/afvalcontainers:${env.BUILD_NUMBER}", "api")
                 api.push()
-                api.push(VERSION)
             }
         }
     }
