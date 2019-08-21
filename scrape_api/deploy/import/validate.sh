@@ -6,4 +6,4 @@ set -x   # print what we are doing
 
 echo 'Check!' > log.txt
 cat log.txt
-curl -F file=log.txt -F channels=niels-test  -H "Authorization: ${SLACK_ID}" https://slack.com/api/files.upload
+curl -F file=log.txt -F channels=niels-test  -H "Authorization: Bearer ${SLACK_ID}" https://slack.com/api/files.upload
