@@ -24,7 +24,7 @@ node {
 
     stage("Check database") {
         OUTPUT = sh(
-            script: 'import/check.sh',
+            script: 'import/validate.sh',
             returnStdout: true
         ).trim()
         slacksend(
