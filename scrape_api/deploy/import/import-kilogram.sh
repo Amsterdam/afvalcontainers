@@ -42,4 +42,6 @@ dc run --rm importer python kilogram/copy_to_model.py --link_gebieden
 
 dc run --rm importer python kilogram/copy_to_model.py --fix_perscontainers
 
+dc run --rm importer python kilogram/validate.py
+
 dc down -v

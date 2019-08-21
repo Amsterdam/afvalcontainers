@@ -26,3 +26,4 @@ six
 SQLAlchemy
 SQLAlchemy-Utils
 urllib3
+slack
