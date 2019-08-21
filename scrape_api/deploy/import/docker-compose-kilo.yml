@@ -22,3 +22,4 @@ services:
       OBJECTSTORE_PASSWORD:
       OBJECTSTORE_LOCAL:
       PYTHONPATH: /app/
+      SLACK_WEBHOOK_URL:
