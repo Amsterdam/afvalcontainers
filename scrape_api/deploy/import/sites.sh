@@ -39,7 +39,7 @@ dc run --rm importer python -m objectstore.databasedumps /data db_enevo --downlo
 
 
 ENV="acceptance"
-if [ "$ENVIRONMENT" == "production" ]; then
+if [[ "$ENVIRONMENT" == "production" ]]; then
   ENV="production"
 fi
 
