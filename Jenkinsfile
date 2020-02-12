@@ -31,7 +31,7 @@ node {
 
     stage("Build dockers") {
         tryStep "build", {
-            docker.withRegistry('https://repo.data.amsterdam.nl','docker-registry') {
+            docker.withRegistry("${DOCKER_REGISTRY_HOST}",'docker_registry_auth') {
             def importer = docker.build("datapunt/afvalcontainers_importer:${env.BUILD_NUMBER}", "scrape_api")
                 importer.push()
                 importer.push("acceptance")
@@ -51,7 +51,7 @@ if (BRANCH == "master") {
     node {
         stage('Push acceptance image') {
             tryStep "image tagging", {
-                docker.withRegistry('https://repo.data.amsterdam.nl','docker-registry') {
+                docker.withRegistry("${DOCKER_REGISTRY_HOST}",'docker_registry_auth') {
                     def image = docker.image("datapunt/afvalcontainers:${env.BUILD_NUMBER}")
                     image.pull()
                     image.push("acceptance")
@@ -80,7 +80,7 @@ if (BRANCH == "master") {
     node {
         stage('Push production image') {
             tryStep "image tagging", {
-                docker.withRegistry('https://repo.data.amsterdam.nl','docker-registry') {
+                docker.withRegistry("${DOCKER_REGISTRY_HOST}",'docker_registry_auth') {
                 def api = docker.image("datapunt/afvalcontainers:${env.BUILD_NUMBER}")
                 def importer = docker.image("datapunt/afvalcontainers_importer:${env.BUILD_NUMBER}")
 
