@@ -1,7 +1,7 @@
 version: '3.0'
 services:
   importer:
-    image: ${DOCKER_REGISTRY_HOST}/datapunt/afvalcontainers_importer:${ENVIRONMENT}
+    image: docker-registry.data.amsterdam.nl/datapunt/afvalcontainers_importer:${ENVIRONMENT}
     # build: ../../
     environment:
       ENVIRONMENT:
