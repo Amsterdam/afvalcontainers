@@ -12,7 +12,7 @@ services:
       - ~/.ssh/datapunt.key:/root/.ssh/datapunt.key
 
   api:
-    image: repo.data.amsterdam.nl/datapunt/afvalcontainers:${ENVIRONMENT}
+    image: ${DOCKER_REGISTRY_HOST}/datapunt/afvalcontainers:${ENVIRONMENT}
     links:
       - database
     environment:
@@ -21,7 +21,7 @@ services:
       DATABASE_USER: afvalcontainers
 
   importer:
-    image: repo.data.amsterdam.nl/datapunt/afvalcontainers_importer:${ENVIRONMENT}
+    image: ${DOCKER_REGISTRY_HOST}/datapunt/afvalcontainers_importer:${ENVIRONMENT}
     # build: ../..
     links:
       - database
