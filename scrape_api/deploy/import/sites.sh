@@ -60,7 +60,6 @@ update_table basiskaart BGTPLUS_BAK_afval_apart_plaats bgt afvalcontainers
 update_table basiskaart BGT_OWGL_verkeerseiland bgt afvalcontainers
 update_table basiskaart BGT_OWGL_berm bgt afvalcontainers
 update_table basiskaart BGT_OTRN_open_verharding bgt afvalcontainers
-update_table basiskaart BGT_OTRN_transitie bgt afvalcontainers
 update_table basiskaart BGT_WGL_fietspad bgt afvalcontainers
 update_table basiskaart BGT_WGL_voetgangersgebied bgt afvalcontainers
 update_table basiskaart BGT_WGL_voetpad bgt afvalcontainers

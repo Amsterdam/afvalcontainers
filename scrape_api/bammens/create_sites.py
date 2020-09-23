@@ -131,7 +131,6 @@ BGT_TABLES = [
     ('bgt."BGT_WGL_voetgangersgebied"', 'MultiPolygon', FOUR_METER),
     ('bgt."BGT_WGL_woonerf"', 'MultiPolygon', FOUR_METER),
     ('bgt."BGT_OTRN_open_verharding"', 'MultiPolygon', FOUR_METER),
-    ('bgt."BGT_OTRN_transitie"', 'MultiPolygon', FOUR_METER),
     ('bgt."BGT_OWGL_berm"', 'MultiPolygon', FOUR_METER),
     ('bgt."BGT_WGL_fietspad"', 'MultiPolygon', FOUR_METER),
     ('bgt."BGT_WGL_parkeervlak"', 'MultiPolygon', FOUR_METER),
