@@ -1,15 +1,18 @@
 {% extends "rest_framework/base.html" %}
 
+{% load static %}
+
 {% block title %}Datapunt: Atlas API{% endblock %}
 
 {% block branding %}
-    <a class='navbar-brand' rel="nofollow" href='//api.data.amsterdam.nl/'>
+    <a class='navbar-brand' rel="nofollow" href='/'>
         Datapunt APIs
     </a>
 {% endblock %}
 
 {% block bootstrap_theme %}
-    <link rel="stylesheet" href="https://bootswatch.com/4/simplex/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="{% static "rest_framework/css/bootstrap.min.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "datapunt_api/datapunt.css" %}" type="text/css">
 {% endblock %}
 
 {% block description %}
@@ -17,5 +20,3 @@
     {{ description }}
     </div>
 {% endblock %}
-
-
