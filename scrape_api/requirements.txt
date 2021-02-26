@@ -1,5 +1,5 @@
 alembic==1.0.6
-aiohttp==3.4.4
+aiohttp==3.7.4
 async-timeout==3.0.1
 asynctest==0.12.2
 atomicwrites==1.2.1
