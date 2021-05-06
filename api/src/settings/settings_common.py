@@ -139,6 +139,7 @@ REST_FRAMEWORK = dict(
     DEFAULT_VERSIONING_CLASS='rest_framework.versioning.NamespaceVersioning',
     DEFAULT_VERSION='v0',
     ALLOWED_VERSIONS=API_VERSIONS.keys(),
+    DEFAULT_SCHEMA_CLASS='rest_framework.schemas.coreapi.AutoSchema',
 )
 
 # Static files (CSS, JavaScript, Images)

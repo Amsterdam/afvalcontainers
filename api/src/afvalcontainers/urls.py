@@ -56,74 +56,74 @@ suppliers = SuppliersRouter()
 
 
 afval_v1.register(
-    r"containers", api_views.ContainerView, base_name="container")
+    r"containers", api_views.ContainerView, basename="container")
 afval_v1.register(
-    r"wells", api_views.WellView, base_name="well")
+    r"wells", api_views.WellView, basename="well")
 afval_v1.register(
-    r"containertypes", api_views.TypeView, base_name="containertype")
+    r"containertypes", api_views.TypeView, basename="containertype")
 
 afval_v1.register(
-    r"sites", api_views.SiteView, base_name="site")
+    r"sites", api_views.SiteView, basename="site")
 afval_v1.register(
-    r"sitefracties", api_views.SiteFractieView, base_name="sitefractie")
+    r"sitefracties", api_views.SiteFractieView, basename="sitefractie")
 
 # LIVE KILOGRAM DATABASE UPDATES
 suppliers.register(
-    r"kilogram", kilo_views.KilogramView, base_name="kilogram")
+    r"kilogram", kilo_views.KilogramView, basename="kilogram")
 
 # stats views
 # supplies.register(
 #     r'kilos/sites/weekly',
-#     kilo_views.WeighDataSiteWeekView, base_name='stats-site-week')
+#     kilo_views.WeighDataSiteWeekView, basename='stats-site-week')
 #
 # containers.register(
 #     r'kilos/sites/monthly',
-#     kilo_views.WeighDataSiteMonthView, base_name='stats-site-month')
+#     kilo_views.WeighDataSiteMonthView, basename='stats-site-month')
 #
 # containers.register(
 #     r'kilos/neighborhood/weekly',
-#     kilo_views.WeighDataBuurtWeekView, base_name='stats-wijk-week')
+#     kilo_views.WeighDataBuurtWeekView, basename='stats-wijk-week')
 #
 # containers.register(
 #     r'kilos/neighborhood/monthly',
-#     kilo_views.WeighDataBuurtMonthView, base_name='stats-wijk-month')
+#     kilo_views.WeighDataBuurtMonthView, basename='stats-wijk-month')
 
 
 suppliers.register(
     r'enevo/containers',
-    enevo_views.ContainerView, base_name='enevocontainer')
+    enevo_views.ContainerView, basename='enevocontainer')
 
 suppliers.register(
     r'enevo/containertypes',
-    enevo_views.ContainerTypeView, base_name='enevocontainertype')
+    enevo_views.ContainerTypeView, basename='enevocontainertype')
 
 suppliers.register(
     r'enevo/sites',
-    enevo_views.SiteView, base_name='enevosite')
+    enevo_views.SiteView, basename='enevosite')
 
 suppliers.register(
     r'enevo/sitecontenttypes',
-    enevo_views.SiteContentTypeView, base_name='enevositecontenttype')
+    enevo_views.SiteContentTypeView, basename='enevositecontenttype')
 
 suppliers.register(
     r'enevo/containerslots',
-    enevo_views.ContainerSlotView, base_name='enevocontainerslot')
+    enevo_views.ContainerSlotView, basename='enevocontainerslot')
 
 suppliers.register(
     r'enevo/alerts',
-    enevo_views.AlertView, base_name='enevoalert')
+    enevo_views.AlertView, basename='enevoalert')
 
 suppliers.register(
     r'enevo/contenttypes',
-    enevo_views.ContentTypeView, base_name='enevocontenttype')
-# containers.register(r"stats", stats, base_name='stats')
+    enevo_views.ContentTypeView, basename='enevocontenttype')
+# containers.register(r"stats", stats, basename='stats')
 suppliers.register(
     r'enevo/filllevels',
-    enevo_views.FillLevelView, base_name='enevofilllevel')
+    enevo_views.FillLevelView, basename='enevofilllevel')
 
 suppliers.register(
     r'sidcon/filllevels',
-    sidcon_views.SidconView, base_name='sidconfilllevel')
+    sidcon_views.SidconView, basename='sidconfilllevel')
 
 
 schema_view = get_schema_view(
