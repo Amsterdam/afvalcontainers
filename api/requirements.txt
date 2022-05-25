@@ -38,7 +38,7 @@ packaging==20.9
 psycopg2-binary==2.7.6.1
 pycparser==2.19
 Pygments==2.7.4
-PyJWT==1.6.4
+PyJWT==2.4.0
 python-dateutil==2.7.5
 pytz==2018.7
 PyYAML==5.4
