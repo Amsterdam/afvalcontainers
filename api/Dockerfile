@@ -1,4 +1,4 @@
-FROM python:3.7-buster as builder
+FROM python:3.7-bookworm
 MAINTAINER datapunt@amsterdam.nl
 
 ENV PYTHONUNBUFFERED 1
@@ -6,25 +6,24 @@ ENV PYTHONUNBUFFERED 1
 EXPOSE 8000
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-RUN apt update && apt install --no-install-recommends -y \
-    build-essential \
-    python3-pip \
-    python3-dev \
-    libpq-dev
+RUN apt-get update && apt-get install -y \
+	gdal-bin \
+	libpcre3 libpcre3-dev \
+	&& apt-get clean \
+	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+	&& adduser --system datapunt \
+	&& mkdir -p /static \
+	&& chown datapunt /static \
+	&& pip install uwsgi
 
-#RUN apt-get install python3-pip -y
-RUN adduser --system datapunt
-RUN mkdir -p /static && chown datapunt /static
+WORKDIR /app
+COPY requirements.txt /app/
+RUN pip install -r requirements.txt
+
+USER datapunt
 
 COPY src /app/
 COPY deploy /deploy/
-
-WORKDIR /app/
-
-COPY requirements.txt /app/
-RUN pip install --no-cache-dir -r requirements.txt
-
-USER datapunt
 
 RUN export DJANGO_SETTINGS_MODULE=containers.settings
 
