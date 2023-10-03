@@ -5,6 +5,7 @@ ENV PYTHONUNBUFFERED 1
 
 EXPOSE 8000
 
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN apt update && apt install --no-install-recommends -y \
     curl \
     gdal-bin \
@@ -14,7 +15,9 @@ RUN apt update && apt install --no-install-recommends -y \
     build-essential \
     python3-pip \
     libgeos-dev \
-    libpq-dev
+    libpq-dev \
+    python3-dev \
+    libffi-dev
 
 #RUN apt-get install python3-pip -y
 RUN adduser --system datapunt
