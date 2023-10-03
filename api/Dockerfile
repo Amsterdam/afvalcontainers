@@ -5,9 +5,20 @@ ENV PYTHONUNBUFFERED 1
 
 EXPOSE 8000
 
-RUN set -xe
-RUN apt-get update && apt-get upgrade -y
-RUN apt-get install python3-pip -y
+RUN apt update && apt install --no-install-recommends -y \
+    curl \
+    gdal-bin \
+    libgeos-c1v5 \
+    libpq5 \
+    netcat-openbsd \
+    build-essential \
+    python3-pip \
+    libgeos-dev \
+    libpq-dev \
+    python3-dev \
+    libffi-dev
+
+#RUN apt-get install python3-pip -y
 RUN adduser --system datapunt
 RUN mkdir -p /static && chown datapunt /static
 
