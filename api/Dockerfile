@@ -12,6 +12,7 @@ COPY src /app/
 COPY deploy /deploy/
 COPY requirements.txt /app/
 
+RUN adduser --system datapunt
 WORKDIR /app
 
 
