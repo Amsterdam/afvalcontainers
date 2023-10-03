@@ -5,7 +5,8 @@ ENV PYTHONUNBUFFERED 1
 
 EXPOSE 8000
 
-RUN apt-get update && apt-get upgrade -y
+RUN set -xe
+RUN apt-get update && apt-get upgrade &&  apt-get install python3-pip -y
 RUN adduser --system datapunt
 RUN mkdir -p /static && chown datapunt /static
 
