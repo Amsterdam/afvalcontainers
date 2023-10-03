@@ -1,10 +1,11 @@
-FROM amsterdam/python
+FROM ubuntu:20.04
 MAINTAINER datapunt@amsterdam.nl
 
 ENV PYTHONUNBUFFERED 1
 
 EXPOSE 8000
 
+RUN apt-get update && apt-get upgrade -y
 RUN mkdir -p /static && chown datapunt /static
 
 COPY src /app/
