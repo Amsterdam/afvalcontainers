@@ -11,14 +11,13 @@ RUN apt-get install python3-pip -y
 RUN adduser --system datapunt
 RUN mkdir -p /static && chown datapunt /static
 
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
-
 COPY src /app/
 COPY deploy /deploy/
-COPY requirements.txt /app/
 
-WORKDIR /app
+WORKDIR /app/
+
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
 
 USER datapunt
 
