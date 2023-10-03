@@ -15,8 +15,7 @@ RUN apt update && apt install --no-install-recommends -y \
     python3-pip \
     libgeos-dev \
     libpq-dev \
-    python3-dev \
-    libffi-dev
+    python3-dev
 
 #RUN apt-get install python3-pip -y
 RUN adduser --system datapunt
