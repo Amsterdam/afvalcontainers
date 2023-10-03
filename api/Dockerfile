@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM python:3.7-buster as builder
 MAINTAINER datapunt@amsterdam.nl
 
 ENV PYTHONUNBUFFERED 1
