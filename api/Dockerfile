@@ -6,15 +6,14 @@ ENV PYTHONUNBUFFERED 1
 EXPOSE 8000
 
 RUN apt-get update && apt-get upgrade -y
+RUN adduser --system datapunt
 RUN mkdir -p /static && chown datapunt /static
 
 COPY src /app/
 COPY deploy /deploy/
 COPY requirements.txt /app/
 
-RUN adduser --system datapunt
 WORKDIR /app
-
 
 RUN pip install --no-cache-dir -r requirements.txt
 
