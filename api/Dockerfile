@@ -7,6 +7,7 @@ EXPOSE 8000
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN apt update && apt install --no-install-recommends -y \
+    build-essential \
     python3-pip \
     python3-dev \
     libpq-dev
