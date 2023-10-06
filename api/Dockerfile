@@ -17,6 +17,11 @@ RUN apt-get update && apt-get install -y \
 	&& chown datapunt /static \
 	&& pip install uwsgi
 
+# Setup certificates for ADP/Motiv
+RUN apk add ca-certificates
+COPY adp_rootca.crt /usr/local/share/ca-certificates/adp_rootca.crt
+RUN chmod 644 /usr/local/share/ca-certificates/adp_rootca.crt && update-ca-certificates –fresh
+
 WORKDIR /app
 COPY requirements.txt /app/
 RUN pip install -r requirements.txt
