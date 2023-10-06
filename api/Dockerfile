@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
 	&& pip install uwsgi
 
 # Setup certificates for ADP/Motiv
-RUN apk add ca-certificates
+RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
 COPY adp_rootca.crt /usr/local/share/ca-certificates/extras/adp_rootca.crt
 RUN chmod 644 /usr/local/share/ca-certificates/adp_rootca.crt && update-ca-certificates –fresh
 
