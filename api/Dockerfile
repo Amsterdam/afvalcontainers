@@ -17,6 +17,11 @@ RUN apt-get update && apt-get install -y \
 	&& chown datapunt /static \
 	&& pip install uwsgi
 
+RUN mkdir /usr/local/share/ca-certificates/extras
+COPY adp_rootca.crt /usr/local/share/ca-certificates/extras/
+RUN chmod 644 /usr/local/share/ca-certificates/extras/adp_rootca.crt
+RUN update-ca-certificates
+
 WORKDIR /app
 COPY requirements.txt /app/
 RUN pip install -r requirements.txt
