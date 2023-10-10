@@ -24,7 +24,7 @@ services:
   api:
     build: ./api
     ports:
-      - "8134:8000"
+      - "8001:8000"
     links:
       - database
     environment:
@@ -32,7 +32,7 @@ services:
       - DATABASE_PASSWORD=insecure
       - DATABASE_KILOGRAM_PASSWORD=insecure
       - DATABASE_KILOGRAM_NAME=afvalcontainers
-      - UWSGI_HTTP=:8000
+      - UWSGI_HTTP=":8000"
       - UWSGI_MASTER=1
       - UWSGI_STATIC_INDEX=index.html
       - UWSGI_STATIC_MAP=/afval/static=/static
